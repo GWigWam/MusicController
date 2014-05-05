@@ -52,7 +52,7 @@ namespace SpeechMusicController {
             if(result.Equals("music") && musicOn == false) {
                 MusicOn = true;
                 timer = new Timer(10000);
-                timer.Elapsed += new ElapsedEventHandler(setMusicOnFalse);
+                timer.Elapsed += new ElapsedEventHandler(timerElapsed);
                 timer.Enabled = true;
                 return;
             }else {
@@ -67,19 +67,20 @@ namespace SpeechMusicController {
                         return;
                     } else if(result.Equals("random")) {
                         result = musicList.getRandomSongName();
+                        player.Play("\"" + musicList.getSongLocation(result) + "\"");
+                        return;
+                    }else{
+                        player.Play("\"" + musicList.getSongLocation(result) + "\""); //Add " at begin and end so AIMP3 gets it
+                        setMusicOff();
                     }
-
-                    player.Play("\"" + musicList.getSongLocation(result) + "\"");
-                    setMusicOff();
                 }catch(Exception e1){
                     Console.WriteLine(e1.Message);
                 }
             }
         }
 
-        private void setMusicOnFalse(object sender, ElapsedEventArgs e) {
-            MusicOn = false;
-            timer.Enabled = false;
+        private void timerElapsed(object sender, ElapsedEventArgs e) {
+            setMusicOff();
         }
 
         private void setMusicOff() {
