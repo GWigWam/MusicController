@@ -9,12 +9,8 @@ namespace SpeechMusicController {
     class Player {
         private Process aimp3 = new Process();
 
-        public Player() {
-            aimp3.StartInfo.FileName = getAimp3Location();
-        }
-
-        private string getAimp3Location(){
-            return @"F:\Program Files (x86)\AIMP3\AIMP3.exe";
+        public Player(string playerLoc) {
+            aimp3.StartInfo.FileName = playerLoc;
         }
 
         public void play(string fileLocation) {

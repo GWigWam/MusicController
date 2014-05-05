@@ -11,11 +11,8 @@ namespace SpeechMusicController {
         static void Main(string[] args) {
             SpeechInput sp = new SpeechInput();
             sp.start();
-            Console.WriteLine("started");
+            Console.WriteLine("Listening... Say 'Music' + 'Titel'");
 
-            //Player p = new Player();
-            //p.play("\"F:\\zooi\\overige\\Muziek\\Muse - Uprising.mp3\"");
-            
             Console.ReadKey();
         }
     }

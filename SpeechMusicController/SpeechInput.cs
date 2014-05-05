@@ -11,6 +11,7 @@ namespace SpeechMusicController {
 
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
         private Timer timer;
+        MusicList musicList = new MusicList(@"F:\zooi\overige\muziek\");
 
         private bool musicOn = false;
         private bool MusicOn {
@@ -29,7 +30,8 @@ namespace SpeechMusicController {
 
         public void start(){
             Choices sList = new Choices();
-            sList.Add(new string[] {"music on", "music off", "it works", "how", "are", "you", "today", "i", "am", "fine", "exit", "close", "quit", "test", "so", "nightwish master passion greed", "nightwish nemo"});
+            sList.Add(new string[] {"music"});
+            sList.Add(musicList.getAllSongNames().ToArray<string>());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
@@ -47,16 +49,20 @@ namespace SpeechMusicController {
         private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             string result = e.Result.Text.ToString();
 
-            if(result.Equals("music on")) {
+            if(result.Equals("music")) {
                 MusicOn = true;
                 timer = new Timer(10000);
                 timer.Elapsed += new ElapsedEventHandler(setMusicOnFalse);
                 timer.Enabled = true;
-            } else if(result.Equals("music off")) {
-                MusicOn = false;
-            } else {
+            }else {
                 Console.WriteLine(result);
             }
+
+            if(MusicOn) { 
+                
+            }
+            //Player p = new Player(@"F:\Program Files (x86)\AIMP3\AIMP3.exe");
+            //p.play("\"F:\\zooi\\overige\\Muziek\\Muse - Uprising.mp3\"");
         }
 
         private void setMusicOnFalse(object sender, ElapsedEventArgs e) {
