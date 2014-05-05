@@ -13,7 +13,9 @@ namespace SpeechMusicController {
             sp.start();
             Console.WriteLine("Listening... Say 'Music' + 'Titel'");
 
-            Console.ReadKey();
+            while(true) {
+                Console.ReadLine();
+            }
         }
     }
 }

@@ -27,12 +27,14 @@ namespace SpeechMusicController {
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.WriteLine("Music detect OFF");
                 }
+
+                System.Media.SystemSounds.Beep.Play();
             }
         }
 
         public void start(){
             Choices sList = new Choices();
-            sList.Add(new string[] {"music", "stop", "resume"});
+            sList.Add(new string[] {"music", "switch"});
             sList.Add(musicList.getAllSongNames().ToArray<string>());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
@@ -47,7 +49,7 @@ namespace SpeechMusicController {
         private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             string result = e.Result.Text.ToString();
 
-            if(result.Equals("music")) {
+            if(result.Equals("music") && musicOn == false) {
                 MusicOn = true;
                 timer = new Timer(10000);
                 timer.Elapsed += new ElapsedEventHandler(setMusicOnFalse);
@@ -59,11 +61,9 @@ namespace SpeechMusicController {
 
             if(MusicOn) {
                 try {
-                    if(result.Equals("stop")) {
-                        player.Pause();
-                        return;
-                    } else if(result.Equals("resume")) {
-                        player.Resume();
+                    if(result.Equals("switch")) {
+                        player.Toggle();
+                        setMusicOff();
                         return;
                     }
 

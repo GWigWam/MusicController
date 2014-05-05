@@ -18,13 +18,8 @@ namespace SpeechMusicController {
             aimp3.Start();
         }
 
-        public void Pause() {
+        public void Toggle() {
             aimp3.StartInfo.Arguments = "/PAUSE";
-            aimp3.Start();
-        }
-
-        public void Resume() {
-            aimp3.StartInfo.Arguments = "/PLAY";
             aimp3.Start();
         }
     }
