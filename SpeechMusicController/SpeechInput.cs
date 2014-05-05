@@ -11,7 +11,9 @@ namespace SpeechMusicController {
 
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
         private Timer timer;
-        MusicList musicList = new MusicList(@"F:\zooi\overige\muziek\");
+
+        MusicList musicList = new MusicList(Settings.MusicLocation);
+        Player player = new Player(Settings.AIMP3Location);
 
         private bool musicOn = false;
         private bool MusicOn {
@@ -58,14 +60,22 @@ namespace SpeechMusicController {
                 Console.WriteLine(result);
             }
 
-            if(MusicOn) { 
-                
+            if(MusicOn) {
+                try{
+                    player.play("\"" + musicList.getSongLocation(result) + "\"");
+                    setMusicOff();
+                }catch(Exception e1){
+                    Console.WriteLine(e1.Message);
+                }
             }
-            //Player p = new Player(@"F:\Program Files (x86)\AIMP3\AIMP3.exe");
-            //p.play("\"F:\\zooi\\overige\\Muziek\\Muse - Uprising.mp3\"");
         }
 
         private void setMusicOnFalse(object sender, ElapsedEventArgs e) {
+            MusicOn = false;
+            timer.Enabled = false;
+        }
+
+        private void setMusicOff() {
             MusicOn = false;
             timer.Enabled = false;
         }
