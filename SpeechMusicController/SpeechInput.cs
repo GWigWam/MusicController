@@ -12,8 +12,8 @@ namespace SpeechMusicController {
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
         private Timer timer;
 
-        MusicList musicList = new MusicList(Settings.MusicLocation);
-        Player player = new Player(Settings.AIMP3Location);
+        MusicList musicList = new MusicList(Settings.readMusicLocation());
+        Player player = new Player(Settings.readAIMP3Location());
 
         private bool musicOn = false;
         private bool MusicOn {
@@ -32,19 +32,15 @@ namespace SpeechMusicController {
 
         public void start(){
             Choices sList = new Choices();
-            sList.Add(new string[] {"music"});
+            sList.Add(new string[] {"music", "stop", "resume"});
             sList.Add(musicList.getAllSongNames().ToArray<string>());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
-            //sRecognize.RecognizeAsyncStop();
-            //sRecognize.RequestRecognizerUpdate();
             sRecognize.LoadGrammar(gr);
 
-            //sRecognize.SpeechRecognized += sRecognize_SpeechRecognized;
             sRecognize.SetInputToDefaultAudioDevice();
             sRecognize.RecognizeAsync(RecognizeMode.Multiple);
-            //sRecognize.Recognize();
             sRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
         }
 
@@ -56,13 +52,22 @@ namespace SpeechMusicController {
                 timer = new Timer(10000);
                 timer.Elapsed += new ElapsedEventHandler(setMusicOnFalse);
                 timer.Enabled = true;
+                return;
             }else {
                 Console.WriteLine(result);
             }
 
             if(MusicOn) {
-                try{
-                    player.play("\"" + musicList.getSongLocation(result) + "\"");
+                try {
+                    if(result.Equals("stop")) {
+                        player.Pause();
+                        return;
+                    } else if(result.Equals("resume")) {
+                        player.Resume();
+                        return;
+                    }
+
+                    player.Play("\"" + musicList.getSongLocation(result) + "\"");
                     setMusicOff();
                 }catch(Exception e1){
                     Console.WriteLine(e1.Message);
