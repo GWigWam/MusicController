@@ -15,13 +15,14 @@ namespace SpeechMusicController {
         }
 
         private List<FileInfo> AllFiles = new List<FileInfo>();
+        private Random random = new Random();
 
         //First string is Song name, second string is full location
         List<Tuple<string, string>> NameLocationMap = new List<Tuple<string, string>>();
 
         private void scanDir(string dirLoc) {
             DirectoryInfo dir = new DirectoryInfo(dirLoc);
-            Console.WriteLine("Directory {0}", dir.FullName);
+            //Console.WriteLine("Directory {0}", dir.FullName);
             // list the files
             try {
                 foreach(FileInfo f in dir.GetFiles("*.mp3")) {
@@ -30,7 +31,7 @@ namespace SpeechMusicController {
                 }
             } catch {
                 Console.WriteLine("Directory {0}  \n could not be accessed!!!!", dir.FullName);
-                return;  // We alredy got an error trying to access dir so dont try to access it again
+                return;
             }
 
             // process each directory
@@ -73,6 +74,10 @@ namespace SpeechMusicController {
             }
 
             throw new Exception("Song with the name " + songName + " could not be found");
+        }
+
+        public string getRandomSongName() {
+            return NameLocationMap[random.Next(0, NameLocationMap.Count)].Item1;
         }
     }
 }

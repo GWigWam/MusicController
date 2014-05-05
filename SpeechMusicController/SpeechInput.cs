@@ -34,7 +34,7 @@ namespace SpeechMusicController {
 
         public void start(){
             Choices sList = new Choices();
-            sList.Add(new string[] {"music", "switch"});
+            sList.Add(new string[] {"music", "switch", "random"});
             sList.Add(musicList.getAllSongNames().ToArray<string>());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
@@ -65,6 +65,8 @@ namespace SpeechMusicController {
                         player.Toggle();
                         setMusicOff();
                         return;
+                    } else if(result.Equals("random")) {
+                        result = musicList.getRandomSongName();
                     }
 
                     player.Play("\"" + musicList.getSongLocation(result) + "\"");

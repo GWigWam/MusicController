@@ -11,7 +11,7 @@ namespace SpeechMusicController {
         static void Main(string[] args) {
             SpeechInput sp = new SpeechInput();
             sp.start();
-            Console.WriteLine("Listening... Say 'Music' + 'Titel'");
+            Console.WriteLine("Listening...\nSay 'Music', wait for beep then available commands are:\n- switch (pause/unpause)\n- random (random song)\n- <song name> (to play said song)\n\nIf command is understood tone will sound again");
 
             while(true) {
                 Console.ReadLine();
