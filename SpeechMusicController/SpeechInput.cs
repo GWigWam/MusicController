@@ -9,12 +9,15 @@ using System.Timers;
 namespace SpeechMusicController {
     class SpeechInput {
 
+        Form1 f1;
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
         private Timer timer;
 
         MusicList musicList = new MusicList(Settings.readMusicLocation());
         Player player = new Player(Settings.readAIMP3Location());
 
+        public bool Enabled = true;
+        
         private bool musicOn = false;
         private bool MusicOn {
             get { return musicOn; }
@@ -22,14 +25,16 @@ namespace SpeechMusicController {
                 musicOn = value;
                 if(musicOn == true) {
                     Console.BackgroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("Music detect ON");
                 } else {
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.WriteLine("Music detect OFF");
                 }
 
                 System.Media.SystemSounds.Beep.Play();
             }
+        }
+
+        public SpeechInput(Form1 inForm1) {
+            f1 = inForm1;
         }
 
         public void start(){
@@ -47,34 +52,36 @@ namespace SpeechMusicController {
         }
 
         private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            string result = e.Result.Text.ToString();
+            if(Enabled) {
+                string result = e.Result.Text.ToString();
 
-            if(result.Equals("music") && musicOn == false) {
-                MusicOn = true;
-                timer = new Timer(10000);
-                timer.Elapsed += new ElapsedEventHandler(timerElapsed);
-                timer.Enabled = true;
-                return;
-            }else {
-                Console.WriteLine(result);
-            }
+                if(result.Equals("music") && musicOn == false) {
+                    MusicOn = true;
+                    timer = new Timer(10000);
+                    timer.Elapsed += new ElapsedEventHandler(timerElapsed);
+                    timer.Enabled = true;
+                    return;
+                } else {
+                    f1.WriteLine(result);
+                }
 
-            if(MusicOn) {
-                try {
-                    if(result.Equals("switch")) {
-                        player.Toggle();
-                        setMusicOff();
-                        return;
-                    } else if(result.Equals("random")) {
-                        result = musicList.getRandomSongName();
-                        player.Play("\"" + musicList.getSongLocation(result) + "\"");
-                        return;
-                    }else{
-                        player.Play("\"" + musicList.getSongLocation(result) + "\""); //Add " at begin and end so AIMP3 gets it
-                        setMusicOff();
+                if(MusicOn) {
+                    try {
+                        if(result.Equals("switch")) {
+                            player.Toggle();
+                            setMusicOff();
+                            return;
+                        } else if(result.Equals("random")) {
+                            result = musicList.getRandomSongName();
+                            player.Play("\"" + musicList.getSongLocation(result) + "\"");
+                            return;
+                        } else {
+                            player.Play("\"" + musicList.getSongLocation(result) + "\""); //Add " at begin and end so AIMP3 gets it
+                            setMusicOff();
+                        }
+                    } catch(Exception e1) {
+                        f1.WriteLine(e1.Message);
                     }
-                }catch(Exception e1){
-                    Console.WriteLine(e1.Message);
                 }
             }
         }
@@ -86,10 +93,6 @@ namespace SpeechMusicController {
         private void setMusicOff() {
             MusicOn = false;
             timer.Enabled = false;
-        }
-
-        public void stop(){
-            sRecognize.RecognizeAsyncStop();
         }
     }
 }

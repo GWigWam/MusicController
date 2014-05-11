@@ -30,7 +30,7 @@ namespace SpeechMusicController {
                     AllFiles.Add(f);
                 }
             } catch {
-                Console.WriteLine("Directory {0}  \n could not be accessed!!!!", dir.FullName);
+                Console.WriteLine("Directory " + dir.FullName + " \n could not be accessed!!!!");
                 return;
             }
 

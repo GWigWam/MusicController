@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Windows.Forms;
 
 namespace SpeechMusicController {
-    class Program {
-
-        static void Main(string[] args) {
-            SpeechInput sp = new SpeechInput();
-            sp.start();
-            Console.WriteLine("Listening...\nSay 'Music', wait for beep then available commands are:\n- switch (pause/unpause)\n- random (random song)\n- <song name> (to play said song)\n\nIf command is understood tone will sound again");
-
-            while(true) {
-                Console.ReadLine();
-            }
+    static class Program {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main() {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
         }
     }
 }
