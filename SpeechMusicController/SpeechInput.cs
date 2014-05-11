@@ -39,7 +39,7 @@ namespace SpeechMusicController {
 
         public void start(){
             Choices sList = new Choices();
-            sList.Add(new string[] {"music", "switch", "random"});
+            sList.Add(new string[] {"music", "switch", "random", "next", "previous", "collection"});
             sList.Add(musicList.getAllSongNames().ToArray<string>());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
@@ -75,9 +75,19 @@ namespace SpeechMusicController {
                             result = musicList.getRandomSongName();
                             player.Play("\"" + musicList.getSongLocation(result) + "\"");
                             return;
+                        } else if(result.Equals("next")) {
+                            player.Next();
+                            return;
+                        } else if(result.Equals("previous")) {
+                            player.Previous();
+                            return;
+                        } else if(result.Equals("collection")) {
+                            player.Play("\"" + Settings.readMusicLocation() + "\"");
+                            setMusicOff();
                         } else {
                             player.Play("\"" + musicList.getSongLocation(result) + "\""); //Add " at begin and end so AIMP3 gets it
                             setMusicOff();
+                            return;
                         }
                     } catch(Exception e1) {
                         f1.WriteLine(e1.Message);

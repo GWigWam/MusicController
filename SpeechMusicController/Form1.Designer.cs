@@ -39,6 +39,7 @@
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(260, 147);
             this.textBox1.TabIndex = 0;
+            this.textBox1.Text = "Possible: music, switch, random, next, previous, collection";
             // 
             // btnSwitch
             // 

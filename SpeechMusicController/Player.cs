@@ -22,5 +22,15 @@ namespace SpeechMusicController {
             aimp3.StartInfo.Arguments = "/PAUSE";
             aimp3.Start();
         }
+
+        public void Next() {
+            aimp3.StartInfo.Arguments = "/NEXT";
+            aimp3.Start(); 
+        }
+
+        public void Previous() {
+            aimp3.StartInfo.Arguments = "/PREV";
+            aimp3.Start();
+        }
     }
 }
