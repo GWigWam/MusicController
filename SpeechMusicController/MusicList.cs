@@ -18,7 +18,8 @@ namespace SpeechMusicController {
         private Random random = new Random();
 
         //First string is Song name, second string is full location
-        List<Tuple<string, string>> NameLocationMap = new List<Tuple<string, string>>();
+        //List<Tuple<string, string>> NameLocationMap = new List<Tuple<string, string>>();
+        public List<Song> SongList = new List<Song>();
 
         private void scanDir(string dirLoc) {
             DirectoryInfo dir = new DirectoryInfo(dirLoc);
@@ -41,43 +42,57 @@ namespace SpeechMusicController {
         }
 
         private void fillTuple() {
-            foreach(FileInfo fi in AllFiles) { 
+            foreach(FileInfo fi in AllFiles) {
                 string songName = fi.Name;
-
                 //Strip .mp3
                 songName = songName.Substring(0, songName.Length - 4);
-                
-                //Get rid of '# - ', '# ' (\d means any digit) and ' - ' and of ( & )
+
+                //Get rid of '# - ', '# ' (\d means any digit) and of '(' & ')'
                 songName = Regex.Replace(songName, @"\d+ - ", "");
                 songName = Regex.Replace(songName, @"^\d+.? ?", "");
-                songName = Regex.Replace(songName, @" - ", " ");
                 songName = Regex.Replace(songName, @"(\(|\))", "");
 
-                NameLocationMap.Add(new Tuple<string, string>(songName, fi.FullName));
+                if(songName.Contains(" - ")) {
+                    string songArtist = songName.Substring(0, songName.IndexOf(" - "));
+                    string songTitle = songName.Substring(songName.IndexOf(" - ") + 3);
+
+                    Song song = new Song(songTitle, songArtist, fi.FullName);
+                    SongList.Add(song);
+                }
             }
         }
 
-        public List<string> getAllSongNames() {
+        public List<string> getAllSongAndBandNames() {
             var returnList = new List<string>();
-            for(int c = 0; c < NameLocationMap.Count(); c++) {
-                returnList.Add(NameLocationMap[c].Item1);
+
+            //Add everything to list
+            for(int c = 0; c < SongList.Count(); c++) {
+                returnList.Add(SongList[c].SongName);
+                returnList.Add(SongList[c].BandName);
+            }
+
+            //Clean list of duplicates
+            returnList = returnList.Distinct().ToList();
+
+            return returnList;
+        }
+
+        public List<Song> getMatchingSongs(string keyword) {
+            List<Song> returnList = new List<Song>();
+
+            for(int c = 0; c < SongList.Count(); c++) {
+                Song current = SongList[c];
+
+                if(current.SongName.Equals(keyword) || current.BandName.Equals(keyword)) {
+                    returnList.Add(current);
+                }
             }
 
             return returnList;
         }
 
-        public string getSongLocation(string songName) {
-            for(int c = 0; c < NameLocationMap.Count(); c++) {
-                if(NameLocationMap[c].Item1.Equals(songName)) {
-                    return NameLocationMap[c].Item2;
-                }
-            }
-
-            throw new Exception("Song with the name " + songName + " could not be found");
-        }
-
-        public string getRandomSongName() {
-            return NameLocationMap[random.Next(0, NameLocationMap.Count)].Item1;
+        public Song getRandomSong() {
+            return SongList[random.Next(0, SongList.Count)];
         }
     }
 }

@@ -13,8 +13,18 @@ namespace SpeechMusicController {
             aimp3.StartInfo.FileName = playerLoc;
         }
 
-        public void Play(string fileLocation) {
-            aimp3.StartInfo.Arguments = "/ADD_PLAY " + fileLocation;
+        //Play single song
+        public void Play(Song song) {
+            aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + song.FilePath + "\"";//Add " at begin and end so AIMP3 gets it
+            aimp3.Start();
+        }
+
+        public void Play(List<Song> playList) {
+            string playString = "/FILE ";
+            for(int c = 0; c < playList.Count(); c++) {
+                playString += "\"" + playList[c].FilePath + "\" ";
+            }
+            aimp3.StartInfo.Arguments = playString;
             aimp3.Start();
         }
 
