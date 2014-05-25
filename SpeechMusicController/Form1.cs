@@ -54,5 +54,9 @@ namespace SpeechMusicController {
             this.Show();
             this.WindowState = FormWindowState.Normal;
         }
+
+        private void MenuItemExit_Click(object sender, EventArgs e) {
+            Environment.Exit(0);
+        }
     }
 }

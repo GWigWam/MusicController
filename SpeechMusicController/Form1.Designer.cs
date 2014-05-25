@@ -28,6 +28,9 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btnSwitch = new System.Windows.Forms.Button();
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.MenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
@@ -53,10 +56,26 @@
             // 
             // NotifyIcon
             // 
+            this.NotifyIcon.ContextMenuStrip = this.contextMenuStrip;
             this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
             this.NotifyIcon.Text = "SpeechMusicController";
             this.NotifyIcon.Visible = true;
             this.NotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseDoubleClick);
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemExit});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 48);
+            // 
+            // MenuItemExit
+            // 
+            this.MenuItemExit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.MenuItemExit.Name = "MenuItemExit";
+            this.MenuItemExit.Size = new System.Drawing.Size(152, 22);
+            this.MenuItemExit.Text = "Exit";
+            this.MenuItemExit.Click += new System.EventHandler(this.MenuItemExit_Click);
             // 
             // Form1
             // 
@@ -68,6 +87,7 @@
             this.Name = "Form1";
             this.Text = "SpeechMusicController";
             this.Resize += new System.EventHandler(this.frmMain_Resize);
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -78,6 +98,8 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button btnSwitch;
         private System.Windows.Forms.NotifyIcon NotifyIcon;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemExit;
     }
 }
 
