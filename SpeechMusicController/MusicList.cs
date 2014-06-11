@@ -10,8 +10,8 @@ namespace SpeechMusicController {
     class MusicList {
 
         public MusicList(string dirLoc) {
-            scanDir(dirLoc);
-            fillTuple();
+            ScanDir(dirLoc);
+            OrganizeList();
         }
 
         private List<FileInfo> AllFiles = new List<FileInfo>();
@@ -21,7 +21,7 @@ namespace SpeechMusicController {
         //List<Tuple<string, string>> NameLocationMap = new List<Tuple<string, string>>();
         public List<Song> SongList = new List<Song>();
 
-        private void scanDir(string dirLoc) {
+        private void ScanDir(string dirLoc) {
             DirectoryInfo dir = new DirectoryInfo(dirLoc);
             //Console.WriteLine("Directory {0}", dir.FullName);
             // list the files
@@ -37,11 +37,11 @@ namespace SpeechMusicController {
 
             // process each directory
             foreach(DirectoryInfo d in dir.GetDirectories()) {
-                scanDir(d.FullName);
+                ScanDir(d.FullName);
             }
         }
 
-        private void fillTuple() {
+        private void OrganizeList() {
             foreach(FileInfo fi in AllFiles) {
                 string songName = fi.Name;
                 //Strip .mp3
@@ -62,7 +62,7 @@ namespace SpeechMusicController {
             }
         }
 
-        public List<string> getAllSongAndBandNames() {
+        public List<string> GetAllSongAndBandNames() {
             var returnList = new List<string>();
 
             //Add everything to list
@@ -77,7 +77,7 @@ namespace SpeechMusicController {
             return returnList;
         }
 
-        public List<Song> getMatchingSongs(string keyword) {
+        public List<Song> GetMatchingSongs(string keyword) {
             List<Song> returnList = new List<Song>();
 
             for(int c = 0; c < SongList.Count(); c++) {
@@ -91,7 +91,7 @@ namespace SpeechMusicController {
             return returnList;
         }
 
-        public Song getRandomSong() {
+        public Song GetRandomSong() {
             return SongList[random.Next(0, SongList.Count)];
         }
     }

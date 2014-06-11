@@ -29,7 +29,7 @@ namespace SpeechMusicController {
         }
 
         public void PlayAll() {
-            aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + Settings.readMusicLocation() + "\"";
+            aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + Settings.ReadMusicLocation() + "\"";
             aimp3.Start();
         }
 

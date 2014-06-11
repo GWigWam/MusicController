@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
     class Settings {
 
-        public static string readAIMP3Location() {
+        public static string ReadAIMP3Location() {
             try {
                 StreamReader file = new StreamReader("AIMP3Location.settings");
                 return file.ReadLine();
@@ -20,7 +20,7 @@ namespace SpeechMusicController {
             }
         }
 
-        public static string readMusicLocation() {
+        public static string ReadMusicLocation() {
             try {
                 StreamReader file = new StreamReader("MusicLocation.settings");
                 return file.ReadLine();

@@ -13,8 +13,8 @@ namespace SpeechMusicController {
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
         private Timer timer;
 
-        MusicList musicList = new MusicList(Settings.readMusicLocation());
-        Player player = new Player(Settings.readAIMP3Location());
+        MusicList musicList = new MusicList(Settings.ReadMusicLocation());
+        Player player = new Player(Settings.ReadAIMP3Location());
 
         public bool Enabled = true;
         
@@ -37,10 +37,10 @@ namespace SpeechMusicController {
             f1 = inForm1;
         }
 
-        public void start(){
+        public void Start(){
             Choices sList = new Choices();
             sList.Add(new string[] {"music", "switch", "random", "next", "previous", "collection"});
-            sList.Add(musicList.getAllSongAndBandNames().ToArray<string>());
+            sList.Add(musicList.GetAllSongAndBandNames().ToArray<string>());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
@@ -58,7 +58,7 @@ namespace SpeechMusicController {
                 if(result.Equals("music") && musicOn == false) {
                     MusicOn = true;
                     timer = new Timer(10000);
-                    timer.Elapsed += new ElapsedEventHandler(timerElapsed);
+                    timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
                     timer.Enabled = true;
                     return;
                 } else {
@@ -69,10 +69,10 @@ namespace SpeechMusicController {
                     try {
                         if(result.Equals("switch")) {
                             player.Toggle();
-                            setMusicOff();
+                            SetMusicOff();
                             return;
                         } else if(result.Equals("random")) {
-                            player.Play(musicList.getRandomSong());
+                            player.Play(musicList.GetRandomSong());
                             return;
                         } else if(result.Equals("next")) {
                             player.Next();
@@ -82,10 +82,10 @@ namespace SpeechMusicController {
                             return;
                         } else if(result.Equals("collection")) {
                             player.PlayAll();
-                            setMusicOff();
+                            SetMusicOff();
                         } else {
-                            player.Play(musicList.getMatchingSongs(result));
-                            setMusicOff();
+                            player.Play(musicList.GetMatchingSongs(result));
+                            SetMusicOff();
                             return;
                         }
                     } catch(Exception e1) {
@@ -95,11 +95,11 @@ namespace SpeechMusicController {
             }
         }
 
-        private void timerElapsed(object sender, ElapsedEventArgs e) {
-            setMusicOff();
+        private void TimerElapsed(object sender, ElapsedEventArgs e) {
+            SetMusicOff();
         }
 
-        private void setMusicOff() {
+        private void SetMusicOff() {
             MusicOn = false;
             timer.Enabled = false;
         }

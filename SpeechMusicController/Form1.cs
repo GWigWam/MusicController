@@ -17,7 +17,7 @@ namespace SpeechMusicController {
         public Form1() {
             InitializeComponent();
             speechInput = new SpeechInput(this);
-            speechInput.start();
+            speechInput.Start();
             NotifyIcon.Visible = false;
         }
 
