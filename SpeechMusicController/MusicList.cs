@@ -17,8 +17,6 @@ namespace SpeechMusicController {
         private List<FileInfo> AllFiles = new List<FileInfo>();
         private Random random = new Random();
 
-        //First string is Song name, second string is full location
-        //List<Tuple<string, string>> NameLocationMap = new List<Tuple<string, string>>();
         public List<Song> SongList = new List<Song>();
 
         private void ScanDir(string dirLoc) {
@@ -63,31 +61,54 @@ namespace SpeechMusicController {
         }
 
         public List<string> GetAllSongAndBandNames() {
-            var returnList = new List<string>();
+            var tmpList = new List<string>();
 
             //Add everything to list
             for(int c = 0; c < SongList.Count(); c++) {
-                returnList.Add(SongList[c].SongName);
-                returnList.Add(SongList[c].BandName);
+                tmpList.Add(SongList[c].SongName);
+                tmpList.Add(SongList[c].BandName);
             }
 
             //Clean list of duplicates
-            returnList = returnList.Distinct().ToList();
-
+            var returnList = new List<string>();
+            foreach(string s1 in tmpList) {
+                bool isNew = true;
+                foreach(string s2 in returnList) {
+                    if(s1.Equals(s2)) {
+                        isNew = false;
+                    }
+                }
+                if(isNew) {
+                    returnList.Add(s1);
+                }
+            }
             return returnList;
         }
 
         public List<Song> GetMatchingSongs(string keyword) {
-            List<Song> returnList = new List<Song>();
+            List<Song> matchingSongs = new List<Song>();
 
             for(int c = 0; c < SongList.Count(); c++) {
                 Song current = SongList[c];
 
                 if(current.SongName.Equals(keyword) || current.BandName.Equals(keyword)) {
-                    returnList.Add(current);
+                    matchingSongs.Add(current);
                 }
             }
-
+            
+            //Clean list of duplicates, even if they are indeed seperate files in differnt folders, but the same song
+            List<Song> returnList = new List<Song>();
+            foreach(Song s1 in matchingSongs) {
+                bool isNew = true;
+                foreach(Song s2 in returnList) {
+                    if(s1.SongName.Equals(s2.SongName) && s1.BandName.Equals(s2.BandName)) {
+                        isNew = false;
+                    }
+                }
+                if(isNew) {
+                    returnList.Add(s1);
+                }
+            }
             return returnList;
         }
 
