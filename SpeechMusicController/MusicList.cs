@@ -60,7 +60,7 @@ namespace SpeechMusicController {
                     string songArtist = songName.Substring(0, songName.IndexOf(" - "));
                     string songTitle = songName.Substring(songName.IndexOf(" - ") + 3);
 
-                    Song song = new Song(songTitle, songArtist, fi.FullName);
+                    Song song = new Song(songTitle.ToLower(), songArtist.ToLower(), fi.FullName);
                     SongList.Add(song);
                 }
             }
