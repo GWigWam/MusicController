@@ -24,6 +24,12 @@ namespace SpeechMusicController {
             //Console.WriteLine("Directory {0}", dir.FullName);
             // list the files
             try {
+                //If there is a file in a folder w/ extentsion '.ignorethisfolder', ignore the folder
+                foreach(FileInfo f1 in dir.GetFiles("*.ignorethisfolder")) {
+                    return;
+                }
+
+                //Add .mp3 files
                 foreach(FileInfo f in dir.GetFiles("*.mp3")) {
                     //Console.WriteLine("File {0}", f.Name);
                     AllFiles.Add(f);
