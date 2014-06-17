@@ -81,7 +81,7 @@ namespace SpeechMusicController {
                             player.Previous();
                             return;
                         } else if(result.Equals("collection")) {
-                            player.PlayAll();
+                            player.Play(musicList.SongList);
                             SetMusicOff();
                         } else {
                             player.Play(musicList.GetMatchingSongs(result));
