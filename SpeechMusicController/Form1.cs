@@ -19,6 +19,7 @@ namespace SpeechMusicController {
             speechInput = new SpeechInput(this);
             speechInput.Start();
             NotifyIcon.Visible = false;
+            WriteLine("");
         }
 
         private void btnSwitch_Click(object sender, EventArgs e) {
