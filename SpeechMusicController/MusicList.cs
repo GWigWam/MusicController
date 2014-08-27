@@ -51,9 +51,7 @@ namespace SpeechMusicController {
                 //Strip .mp3
                 songName = songName.Substring(0, songName.Length - 4);
 
-                //Get rid of '# - ', '# ' (\d means any digit) and of '(' & ')'
-                songName = Regex.Replace(songName, @"\d+ - ", "");
-                songName = Regex.Replace(songName, @"^\d+.? ?", "");
+                //Get rid of '(' & ')'
                 songName = Regex.Replace(songName, @"(\(|\))", "");
 
                 if(songName.Contains(" - ")) {

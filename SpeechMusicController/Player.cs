@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace SpeechMusicController {
     class Player {
         private Process aimp3 = new Process();
+        private const int MaxCharInFilename = 32000; //32,768 actually, but keep some headroom
 
         public Player(string playerLoc) {
             aimp3.StartInfo.FileName = playerLoc;
@@ -21,18 +22,46 @@ namespace SpeechMusicController {
 
         public void Play(List<Song> playList) {
             string playString = "/FILE ";
+            List<Song> insertLater = new List<Song>();
             for(int c = 0; c < playList.Count(); c++) {
-                playString += "\"" + playList[c].FilePath + "\" ";
+                if(playString.Count() < MaxCharInFilename) {
+                    playString += "\"" + playList[c].FilePath + "\" ";
+                } else {
+                    insertLater.Add(playList[c]);
+                }
             }
             aimp3.StartInfo.Arguments = playString;
             aimp3.Start();
+
+            if(insertLater.Count > 0) {
+                Insert(insertLater);
+            }
         }
 
-        public void PlayAll() {
+        public void Insert(List<Song> inserList) {
+            string insertString = "/INSERT ";
+            List<Song> insertLater = new List<Song>();
+            for(int c = 0; c < inserList.Count(); c++) {
+                if(inserList.Count() < MaxCharInFilename) {
+                    insertString += "\"" + inserList[c].FilePath + "\" ";
+                } else {
+                    insertLater.Add(inserList[c]);
+                }
+            }
+            aimp3.StartInfo.Arguments = insertString;
+            aimp3.Start();
+
+            if(insertLater.Count > 0) {
+                Insert(insertLater);
+            }
+        }
+
+        //Obsolete?
+        /*public void PlayAll() {
             //Not in use now, maybe needed later
             aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + Settings.ReadMusicLocation() + "\"";
             aimp3.Start();
-        }
+        }*/
 
         public void Toggle() {
             aimp3.StartInfo.Arguments = "/PAUSE";
