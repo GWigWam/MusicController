@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace SpeechMusicController {
     class Player {
@@ -54,6 +55,16 @@ namespace SpeechMusicController {
             if(insertLater.Count > 0) {
                 Insert(insertLater);
             }
+
+            //Gives Aimp3 time to load, then calls play
+            Timer playTimer = new Timer(3000);
+            playTimer.Elapsed += new ElapsedEventHandler(PlayTimerEnds);
+            playTimer.AutoReset = false; //Only get called once
+            playTimer.Enabled = true;
+        }
+
+        private void PlayTimerEnds(object sender, ElapsedEventArgs e) {
+            Play();
         }
 
         //Obsolete?
@@ -62,6 +73,11 @@ namespace SpeechMusicController {
             aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + Settings.ReadMusicLocation() + "\"";
             aimp3.Start();
         }*/
+
+        public void Play() {
+            aimp3.StartInfo.Arguments = "/PLAY";
+            aimp3.Start();
+        }
 
         public void Toggle() {
             aimp3.StartInfo.Arguments = "/PAUSE";
