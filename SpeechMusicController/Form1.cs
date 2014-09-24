@@ -20,6 +20,8 @@ namespace SpeechMusicController {
             speechInput.Start();
             NotifyIcon.Visible = false;
             WriteLine("");
+            this.WindowState = FormWindowState.Minimized;
+            this.ShowInTaskbar = false;
         }
 
         private void btnSwitch_Click(object sender, EventArgs e) {
@@ -39,15 +41,17 @@ namespace SpeechMusicController {
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
-            NotifyIcon.BalloonTipTitle = "Minimize to Tray App";
-            NotifyIcon.BalloonTipText = "SpeechMusicController is down here";
-
             if(FormWindowState.Minimized == this.WindowState) {
                 NotifyIcon.Visible = true;
-                NotifyIcon.ShowBalloonTip(500);
                 this.Hide();
+                this.ShowInTaskbar = false;
+
+                //NotifyIcon.BalloonTipTitle = "Minimize to Tray App";
+                //NotifyIcon.BalloonTipText = "SpeechMusicController is down here";
+                //NotifyIcon.ShowBalloonTip(500);
             } else if(FormWindowState.Normal == this.WindowState) {
                 NotifyIcon.Visible = false;
+                this.ShowInTaskbar = true;
             }
         }
 
