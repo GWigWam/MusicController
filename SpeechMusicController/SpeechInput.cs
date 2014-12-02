@@ -8,30 +8,14 @@ using System.Timers;
 
 namespace SpeechMusicController {
     class SpeechInput {
-
         Form1 f1;
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
-        private Timer timer;
 
         MusicList musicList = new MusicList(Settings.ReadMusicLocation());
         Player player = new Player(Settings.ReadAIMP3Location());
 
         public bool Enabled = true;
-        
-        private bool musicOn = false;
-        private bool MusicOn {
-            get { return musicOn; }
-            set {
-                musicOn = value;
-                if(musicOn == true) {
-                    Console.BackgroundColor = ConsoleColor.DarkRed;
-                } else {
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-
-                System.Media.SystemSounds.Beep.Play();
-            }
-        }
+        private bool MusicOn { get; set; }
 
         public SpeechInput(Form1 inForm1) {
             f1 = inForm1;
@@ -53,55 +37,41 @@ namespace SpeechMusicController {
 
         private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             if(Enabled) {
-                string result = e.Result.Text.ToString();
-
-                if(result.Equals("music") && musicOn == false) {
-                    MusicOn = true;
-                    timer = new Timer(10000);
-                    timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
-                    timer.Enabled = true;
-                    return;
-                } else {
-                    f1.WriteLine(result);
-                }
-
+                var result = e.Result.Text.ToString();
                 if(MusicOn) {
                     try {
                         if(result.Equals("switch")) {
                             player.Toggle();
-                            SetMusicOff();
-                            return;
+                            MusicOn = false;
                         } else if(result.Equals("random")) {
                             player.Play(musicList.GetRandomSong());
-                            return;
                         } else if(result.Equals("next")) {
                             player.Next();
-                            return;
                         } else if(result.Equals("previous")) {
                             player.Previous();
-                            return;
                         } else if(result.Equals("collection")) {
                             player.Play(musicList.SongList);
-                            SetMusicOff();
+                            MusicOn = false;
                         } else {
                             player.Play(musicList.GetMatchingSongs(result));
-                            SetMusicOff();
-                            return;
+                            MusicOn = false;
                         }
                     } catch(Exception e1) {
                         f1.WriteLine(e1.Message);
                     }
+                } else if (result.Equals("music")) {
+                    MusicOn = true;
+                    System.Media.SystemSounds.Beep.Play();
+                    Task.Delay(10000).GetAwaiter().OnCompleted(() => {
+                        if (MusicOn) {
+                            MusicOn = false;
+                            System.Media.SystemSounds.Beep.Play();
+                        }
+                    });
+                } else {
+                    f1.WriteLine(result);
                 }
             }
-        }
-
-        private void TimerElapsed(object sender, ElapsedEventArgs e) {
-            SetMusicOff();
-        }
-
-        private void SetMusicOff() {
-            MusicOn = false;
-            timer.Enabled = false;
         }
     }
 }
