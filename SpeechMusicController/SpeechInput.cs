@@ -6,7 +6,7 @@ using System.Speech.Recognition;
 
 namespace SpeechMusicController {
     public class SpeechInput {
-        public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume", "up", "down" };
+        public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
         Form1 f1;
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
 
@@ -14,7 +14,7 @@ namespace SpeechMusicController {
 
         public bool Enabled = true;
         private bool MusicOn;
-        private bool VolumeOn;
+        //private bool VolumeOn;
 
         public SpeechInput(Form1 inForm1) {
             f1 = inForm1;
@@ -28,7 +28,7 @@ namespace SpeechMusicController {
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
             sRecognize.LoadGrammar(gr);
-
+            
             sRecognize.SetInputToDefaultAudioDevice();
             sRecognize.RecognizeAsync(RecognizeMode.Multiple);
             sRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
@@ -67,15 +67,9 @@ namespace SpeechMusicController {
                 } else if (input == "collection") {
                     player.Play(MusicList.SongList);
                     MusicOn = false;
-                }else if(input == "volume"){
-                    VolumeOn = true;
-                    System.Media.SystemSounds.Beep.Play();
-                    Task.Delay(10000).GetAwaiter().OnCompleted(() => {
-                        VolumeOn = false;
-                    });
-                } else if (input == "up" && VolumeOn) {
+                } else if (input == "volume up") {
                     player.VolUp();
-                } else if (input == "down" && VolumeOn) {
+                } else if (input == "volume down") {
                     player.VolDown();
                 } else {
                     player.Play(MusicList.GetMatchingSongs(input));
