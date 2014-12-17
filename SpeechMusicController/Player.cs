@@ -95,5 +95,15 @@ namespace SpeechMusicController {
             aimp3.StartInfo.Arguments = "/PREV";
             aimp3.Start();
         }
+
+        public void VolUp() {
+            aimp3.StartInfo.Arguments = "/VOLUP";
+            aimp3.Start();
+        }
+
+        public void VolDown() {
+            aimp3.StartInfo.Arguments = "/VOLDWN";
+            aimp3.Start();
+        }
     }
 }

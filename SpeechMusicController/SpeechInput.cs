@@ -6,14 +6,15 @@ using System.Speech.Recognition;
 
 namespace SpeechMusicController {
     public class SpeechInput {
-        public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection" };
+        public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume", "up", "down" };
         Form1 f1;
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
 
         Player player = new Player(Settings.ReadAIMP3Location());
 
         public bool Enabled = true;
-        private bool MusicOn { get; set; }
+        private bool MusicOn;
+        private bool VolumeOn;
 
         public SpeechInput(Form1 inForm1) {
             f1 = inForm1;
@@ -38,7 +39,7 @@ namespace SpeechMusicController {
                 var input = e.Result.Text;
                 if (MusicOn) {
                     ExecuteCommand(input);
-                } else if (input.Equals("music")) {
+                } else if (input == "music") {
                     MusicOn = true;
                     System.Media.SystemSounds.Beep.Play();
                     Task.Delay(10000).GetAwaiter().OnCompleted(() => {
@@ -54,18 +55,28 @@ namespace SpeechMusicController {
 
         public void ExecuteCommand(string input) {
             try {
-                if (input.Equals("switch")) {
+                if (input == "switch") {
                     player.Toggle();
                     MusicOn = false;
-                } else if (input.Equals("random")) {
+                } else if (input == "random") {
                     player.Play(MusicList.GetRandomSong());
-                } else if (input.Equals("next")) {
+                } else if (input == "next") {
                     player.Next();
-                } else if (input.Equals("previous")) {
+                } else if (input == "previous") {
                     player.Previous();
-                } else if (input.Equals("collection")) {
+                } else if (input == "collection") {
                     player.Play(MusicList.SongList);
                     MusicOn = false;
+                }else if(input == "volume"){
+                    VolumeOn = true;
+                    System.Media.SystemSounds.Beep.Play();
+                    Task.Delay(10000).GetAwaiter().OnCompleted(() => {
+                        VolumeOn = false;
+                    });
+                } else if (input == "up" && VolumeOn) {
+                    player.VolUp();
+                } else if (input == "down" && VolumeOn) {
+                    player.VolDown();
                 } else {
                     player.Play(MusicList.GetMatchingSongs(input));
                     MusicOn = false;
