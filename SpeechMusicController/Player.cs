@@ -22,24 +22,26 @@ namespace SpeechMusicController {
         }
 
         public void Play(List<Song> playList) {
-            string playString = "/FILE ";
-            List<Song> insertLater = new List<Song>();
-            for(int c = 0; c < playList.Count(); c++) {
-                if(playString.Count() < MaxCharInFilename) {
-                    playString += "\"" + playList[c].FilePath + "\" ";
-                } else {
-                    insertLater.Add(playList[c]);
+            if (playList.Count > 0) {
+                string playString = "/FILE ";
+                List<Song> insertLater = new List<Song>();
+                for (int c = 0; c < playList.Count(); c++) {
+                    if (playString.Count() < MaxCharInFilename) {
+                        playString += "\"" + playList[c].FilePath + "\" ";
+                    } else {
+                        insertLater.Add(playList[c]);
+                    }
                 }
-            }
-            aimp3.StartInfo.Arguments = playString;
-            aimp3.Start();
+                aimp3.StartInfo.Arguments = playString;
+                aimp3.Start();
 
-            if(insertLater.Count > 0) {
-                Insert(insertLater);
+                if (insertLater.Count > 0) {
+                    Insert(insertLater);
+                }
             }
         }
 
-        public void Insert(List<Song> inserList) {
+        private void Insert(List<Song> inserList) {
             string insertString = "/INSERT ";
             List<Song> insertLater = new List<Song>();
             for(int c = 0; c < inserList.Count(); c++) {

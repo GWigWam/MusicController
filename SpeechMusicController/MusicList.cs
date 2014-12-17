@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace SpeechMusicController {
-    class MusicList {
+    static class MusicList {
 
-        public MusicList(string dirLoc) {
+        static MusicList() {
+            var dirLoc = Settings.ReadMusicLocation();
             ScanDir(dirLoc);
             OrganizeList();
         }
 
-        private List<FileInfo> AllFiles = new List<FileInfo>();
-        private Random random = new Random();
+        private static List<FileInfo> AllFiles = new List<FileInfo>();
+        private static Random random = new Random();
 
-        public List<Song> SongList = new List<Song>();
+        public static List<Song> SongList = new List<Song>();
 
-        private void ScanDir(string dirLoc) {
+        private static void ScanDir(string dirLoc) {
             DirectoryInfo dir = new DirectoryInfo(dirLoc);
             //Console.WriteLine("Directory {0}", dir.FullName);
             // list the files
@@ -45,7 +44,7 @@ namespace SpeechMusicController {
             }
         }
 
-        private void OrganizeList() {
+        private static void OrganizeList() {
             foreach(FileInfo fi in AllFiles) {
                 string songName = fi.Name;
                 //Strip .mp3
@@ -64,7 +63,7 @@ namespace SpeechMusicController {
             }
         }
 
-        public List<string> GetAllSongAndBandNames() {
+        public static List<string> GetAllSongAndBandNames() {
             var tmpList = new List<string>();
 
             //Add everything to list
@@ -89,7 +88,7 @@ namespace SpeechMusicController {
             return returnList;
         }
 
-        public List<Song> GetMatchingSongs(string keyword) {
+        public static List<Song> GetMatchingSongs(string keyword) {
             List<Song> matchingSongs = new List<Song>();
 
             for(int c = 0; c < SongList.Count(); c++) {
@@ -116,7 +115,7 @@ namespace SpeechMusicController {
             return returnList;
         }
 
-        public Song GetRandomSong() {
+        public static Song GetRandomSong() {
             return SongList[random.Next(0, SongList.Count)];
         }
     }

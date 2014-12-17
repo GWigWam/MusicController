@@ -30,17 +30,18 @@
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.KeyInput = new System.Windows.Forms.TextBox();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
             // 
             this.textBox1.AcceptsReturn = true;
-            this.textBox1.Location = new System.Drawing.Point(12, 12);
+            this.textBox1.Location = new System.Drawing.Point(12, 38);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(260, 147);
+            this.textBox1.Size = new System.Drawing.Size(260, 122);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "Possible: music, switch, random, next, previous, collection";
             // 
@@ -76,15 +77,25 @@
             this.MenuItemExit.Text = "Exit";
             this.MenuItemExit.Click += new System.EventHandler(this.MenuItemExit_Click);
             // 
+            // KeyInput
+            // 
+            this.KeyInput.Location = new System.Drawing.Point(12, 12);
+            this.KeyInput.Name = "KeyInput";
+            this.KeyInput.Size = new System.Drawing.Size(259, 20);
+            this.KeyInput.TabIndex = 2;
+            this.KeyInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyInput_KeyUp);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 199);
+            this.Controls.Add(this.KeyInput);
             this.Controls.Add(this.btnSwitch);
             this.Controls.Add(this.textBox1);
             this.Name = "Form1";
             this.Text = "SpeechMusicController";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -99,6 +110,7 @@
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem MenuItemExit;
+        private System.Windows.Forms.TextBox KeyInput;
     }
 }
 
