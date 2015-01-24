@@ -28,10 +28,12 @@ namespace SpeechMusicController {
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
             sRecognize.LoadGrammar(gr);
-            
-            sRecognize.SetInputToDefaultAudioDevice();
-            sRecognize.RecognizeAsync(RecognizeMode.Multiple);
-            sRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
+
+            try {
+                sRecognize.SetInputToDefaultAudioDevice();
+                sRecognize.RecognizeAsync(RecognizeMode.Multiple);
+                sRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
+            } catch { }
         }
 
         private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
