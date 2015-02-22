@@ -10,68 +10,40 @@ using System.Windows.Forms;
 
 namespace SpeechMusicController {
     public partial class Form1 : Form {
-
         SpeechInput speechInput;
         bool Listening = true;
 
         public Form1() {
             InitializeComponent();
-            speechInput = new SpeechInput(this);
-            speechInput.Start();
-            NotifyIcon.Visible = false;
-            WriteLine("");
+
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
             this.ActiveControl = KeyInput;
+            MoveToDefaultLocation();
         }
 
         private void Form1_Load(object sender, EventArgs e) {
+            speechInput = new SpeechInput(this);
+            speechInput.Start();
+
             var source = new AutoCompleteStringCollection();
             source.AddRange(SpeechInput.KEYWORDS);
             source.AddRange(MusicList.GetAllSongAndBandNames().ToArray());
             KeyInput.AutoCompleteCustomSource = source;
             KeyInput.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             KeyInput.AutoCompleteSource = AutoCompleteSource.CustomSource;
-        }
-
-        private void btnSwitch_Click(object sender, EventArgs e) {
-            if(Listening) {
-                Listening = false;
-                btnSwitch.Text = "Start";
-                speechInput.Enabled = false;
-            } else {
-                Listening = true;
-                btnSwitch.Text = "Stop";
-                speechInput.Enabled = true;
+            foreach (var word in SpeechInput.KEYWORDS) {
+                Write(word + ", ");
             }
-        }
-
-        public void WriteLine(string message) {
-            textBox1.Text = "\r\n" + message + textBox1.Text;
+            WriteLine("Possible: ");
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
             if(FormWindowState.Minimized == this.WindowState) {
-                NotifyIcon.Visible = true;
-                this.Hide();
-                this.ShowInTaskbar = false;
-
-                //NotifyIcon.BalloonTipTitle = "Minimize to Tray App";
-                //NotifyIcon.BalloonTipText = "SpeechMusicController is down here";
-                //NotifyIcon.ShowBalloonTip(500);
-            } else if(FormWindowState.Normal == this.WindowState) {
-                NotifyIcon.Visible = false;
-                this.ShowInTaskbar = true;
+                HideWindow();
+            } else {
+                ShowWindow();
             }
-        }
-
-        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
-        }
-
-        private void MenuItemExit_Click(object sender, EventArgs e) {
-            Environment.Exit(0);
         }
 
         private void KeyInput_KeyUp(object sender, KeyEventArgs e) {
@@ -79,9 +51,52 @@ namespace SpeechMusicController {
                 speechInput.ExecuteCommand(KeyInput.Text.ToLower());
                 KeyInput.Text = "";
             } else if (e.KeyCode == Keys.Escape) {
-                this.WindowState = FormWindowState.Minimized;
-                frmMain_Resize(null, null);
+                HideWindow();
             }
+        }
+
+        private void Form1_Deactivate(object sender, EventArgs e) {
+            HideWindow();
+        }
+
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                ShowWindow();
+            }
+        }
+
+        private void ShowWindow() {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            MoveToDefaultLocation();
+            this.Activate();
+        }
+
+        private void HideWindow() {
+            this.Hide();
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void MoveToDefaultLocation() {
+            Screen screen = Screen.AllScreens[0];
+            this.Left = screen.WorkingArea.Right - this.Width;
+            this.Top = screen.WorkingArea.Bottom - this.Height;
+        }
+
+        public void Write(string message) {
+            textBox1.Text = message + textBox1.Text;
+        }
+
+        public void WriteLine(string message) {
+            Write("\r\n" + message);
+        }
+
+        private void MenuItemShow_Click(object sender, EventArgs e) {
+            ShowWindow();
+        }
+
+        private void MenuItemExit_Click(object sender, EventArgs e) {
+            Environment.Exit(0);
         }
     }
 }

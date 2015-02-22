@@ -51,11 +51,11 @@ namespace SpeechMusicController {
                         }
                     });
                 }
-                f1.WriteLine(input);
             }
         }
 
         public void ExecuteCommand(string input) {
+            f1.WriteLine(input);
             try {
                 if (input == "switch") {
                     player.Toggle();

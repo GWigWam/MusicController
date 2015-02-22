@@ -26,75 +26,80 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.btnSwitch = new System.Windows.Forms.Button();
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.KeyInput = new System.Windows.Forms.TextBox();
+            this.MenuItemShow = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
             // 
             this.textBox1.AcceptsReturn = true;
+            this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Location = new System.Drawing.Point(12, 38);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(260, 122);
+            this.textBox1.Size = new System.Drawing.Size(260, 80);
             this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "Possible: music, switch, random, next, previous, collection";
-            // 
-            // btnSwitch
-            // 
-            this.btnSwitch.Location = new System.Drawing.Point(13, 166);
-            this.btnSwitch.Name = "btnSwitch";
-            this.btnSwitch.Size = new System.Drawing.Size(259, 23);
-            this.btnSwitch.TabIndex = 1;
-            this.btnSwitch.Text = "Stop";
-            this.btnSwitch.UseVisualStyleBackColor = true;
-            this.btnSwitch.Click += new System.EventHandler(this.btnSwitch_Click);
             // 
             // NotifyIcon
             // 
             this.NotifyIcon.ContextMenuStrip = this.contextMenuStrip;
             this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
             this.NotifyIcon.Visible = true;
-            this.NotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseDoubleClick);
+            this.NotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseClick);
             // 
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemShow,
             this.MenuItemExit});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(96, 26);
+            this.contextMenuStrip.Size = new System.Drawing.Size(104, 48);
             // 
             // MenuItemExit
             // 
             this.MenuItemExit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.MenuItemExit.Name = "MenuItemExit";
-            this.MenuItemExit.Size = new System.Drawing.Size(95, 22);
+            this.MenuItemExit.Size = new System.Drawing.Size(152, 22);
             this.MenuItemExit.Text = "Exit";
             this.MenuItemExit.Click += new System.EventHandler(this.MenuItemExit_Click);
             // 
             // KeyInput
             // 
-            this.KeyInput.Location = new System.Drawing.Point(12, 12);
+            this.KeyInput.Location = new System.Drawing.Point(13, 12);
             this.KeyInput.Name = "KeyInput";
             this.KeyInput.Size = new System.Drawing.Size(259, 20);
             this.KeyInput.TabIndex = 2;
             this.KeyInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyInput_KeyUp);
             // 
+            // MenuItemShow
+            // 
+            this.MenuItemShow.Name = "MenuItemShow";
+            this.MenuItemShow.Size = new System.Drawing.Size(152, 22);
+            this.MenuItemShow.Text = "Show";
+            this.MenuItemShow.Click += new System.EventHandler(this.MenuItemShow_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 199);
+            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.ClientSize = new System.Drawing.Size(284, 130);
             this.Controls.Add(this.KeyInput);
-            this.Controls.Add(this.btnSwitch);
             this.Controls.Add(this.textBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
+            this.ShowInTaskbar = false;
             this.Text = "SpeechMusicController";
+            this.TopMost = true;
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.Deactivate += new System.EventHandler(this.Form1_Deactivate);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.contextMenuStrip.ResumeLayout(false);
@@ -106,11 +111,11 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button btnSwitch;
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem MenuItemExit;
         private System.Windows.Forms.TextBox KeyInput;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemShow;
     }
 }
 
