@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Speech.Recognition;
+using System.Threading;
 
 namespace SpeechMusicController {
     public class SpeechInput {
         public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
-        Form1 f1;
+        MainForm f1;
         SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
 
         Player player = new Player(Settings.ReadAIMP3Location());
 
-        public bool Enabled = true;
-        private bool MusicOn;
-        //private bool VolumeOn;
-
-        public SpeechInput(Form1 inForm1) {
+        public SpeechInput(MainForm inForm1) {
             f1 = inForm1;
         }
 
@@ -37,20 +34,14 @@ namespace SpeechMusicController {
         }
 
         private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            if (Enabled) {
-                var input = e.Result.Text;
-                if (MusicOn) {
-                    ExecuteCommand(input);
-                } else if (input == "music") {
-                    MusicOn = true;
-                    System.Media.SystemSounds.Beep.Play();
-                    Task.Delay(10000).GetAwaiter().OnCompleted(() => {
-                        if (MusicOn) {
-                            MusicOn = false;
-                            System.Media.SystemSounds.Beep.Play();
-                        }
-                    });
-                }
+            var input = e.Result.Text;
+
+            if (ListeningTimer.Instance.IsListening) {
+                ExecuteCommand(input);
+            }
+
+            if (input == "music") {
+                ListeningTimer.Instance.IncrementTime();
             }
         }
 
@@ -59,7 +50,7 @@ namespace SpeechMusicController {
             try {
                 if (input == "switch") {
                     player.Toggle();
-                    MusicOn = false;
+                    ListeningTimer.Instance.StopListening();
                 } else if (input == "random") {
                     player.Play(MusicList.GetRandomSong());
                 } else if (input == "next") {
@@ -68,14 +59,14 @@ namespace SpeechMusicController {
                     player.Previous();
                 } else if (input == "collection") {
                     player.Play(MusicList.SongList);
-                    MusicOn = false;
+                    ListeningTimer.Instance.StopListening();
                 } else if (input == "volume up") {
                     player.VolUp();
                 } else if (input == "volume down") {
                     player.VolDown();
                 } else {
                     player.Play(MusicList.GetMatchingSongs(input));
-                    MusicOn = false;
+                    ListeningTimer.Instance.StopListening();
                 }
             } catch (Exception e1) {
                 f1.WriteLine(e1.Message);

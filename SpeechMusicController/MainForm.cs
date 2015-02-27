@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
-    public partial class Form1 : Form {
+    public partial class MainForm : Form {
         SpeechInput speechInput;
         bool Listening = true;
 
-        public Form1() {
+        public MainForm() {
             InitializeComponent();
 
             this.WindowState = FormWindowState.Minimized;
