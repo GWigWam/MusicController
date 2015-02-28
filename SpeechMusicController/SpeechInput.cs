@@ -20,7 +20,7 @@ namespace SpeechMusicController {
         public void Start() {
             Choices sList = new Choices();
             sList.Add(KEYWORDS);
-            sList.Add(MusicList.GetAllSongAndBandNames().ToArray<string>());
+            sList.Add(MusicList.GetAllSongKeywords());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
@@ -58,7 +58,7 @@ namespace SpeechMusicController {
                 } else if (input == "previous") {
                     player.Previous();
                 } else if (input == "collection") {
-                    player.Play(MusicList.SongList);
+                    player.Play(MusicList.SongList.ToArray());
                     ListeningTimer.Instance.StopListening();
                 } else if (input == "volume up") {
                     player.VolUp();
