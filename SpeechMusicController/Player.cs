@@ -21,10 +21,12 @@ namespace SpeechMusicController {
             aimp3.Start();
         }
 
-        public void Play(Song[] playList) {
+        public void Play(Song[] playList, bool PlayNr1First = true) {
             if (playList.Length > 0) {
-                Play(playList.First());
-                playList = playList.Skip(1).ToArray();
+                if (PlayNr1First) {
+                    Play(playList.First());
+                    playList = playList.Skip(1).ToArray();
+                }
 
                 string playString = "/FILE ";
                 List<Song> insertLater = new List<Song>();

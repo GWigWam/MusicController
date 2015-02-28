@@ -58,7 +58,7 @@ namespace SpeechMusicController {
                 } else if (input == "previous") {
                     player.Previous();
                 } else if (input == "collection") {
-                    player.Play(MusicList.SongList.ToArray());
+                    player.Play(MusicList.SongList.ToArray(), false);
                     ListeningTimer.Instance.StopListening();
                 } else if (input == "volume up") {
                     player.VolUp();
