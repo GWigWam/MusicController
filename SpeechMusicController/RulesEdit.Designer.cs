@@ -126,6 +126,7 @@
             this.Controls.Add(this.label1);
             this.Name = "RulesEdit";
             this.Text = "RulesEdit";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RulesEdit_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

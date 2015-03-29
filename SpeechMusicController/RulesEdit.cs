@@ -122,5 +122,9 @@ namespace SpeechMusicController {
                 Tb_Rename.Enabled = true;
             }
         }
+
+        private void RulesEdit_FormClosed(object sender, FormClosedEventArgs e) {
+            SpeechInput.LoadGrammar();
+        }
     }
 }

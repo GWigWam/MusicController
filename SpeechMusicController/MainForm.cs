@@ -11,7 +11,6 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
 
     public partial class MainForm : Form {
-        private SpeechInput speechInput;
         private bool Listening = true;
 
         public MainForm() {
@@ -24,13 +23,16 @@ namespace SpeechMusicController {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            speechInput = new SpeechInput(this);
-            speechInput.Start();
-
             foreach (var word in SpeechInput.KEYWORDS) {
                 Write(word + ", ");
             }
             WriteLine("Possible: ");
+
+            SpeechInput.MessageSend += SpeechInput_MessageSend;
+        }
+
+        private void SpeechInput_MessageSend(object sender, string e) {
+            WriteLine(e);
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
@@ -43,7 +45,7 @@ namespace SpeechMusicController {
 
         private void KeyInput_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) {
-                speechInput.ExecuteCommand(KeyInput.Text.ToLower());
+                SpeechInput.ExecuteCommand(KeyInput.Text.ToLower());
                 KeyInput.Text = "";
             } else if (e.KeyCode == Keys.Escape) {
                 HideWindow();

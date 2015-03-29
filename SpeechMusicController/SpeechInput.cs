@@ -8,26 +8,21 @@ using System.Threading.Tasks;
 
 namespace SpeechMusicController {
 
-    public class SpeechInput {
+    public static class SpeechInput {
         public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
-        private MainForm f1;
-        private SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
 
-        private Player player = new Player(PathSettings.ReadAIMP3Location());
+        public static event EventHandler<string> MessageSend;
 
-        public SpeechInput(MainForm inForm1) {
-            f1 = inForm1;
-            SongRules.GetRules();
+        private static SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
+
+        private static Player player = new Player(PathSettings.ReadAIMP3Location());
+
+        static SpeechInput() {
+            Start();
         }
 
-        public void Start() {
-            Choices sList = new Choices();
-            sList.Add(KEYWORDS);
-            sList.Add(MusicList.GetAllSongKeywords());
-            GrammarBuilder gb = new GrammarBuilder();
-            gb.Append(sList);
-            Grammar gr = new Grammar(gb);
-            sRecognize.LoadGrammar(gr);
+        private static void Start() {
+            LoadGrammar();
 
             try {
                 sRecognize.SetInputToDefaultAudioDevice();
@@ -36,7 +31,18 @@ namespace SpeechMusicController {
             } catch { }
         }
 
-        private void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
+        public static void LoadGrammar() {
+            Choices sList = new Choices();
+            sList.Add(KEYWORDS);
+            sList.Add(MusicList.GetAllSongKeywords());
+            GrammarBuilder gb = new GrammarBuilder();
+            gb.Append(sList);
+            Grammar gr = new Grammar(gb);
+            sRecognize.UnloadAllGrammars();
+            sRecognize.LoadGrammar(gr);
+        }
+
+        private static void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             var input = e.Result.Text;
 
             if (ListeningTimer.Instance.IsListening) {
@@ -48,8 +54,8 @@ namespace SpeechMusicController {
             }
         }
 
-        public void ExecuteCommand(string input) {
-            f1.WriteLine(input);
+        public static void ExecuteCommand(string input) {
+            SendMessage(input);
             try {
                 if (input == "switch") {
                     player.Toggle();
@@ -72,7 +78,13 @@ namespace SpeechMusicController {
                     ListeningTimer.Instance.StopListening();
                 }
             } catch (Exception e1) {
-                f1.WriteLine(e1.Message);
+                SendMessage(e1.Message);
+            }
+        }
+
+        private static void SendMessage(string message) {
+            if (MessageSend != null) {
+                MessageSend(null, message);
             }
         }
     }
