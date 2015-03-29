@@ -66,7 +66,15 @@
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="RulesEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RulesEdit.Designer.cs">
+      <DependentUpon>RulesEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\PathSettings.cs" />
+    <Compile Include="Settings\SongRules.cs" />
+    <Compile Include="Settings\SongRule.cs" />
     <Compile Include="Song.cs" />
     <Compile Include="SpeechInput.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -84,6 +92,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RulesEdit.resx">
+      <DependentUpon>RulesEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

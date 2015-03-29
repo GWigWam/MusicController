@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
+
     public partial class MainForm : Form {
-        SpeechInput speechInput;
-        bool Listening = true;
+        private SpeechInput speechInput;
+        private bool Listening = true;
 
         public MainForm() {
             InitializeComponent();
@@ -26,12 +27,6 @@ namespace SpeechMusicController {
             speechInput = new SpeechInput(this);
             speechInput.Start();
 
-            var source = new AutoCompleteStringCollection();
-            source.AddRange(SpeechInput.KEYWORDS);
-            source.AddRange(MusicList.GetAllSongKeywords());
-            KeyInput.AutoCompleteCustomSource = source;
-            KeyInput.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            KeyInput.AutoCompleteSource = AutoCompleteSource.CustomSource;
             foreach (var word in SpeechInput.KEYWORDS) {
                 Write(word + ", ");
             }
@@ -39,7 +34,7 @@ namespace SpeechMusicController {
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
-            if(FormWindowState.Minimized == this.WindowState) {
+            if (FormWindowState.Minimized == this.WindowState) {
                 HideWindow();
             } else {
                 ShowWindow();
@@ -97,6 +92,21 @@ namespace SpeechMusicController {
 
         private void MenuItemExit_Click(object sender, EventArgs e) {
             Environment.Exit(0);
+        }
+
+        private void Bt_Rules_Click(object sender, EventArgs e) {
+            var rulesEdit = new RulesEdit();
+            rulesEdit.Show();
+        }
+
+        private void KeyInput_Click(object sender, EventArgs e) {
+            var source = new AutoCompleteStringCollection();
+            source.AddRange(SpeechInput.KEYWORDS);
+            source.AddRange(MusicList.GetAllSongKeywords());
+            KeyInput.AutoCompleteCustomSource.Clear();
+            KeyInput.AutoCompleteCustomSource = source;
+            KeyInput.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            KeyInput.AutoCompleteSource = AutoCompleteSource.CustomSource;
         }
     }
 }
