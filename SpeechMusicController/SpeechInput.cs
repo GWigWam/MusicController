@@ -11,7 +11,7 @@ namespace SpeechMusicController {
     public static class SpeechInput {
         public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
 
-        public static event EventHandler<string> MessageSend;
+        public static event Action<string> MessageSend;
 
         private static SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
 
@@ -19,6 +19,8 @@ namespace SpeechMusicController {
 
         static SpeechInput() {
             Start();
+
+            SongRules.OnRulesChanged += LoadGrammar;
         }
 
         private static void Start() {
@@ -84,7 +86,7 @@ namespace SpeechMusicController {
 
         private static void SendMessage(string message) {
             if (MessageSend != null) {
-                MessageSend(null, message);
+                MessageSend(message);
             }
         }
     }

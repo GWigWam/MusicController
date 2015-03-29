@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpeechMusicController.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,10 +30,11 @@ namespace SpeechMusicController {
             WriteLine("Possible: ");
 
             SpeechInput.MessageSend += SpeechInput_MessageSend;
+            SongRules.OnRulesChanged += UpdateSuggestions;
         }
 
-        private void SpeechInput_MessageSend(object sender, string e) {
-            WriteLine(e);
+        private void SpeechInput_MessageSend(string msg) {
+            WriteLine(msg);
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
@@ -101,7 +103,7 @@ namespace SpeechMusicController {
             rulesEdit.Show();
         }
 
-        private void KeyInput_Click(object sender, EventArgs e) {
+        private void UpdateSuggestions() {
             var source = new AutoCompleteStringCollection();
             source.AddRange(SpeechInput.KEYWORDS);
             source.AddRange(MusicList.GetAllSongKeywords());

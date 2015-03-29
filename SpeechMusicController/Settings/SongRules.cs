@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace SpeechMusicController.Settings {
 
     internal static class SongRules {
+
+        public static event Action OnRulesChanged;
 
         public static int NextRuleId {
             get {
@@ -44,6 +47,8 @@ namespace SpeechMusicController.Settings {
                 }
 
                 Rules.Add(rule);
+
+                CallOnRulesChanged();
             }
         }
 
@@ -52,6 +57,8 @@ namespace SpeechMusicController.Settings {
 
             File.WriteAllLines(SongSettinsFile,
                 File.ReadAllLines(SongSettinsFile).Where(l => !l.StartsWith(string.Format("{0}{1}", ruleId, SongRule.Seperator))));
+
+            CallOnRulesChanged();
         }
 
         public static void RemoveRule(SongRule rule) {
@@ -64,6 +71,12 @@ namespace SpeechMusicController.Settings {
 
         public static SongRule[] GetRules(SongRuleType type) {
             return Rules.Where(r => r.Type == type).ToArray();
+        }
+
+        private static void CallOnRulesChanged() {
+            if (OnRulesChanged != null) {
+                OnRulesChanged();
+            }
         }
     }
 }

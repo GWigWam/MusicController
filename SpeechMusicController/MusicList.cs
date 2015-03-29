@@ -24,7 +24,7 @@ namespace SpeechMusicController {
         //Songs after rules have been applied to them
         public static List<Song> ActiveSongs {
             get {
-                return ApplyRules(InternalSongList);
+                return RemoveDuplicates(ApplyRules(InternalSongList));
             }
         }
 
@@ -78,6 +78,11 @@ namespace SpeechMusicController {
             }
         }
 
+        private static List<Song> RemoveDuplicates(List<Song> songs) {
+            var cleanList = new HashSet<Song>(songs);
+            return cleanList.ToList();
+        }
+
         private static List<Song> ApplyRules(List<Song> songs) {
             List<Song> tmpList = new List<Song>(songs);
             foreach (var rule in SongRules.GetRules(SongRuleType.Exclude)) {
@@ -114,9 +119,7 @@ namespace SpeechMusicController {
                 string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
                 string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
 
-            var cleanList = new HashSet<Song>(matchingSongs);
-
-            var orderedList = cleanList.OrderByDescending(s => {
+            var orderedList = matchingSongs.OrderByDescending(s => {
                 if (string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
                 if (string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;
                 if (string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase)) return -1;

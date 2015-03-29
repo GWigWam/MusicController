@@ -82,7 +82,6 @@
             this.KeyInput.Name = "KeyInput";
             this.KeyInput.Size = new System.Drawing.Size(178, 20);
             this.KeyInput.TabIndex = 2;
-            this.KeyInput.Click += new System.EventHandler(this.KeyInput_Click);
             this.KeyInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyInput_KeyUp);
             // 
             // Bt_Rules
