@@ -29,12 +29,20 @@ namespace SpeechMusicController {
             }
             WriteLine("Possible: ");
 
-            SpeechInput.MessageSend += SpeechInput_MessageSend;
+            UpdateSuggestions();
+
+            SpeechInput.MessageSend += WriteLine;
             SongRules.OnRulesChanged += UpdateSuggestions;
         }
 
-        private void SpeechInput_MessageSend(string msg) {
-            WriteLine(msg);
+        private void UpdateSuggestions() {
+            var source = new AutoCompleteStringCollection();
+            source.AddRange(SpeechInput.KEYWORDS);
+            source.AddRange(MusicList.GetAllSongKeywords());
+            KeyInput.AutoCompleteCustomSource.Clear();
+            KeyInput.AutoCompleteCustomSource = source;
+            KeyInput.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            KeyInput.AutoCompleteSource = AutoCompleteSource.CustomSource;
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
@@ -101,16 +109,6 @@ namespace SpeechMusicController {
         private void Bt_Rules_Click(object sender, EventArgs e) {
             var rulesEdit = new RulesEdit();
             rulesEdit.Show();
-        }
-
-        private void UpdateSuggestions() {
-            var source = new AutoCompleteStringCollection();
-            source.AddRange(SpeechInput.KEYWORDS);
-            source.AddRange(MusicList.GetAllSongKeywords());
-            KeyInput.AutoCompleteCustomSource.Clear();
-            KeyInput.AutoCompleteCustomSource = source;
-            KeyInput.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            KeyInput.AutoCompleteSource = AutoCompleteSource.CustomSource;
         }
     }
 }
