@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using System.Timers;
 
 namespace SpeechMusicController {
-    class Player {
+
+    internal class Player {
         private Process aimp3 = new Process();
         private const int MaxCharInFilename = 32000; //32,768 actually, but keep some headroom
 
@@ -22,10 +23,12 @@ namespace SpeechMusicController {
         }
 
         public void Play(Song[] playList, bool PlayNr1First = true) {
-            if (playList.Length > 0) {
+            if (playList.Length == 1) {
+                Play(playList.First());
+            } else if (playList.Length > 1) {
                 if (PlayNr1First) {
                     Play(playList.First());
-                    playList = playList.Skip(1).ToArray();
+                    Play(playList.Skip(1).ToArray(), false);
                 }
 
                 string playString = "/FILE ";
@@ -49,8 +52,8 @@ namespace SpeechMusicController {
         private void Insert(List<Song> inserList) {
             string insertString = "/INSERT ";
             List<Song> insertLater = new List<Song>();
-            for(int c = 0; c < inserList.Count(); c++) {
-                if(inserList.Count() < MaxCharInFilename) {
+            for (int c = 0; c < inserList.Count(); c++) {
+                if (inserList.Count() < MaxCharInFilename) {
                     insertString += "\"" + inserList[c].FilePath + "\" ";
                 } else {
                     insertLater.Add(inserList[c]);
@@ -59,7 +62,7 @@ namespace SpeechMusicController {
             aimp3.StartInfo.Arguments = insertString;
             aimp3.Start();
 
-            if(insertLater.Count > 0) {
+            if (insertLater.Count > 0) {
                 Insert(insertLater);
             }
 
@@ -93,7 +96,7 @@ namespace SpeechMusicController {
 
         public void Next() {
             aimp3.StartInfo.Arguments = "/NEXT";
-            aimp3.Start(); 
+            aimp3.Start();
         }
 
         public void Previous() {
