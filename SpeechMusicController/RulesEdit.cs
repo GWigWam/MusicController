@@ -19,15 +19,16 @@ namespace SpeechMusicController {
         }
 
         private void SetupLists() {
-            SetupRuleList();
-            SetupSongList();
+            FillRuleList();
+            FillSongList();
         }
 
         private List<int> RuleIdList;
 
-        private void SetupRuleList() {
+        private void FillRuleList() {
             Lb_Rules.Items.Clear();
             RuleIdList = new List<int>();
+
             foreach (var rule in SongRules.GetRules()) {
                 RuleIdList.Add(rule.Id);
                 if (rule.Type == SongRuleType.Exclude) {
@@ -41,10 +42,18 @@ namespace SpeechMusicController {
 
         private List<int> SongHashCodes;
 
-        private void SetupSongList() {
+        private void FillSongList() {
             Lb_Songs.Items.Clear();
             SongHashCodes = new List<int>();
-            foreach (var song in MusicList.ActiveSongs.OrderBy(s => s.Title)) {
+
+            IEnumerable<Song> songList = MusicList.ActiveSongs.OrderBy(s => s.Title);
+            var searchWord = Tb_Search.Text;
+
+            if (!string.IsNullOrWhiteSpace(searchWord)) {
+                songList = songList.Where(s => s.ToString().ToLower().Contains(searchWord.ToLower()));
+            }
+
+            foreach (var song in songList) {
                 Lb_Songs.Items.Add(song);
                 SongHashCodes.Add(song.GetHashCode());
             }
@@ -52,7 +61,7 @@ namespace SpeechMusicController {
 
         private void DeleteRule(int ruleId) {
             SongRules.RemoveRule(ruleId);
-            SetupRuleList();
+            FillRuleList();
         }
 
         //Regions
@@ -121,6 +130,10 @@ namespace SpeechMusicController {
                 Bt_RenameSong.Enabled = true;
                 Tb_Rename.Enabled = true;
             }
+        }
+
+        private void Tb_Search_TextChanged(object sender, EventArgs e) {
+            FillSongList();
         }
     }
 }

@@ -31,6 +31,8 @@
             this.Tb_Rename = new System.Windows.Forms.TextBox();
             this.Bt_RenameSong = new System.Windows.Forms.Button();
             this.Bt_DeleteRule = new System.Windows.Forms.Button();
+            this.Tb_Search = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -45,7 +47,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 149);
+            this.label2.Location = new System.Drawing.Point(9, 161);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 13);
             this.label2.TabIndex = 3;
@@ -56,23 +58,23 @@
             this.Lb_Rules.FormattingEnabled = true;
             this.Lb_Rules.Location = new System.Drawing.Point(12, 25);
             this.Lb_Rules.Name = "Lb_Rules";
-            this.Lb_Rules.Size = new System.Drawing.Size(548, 121);
+            this.Lb_Rules.Size = new System.Drawing.Size(548, 134);
             this.Lb_Rules.TabIndex = 4;
             this.Lb_Rules.Click += new System.EventHandler(this.Lb_Rules_Click);
             // 
             // Lb_Songs
             // 
             this.Lb_Songs.FormattingEnabled = true;
-            this.Lb_Songs.Location = new System.Drawing.Point(12, 165);
+            this.Lb_Songs.Location = new System.Drawing.Point(12, 197);
             this.Lb_Songs.Name = "Lb_Songs";
-            this.Lb_Songs.Size = new System.Drawing.Size(548, 121);
+            this.Lb_Songs.Size = new System.Drawing.Size(548, 134);
             this.Lb_Songs.TabIndex = 5;
             this.Lb_Songs.Click += new System.EventHandler(this.Lb_Songs_Click);
             // 
             // Bt_ExcludeSong
             // 
             this.Bt_ExcludeSong.Enabled = false;
-            this.Bt_ExcludeSong.Location = new System.Drawing.Point(298, 290);
+            this.Bt_ExcludeSong.Location = new System.Drawing.Point(235, 344);
             this.Bt_ExcludeSong.Name = "Bt_ExcludeSong";
             this.Bt_ExcludeSong.Size = new System.Drawing.Size(75, 23);
             this.Bt_ExcludeSong.TabIndex = 6;
@@ -83,16 +85,16 @@
             // Tb_Rename
             // 
             this.Tb_Rename.Enabled = false;
-            this.Tb_Rename.Location = new System.Drawing.Point(460, 292);
+            this.Tb_Rename.Location = new System.Drawing.Point(397, 346);
             this.Tb_Rename.Name = "Tb_Rename";
-            this.Tb_Rename.Size = new System.Drawing.Size(100, 20);
+            this.Tb_Rename.Size = new System.Drawing.Size(163, 20);
             this.Tb_Rename.TabIndex = 7;
             this.Tb_Rename.Click += new System.EventHandler(this.Tb_Rename_Click);
             // 
             // Bt_RenameSong
             // 
             this.Bt_RenameSong.Enabled = false;
-            this.Bt_RenameSong.Location = new System.Drawing.Point(379, 290);
+            this.Bt_RenameSong.Location = new System.Drawing.Point(316, 344);
             this.Bt_RenameSong.Name = "Bt_RenameSong";
             this.Bt_RenameSong.Size = new System.Drawing.Size(75, 23);
             this.Bt_RenameSong.TabIndex = 8;
@@ -103,7 +105,7 @@
             // Bt_DeleteRule
             // 
             this.Bt_DeleteRule.Enabled = false;
-            this.Bt_DeleteRule.Location = new System.Drawing.Point(12, 292);
+            this.Bt_DeleteRule.Location = new System.Drawing.Point(12, 344);
             this.Bt_DeleteRule.Name = "Bt_DeleteRule";
             this.Bt_DeleteRule.Size = new System.Drawing.Size(75, 23);
             this.Bt_DeleteRule.TabIndex = 10;
@@ -111,11 +113,30 @@
             this.Bt_DeleteRule.UseVisualStyleBackColor = true;
             this.Bt_DeleteRule.Click += new System.EventHandler(this.Bt_DeleteRule_Click);
             // 
+            // Tb_Search
+            // 
+            this.Tb_Search.Location = new System.Drawing.Point(55, 171);
+            this.Tb_Search.Name = "Tb_Search";
+            this.Tb_Search.Size = new System.Drawing.Size(505, 20);
+            this.Tb_Search.TabIndex = 11;
+            this.Tb_Search.TextChanged += new System.EventHandler(this.Tb_Search_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(9, 174);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Search:";
+            // 
             // RulesEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(572, 322);
+            this.ClientSize = new System.Drawing.Size(572, 376);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.Tb_Search);
             this.Controls.Add(this.Bt_DeleteRule);
             this.Controls.Add(this.Bt_RenameSong);
             this.Controls.Add(this.Tb_Rename);
@@ -141,6 +162,8 @@
         private System.Windows.Forms.TextBox Tb_Rename;
         private System.Windows.Forms.Button Bt_RenameSong;
         private System.Windows.Forms.Button Bt_DeleteRule;
+        private System.Windows.Forms.TextBox Tb_Search;
+        private System.Windows.Forms.Label label3;
 
     }
 }
