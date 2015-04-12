@@ -22,55 +22,40 @@ namespace SpeechMusicController {
             aimp3.Start();
         }
 
-        public void Play(Song[] playList, bool PlayNr1First = true) {
-            if (playList.Length == 1) {
+        public void Play(IEnumerable<Song> playList) {
+            if (playList.Count() == 1) {
                 Play(playList.First());
-            } else if (playList.Length > 1) {
-                if (PlayNr1First) {
-                    Play(playList.First());
-                    Play(playList.Skip(1).ToArray(), false);
-                }
+            } else if (playList.Count() > 1) {
+                Play(playList.First());
 
-                string playString = "/FILE ";
-                List<Song> insertLater = new List<Song>();
-                for (int c = 0; c < playList.Count(); c++) {
-                    if (playString.Count() < MaxCharInFilename) {
-                        playString += "\"" + playList[c].FilePath + "\" ";
-                    } else {
-                        insertLater.Add(playList[c]);
-                    }
-                }
-                aimp3.StartInfo.Arguments = playString;
-                aimp3.Start();
-
-                if (insertLater.Count > 0) {
-                    Insert(insertLater);
-                }
+                Insert(playList.Skip(1).ToList(), false);
             }
         }
 
-        private void Insert(List<Song> inserList) {
+        private void Insert(IEnumerable<Song> inserList, bool callPlay) {
             string insertString = "/INSERT ";
             List<Song> insertLater = new List<Song>();
             for (int c = 0; c < inserList.Count(); c++) {
-                if (inserList.Count() < MaxCharInFilename) {
-                    insertString += "\"" + inserList[c].FilePath + "\" ";
+                if (insertString.Length < MaxCharInFilename) {
+                    insertString += "\"" + inserList.ElementAt(c).FilePath + "\" ";
                 } else {
-                    insertLater.Add(inserList[c]);
+                    insertLater.Add(inserList.ElementAt(c));
                 }
             }
             aimp3.StartInfo.Arguments = insertString;
             aimp3.Start();
 
             if (insertLater.Count > 0) {
-                Insert(insertLater);
+                Insert(insertLater, false);
             }
 
-            //Gives Aimp3 time to load, then calls play
-            Timer playTimer = new Timer(3000);
-            playTimer.Elapsed += new ElapsedEventHandler(PlayTimerEnds);
-            playTimer.AutoReset = false; //Only get called once
-            playTimer.Enabled = true;
+            if (callPlay) {
+                //Gives Aimp3 time to load, then calls play
+                Timer playTimer = new Timer(3000);
+                playTimer.Elapsed += new ElapsedEventHandler(PlayTimerEnds);
+                playTimer.AutoReset = false; //Only get called once
+                playTimer.Enabled = true;
+            }
         }
 
         private void PlayTimerEnds(object sender, ElapsedEventArgs e) {

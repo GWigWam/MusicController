@@ -69,7 +69,8 @@ namespace SpeechMusicController {
                 } else if (input == "previous") {
                     player.Previous();
                 } else if (input == "collection") {
-                    player.Play(MusicList.ActiveSongs.ToArray(), false);
+                    Random rand = new Random();
+                    player.Play(MusicList.ActiveSongs.OrderBy(s => rand.Next()).ToArray());
                     ListeningTimer.Instance.StopListening();
                 } else if (input == "volume up") {
                     player.VolUp();
