@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace SpeechMusicController {
-
-    internal class Player {
-        private Process aimp3 = new Process();
+    internal class Aimp3Player : IPlayer, IDisposable {
+        private Process aimp3;
         private const int MaxCharInFilename = 32000; //32,768 actually, but keep some headroom
 
-        public Player(string playerLoc) {
+        public Aimp3Player(string playerLoc) {
+            aimp3 = new Process();
             aimp3.StartInfo.FileName = playerLoc;
         }
 
         //Play single song
         public void Play(Song song) {
-            aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + song.FilePath + "\"";//Add " at begin and end so AIMP3 gets it
+            aimp3.StartInfo.Arguments = string.Format("/ADD_PLAY \"{0}\"", song.FilePath);//Add " at begin and end so AIMP3 gets it
             aimp3.Start();
         }
 
@@ -37,7 +35,7 @@ namespace SpeechMusicController {
             List<Song> insertLater = new List<Song>();
             for (int c = 0; c < inserList.Count(); c++) {
                 if (insertString.Length < MaxCharInFilename) {
-                    insertString += "\"" + inserList.ElementAt(c).FilePath + "\" ";
+                    insertString += string.Format("\"{0}\" ", inserList.ElementAt(c).FilePath);
                 } else {
                     insertLater.Add(inserList.ElementAt(c));
                 }
@@ -52,22 +50,11 @@ namespace SpeechMusicController {
             if (callPlay) {
                 //Gives Aimp3 time to load, then calls play
                 Timer playTimer = new Timer(3000);
-                playTimer.Elapsed += new ElapsedEventHandler(PlayTimerEnds);
+                playTimer.Elapsed += new ElapsedEventHandler((s, e) => Play());
                 playTimer.AutoReset = false; //Only get called once
                 playTimer.Enabled = true;
             }
         }
-
-        private void PlayTimerEnds(object sender, ElapsedEventArgs e) {
-            Play();
-        }
-
-        //Obsolete?
-        /*public void PlayAll() {
-            //Not in use now, maybe needed later
-            aimp3.StartInfo.Arguments = "/ADD_PLAY " + "\"" + Settings.ReadMusicLocation() + "\"";
-            aimp3.Start();
-        }*/
 
         public void Play() {
             aimp3.StartInfo.Arguments = "/PLAY";
@@ -97,6 +84,12 @@ namespace SpeechMusicController {
         public void VolDown() {
             aimp3.StartInfo.Arguments = "/VOLDWN";
             aimp3.Start();
+        }
+
+        public void Dispose() {
+            try {
+                aimp3.Dispose();
+            } catch { }
         }
     }
 }

@@ -38,10 +38,7 @@ namespace SpeechMusicController {
                     //Console.WriteLine("File {0}", f.Name);
                     AllFiles.Add(f);
                 }
-            } catch (Exception e) {
-                Console.WriteLine("Directory " + dir.FullName + " \n could not be accessed!!!!");
-                //return;
-            }
+            } catch {}
 
             // process each directory
             foreach (DirectoryInfo d in dir.GetDirectories()) {
@@ -113,20 +110,20 @@ namespace SpeechMusicController {
             return keywordList.ToArray();
         }
 
-        public static Song[] GetMatchingSongs(string keyword) {
-            var matchingSongs = ActiveSongs.Where(s =>
+        public static IEnumerable<Song> GetMatchingSongs(string keyword) {
+            IEnumerable<Song> retList = ActiveSongs.Where(s =>
                 string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
                 string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
                 string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
 
-            var orderedList = matchingSongs.OrderByDescending(s => {
+            retList = retList.OrderByDescending(s => {
                 if (string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
                 if (string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;
                 if (string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase)) return -1;
                 return -1;
             });
 
-            return orderedList.ToArray();
+            return retList;
         }
 
         public static Song GetInternalSongByHash(int hash) {

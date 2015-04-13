@@ -15,7 +15,7 @@ namespace SpeechMusicController {
 
         private static SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
 
-        private static Player player = new Player(PathSettings.ReadAIMP3Location());
+        private static Aimp3Player player = new Aimp3Player(PathSettings.ReadAIMP3Location());
 
         static SpeechInput() {
             Start();
