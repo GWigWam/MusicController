@@ -6,25 +6,37 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SpeechMusicController {
-
     internal static class MusicList {
-
-        static MusicList() {
-            var dirLoc = PathSettings.ReadMusicLocation();
-            ScanDir(dirLoc);
-            OrganizeList();
-        }
-
-        private static List<FileInfo> AllFiles = new List<FileInfo>();
-        private static Random random = new Random();
+        private static List<FileInfo> AllFiles;
+        private static Random random;
 
         //All songs as read from disc
-        private static List<Song> InternalSongList = new List<Song>();
+        private static List<Song> InternalSongList;
+
+        public static event Action SongListUpdated;
 
         //Songs after rules have been applied to them
         public static List<Song> ActiveSongs {
             get {
                 return RemoveDuplicates(ApplyRules(InternalSongList));
+            }
+        }
+
+        static MusicList() {
+            ReadListFromDisc();
+        }
+
+        public static void ReadListFromDisc() {
+            AllFiles = new List<FileInfo>();
+            random = new Random();
+            InternalSongList = new List<Song>();
+
+            var dirLoc = PathSettings.ReadMusicLocation();
+            ScanDir(dirLoc);
+            OrganizeList();
+
+            if (SongListUpdated != null) {
+                SongListUpdated();
             }
         }
 
@@ -38,7 +50,7 @@ namespace SpeechMusicController {
                     //Console.WriteLine("File {0}", f.Name);
                     AllFiles.Add(f);
                 }
-            } catch {}
+            } catch { }
 
             // process each directory
             foreach (DirectoryInfo d in dir.GetDirectories()) {

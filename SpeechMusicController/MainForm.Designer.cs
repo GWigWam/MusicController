@@ -32,6 +32,9 @@
             this.MenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.KeyInput = new System.Windows.Forms.TextBox();
             this.Bt_Rules = new System.Windows.Forms.Button();
+            this.Bt_Refresh = new System.Windows.Forms.Button();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.MenuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,7 +46,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(260, 80);
+            this.textBox1.Size = new System.Drawing.Size(179, 80);
             this.textBox1.TabIndex = 0;
             // 
             // NotifyIcon
@@ -56,15 +59,17 @@
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemRefresh,
             this.MenuItemShow,
+            this.toolStripSeparator1,
             this.MenuItemExit});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(104, 48);
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 98);
             // 
             // MenuItemShow
             // 
             this.MenuItemShow.Name = "MenuItemShow";
-            this.MenuItemShow.Size = new System.Drawing.Size(103, 22);
+            this.MenuItemShow.Size = new System.Drawing.Size(152, 22);
             this.MenuItemShow.Text = "Show";
             this.MenuItemShow.Click += new System.EventHandler(this.MenuItemShow_Click);
             // 
@@ -72,7 +77,7 @@
             // 
             this.MenuItemExit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.MenuItemExit.Name = "MenuItemExit";
-            this.MenuItemExit.Size = new System.Drawing.Size(103, 22);
+            this.MenuItemExit.Size = new System.Drawing.Size(152, 22);
             this.MenuItemExit.Text = "Exit";
             this.MenuItemExit.Click += new System.EventHandler(this.MenuItemExit_Click);
             // 
@@ -80,13 +85,13 @@
             // 
             this.KeyInput.Location = new System.Drawing.Point(13, 12);
             this.KeyInput.Name = "KeyInput";
-            this.KeyInput.Size = new System.Drawing.Size(178, 20);
+            this.KeyInput.Size = new System.Drawing.Size(259, 20);
             this.KeyInput.TabIndex = 2;
             this.KeyInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyInput_KeyUp);
             // 
             // Bt_Rules
             // 
-            this.Bt_Rules.Location = new System.Drawing.Point(197, 10);
+            this.Bt_Rules.Location = new System.Drawing.Point(197, 38);
             this.Bt_Rules.Name = "Bt_Rules";
             this.Bt_Rules.Size = new System.Drawing.Size(75, 23);
             this.Bt_Rules.TabIndex = 3;
@@ -94,12 +99,35 @@
             this.Bt_Rules.UseVisualStyleBackColor = true;
             this.Bt_Rules.Click += new System.EventHandler(this.Bt_Rules_Click);
             // 
+            // Bt_Refresh
+            // 
+            this.Bt_Refresh.Location = new System.Drawing.Point(197, 67);
+            this.Bt_Refresh.Name = "Bt_Refresh";
+            this.Bt_Refresh.Size = new System.Drawing.Size(75, 23);
+            this.Bt_Refresh.TabIndex = 4;
+            this.Bt_Refresh.Text = "Refresh";
+            this.Bt_Refresh.UseVisualStyleBackColor = true;
+            this.Bt_Refresh.Click += new System.EventHandler(this.Bt_Refresh_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            // 
+            // MenuItemRefresh
+            // 
+            this.MenuItemRefresh.Name = "MenuItemRefresh";
+            this.MenuItemRefresh.Size = new System.Drawing.Size(152, 22);
+            this.MenuItemRefresh.Text = "Refresh";
+            this.MenuItemRefresh.Click += new System.EventHandler(this.MenuItemRefresh_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(284, 130);
+            this.Controls.Add(this.Bt_Refresh);
             this.Controls.Add(this.Bt_Rules);
             this.Controls.Add(this.KeyInput);
             this.Controls.Add(this.textBox1);
@@ -129,6 +157,9 @@
         private System.Windows.Forms.TextBox KeyInput;
         private System.Windows.Forms.ToolStripMenuItem MenuItemShow;
         private System.Windows.Forms.Button Bt_Rules;
+        private System.Windows.Forms.Button Bt_Refresh;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemRefresh;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 

@@ -10,9 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
-
     public partial class MainForm : Form {
-        private bool Listening = true;
 
         public MainForm() {
             InitializeComponent();
@@ -33,6 +31,7 @@ namespace SpeechMusicController {
 
             SpeechInput.MessageSend += WriteLine;
             SongRules.OnRulesChanged += UpdateSuggestions;
+            MusicList.SongListUpdated += UpdateSuggestions;
         }
 
         private void UpdateSuggestions() {
@@ -110,5 +109,17 @@ namespace SpeechMusicController {
             var rulesEdit = new RulesEdit();
             rulesEdit.Show();
         }
+
+        #region Refresh
+
+        private void Bt_Refresh_Click(object sender, EventArgs e) {
+            MusicList.ReadListFromDisc();
+        }
+
+        private void MenuItemRefresh_Click(object sender, EventArgs e) {
+            MusicList.ReadListFromDisc();
+        }
+
+        #endregion Refresh
     }
 }

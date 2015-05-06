@@ -5,12 +5,21 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
-    static class Program {
+    internal static class Program {
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main() {
+        private static void Main(string[] args) {
+            try {
+                for (int i = 0; i < args.Length; i++) {
+                    if (args[i] == "-delayed" || args[i] == "/delayed") {
+                        System.Threading.Thread.Sleep(Int32.Parse(args[i + 1]));
+                    }
+                }
+            } catch { }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
