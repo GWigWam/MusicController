@@ -84,6 +84,12 @@
     <Compile Include="Song.cs" />
     <Compile Include="SongAttributes.cs" />
     <Compile Include="SpeechInput.cs" />
+    <Compile Include="SystemVarsEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemVarsEdit.Designer.cs">
+      <DependentUpon>SystemVarsEdit.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -101,6 +107,9 @@
     </Compile>
     <EmbeddedResource Include="RulesEdit.resx">
       <DependentUpon>RulesEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemVarsEdit.resx">
+      <DependentUpon>SystemVarsEdit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

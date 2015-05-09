@@ -11,6 +11,15 @@ namespace SpeechMusicController.AppSettings {
     [JsonObject(Description = "SpeechMusicController's settings")]
     public class Settings {
         private const string FilePath = "settings.json";
+
+        [JsonIgnore]
+        public string FullFilePath {
+            get {
+                var path = Path.GetFullPath(FilePath);
+                return path;
+            }
+        }
+
         private static Settings instance;
 
         [JsonIgnore]
@@ -55,11 +64,15 @@ namespace SpeechMusicController.AppSettings {
         }
 
         public string GetSetting(string name) {
-            if (StringValues.ContainsKey(name)) {
+            if (!string.IsNullOrEmpty(name) && StringValues.ContainsKey(name)) {
                 return StringValues[name];
             } else {
                 return null;
             }
+        }
+
+        public string[] GetAllSettingNames() {
+            return StringValues.Keys.ToArray();
         }
 
         public void AddSongRule(SongRule rule) {

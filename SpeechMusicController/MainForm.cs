@@ -121,5 +121,10 @@ namespace SpeechMusicController {
         }
 
         #endregion Refresh
+
+        private void Bt_Settings_Click(object sender, EventArgs e) {
+            var sysVar = new SystemVarsEdit();
+            sysVar.Show();
+        }
     }
 }
