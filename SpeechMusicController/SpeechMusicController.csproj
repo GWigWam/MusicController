@@ -78,8 +78,10 @@
       <DependentUpon>RulesEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\Model\ExcludeRule.cs" />
+    <Compile Include="Settings\Model\NameChangeRule.cs" />
     <Compile Include="Settings\Model\SongRule.cs" />
     <Compile Include="Settings\PathSettings.cs" />
+    <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\SongRules.cs" />
     <Compile Include="Settings\SongRule.cs" />
     <Compile Include="Song.cs" />
