@@ -1,4 +1,5 @@
-﻿using SpeechMusicController.Settings;
+﻿using SpeechMusicController.AppSettings;
+using SpeechMusicController.AppSettings.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
-
     public partial class RulesEdit : Form {
 
         public RulesEdit() {
@@ -23,30 +23,16 @@ namespace SpeechMusicController {
             FillSongList();
         }
 
-        private List<int> RuleIdList;
-
         private void FillRuleList() {
             Lb_Rules.Items.Clear();
-            RuleIdList = new List<int>();
 
-            foreach (var rule in SongRules.GetRules()) {
-                RuleIdList.Add(rule.Id);
-                if (rule.Type == SongRuleType.Exclude) {
-                    Lb_Rules.Items.Add(string.Format("{0}: {1}", rule.Type, MusicList.GetInternalSongByHash(rule.SongHashCode).ToString()));
-                } else if (rule.Type == SongRuleType.NameChange) {
-                    var tmp = string.Format("{0}: {1} --> {2}", rule.Type, MusicList.GetInternalSongByHash(rule.SongHashCode).ToString(), rule.Parameters);
-                    Lb_Rules.Items.Add(tmp);
-                }
-            }
+            Lb_Rules.Items.AddRange(Settings.Instance.GetSongRules(true, true));
         }
-
-        private List<int> SongHashCodes;
 
         private void FillSongList() {
             Lb_Songs.Items.Clear();
-            SongHashCodes = new List<int>();
 
-            IEnumerable<Song> songList = MusicList.ActiveSongs.OrderBy(s => s.Title);
+            IEnumerable<Song> songList = MusicList.ActiveSongs.OrderBy(s => s.Attributes.Title);
             var searchWord = Tb_Search.Text;
 
             if (!string.IsNullOrWhiteSpace(searchWord)) {
@@ -55,58 +41,61 @@ namespace SpeechMusicController {
 
             foreach (var song in songList) {
                 Lb_Songs.Items.Add(song);
-                SongHashCodes.Add(song.GetHashCode());
             }
         }
 
-        private void DeleteRule(int ruleId) {
-            SongRules.RemoveRule(ruleId);
-            FillRuleList();
-        }
-
-        //Regions
         private void Tb_Rename_Click(object sender, EventArgs e) {
             Tb_Rename.Text = string.Empty;
         }
 
         private void Bt_DeleteRule_Click(object sender, EventArgs e) {
-            int index = Lb_Rules.SelectedIndex;
-            int ruleId = RuleIdList[index];
-            SongRules.RemoveRule(ruleId);
-            SetupLists();
+            SongRule selected = (Lb_Rules.SelectedItem as SongRule);
 
-            try {
-                Lb_Rules.SelectedIndex = index;
-            } catch (ArgumentOutOfRangeException) { }
-            Lb_Rules.Focus();
+            if (selected != null) {
+                Settings.Instance.RemoveSongRule(selected);
+
+                int index = Lb_Rules.SelectedIndex;
+                SetupLists();
+
+                try {
+                    Lb_Rules.SelectedIndex = index;
+                } catch (ArgumentOutOfRangeException) { }
+                Lb_Rules.Focus();
+            }
         }
 
         private void Bt_ExcludeSong_Click(object sender, EventArgs e) {
-            int index = Lb_Songs.SelectedIndex;
-            int songHash = SongHashCodes[index];
-            var newRule = SongRule.newExcludeRule(songHash);
-            SongRules.AddRule(newRule);
-            SetupLists();
-            try {
-                Lb_Songs.SelectedIndex = index;
-            } catch (ArgumentOutOfRangeException) { }
-            Lb_Songs.Focus();
-        }
+            if (Lb_Songs.SelectedItem is Song) {
+                Song selected = (Song)Lb_Songs.SelectedItem;
 
-        private void Bt_RenameSong_Click(object sender, EventArgs e) {
-            if (!string.IsNullOrWhiteSpace(Tb_Rename.Text)) {
+                Settings.Instance.AddSongRule(new ExcludeRule(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album));
+
                 int index = Lb_Songs.SelectedIndex;
-                int songHash = SongHashCodes[index];
-                var newRule = SongRule.newNameChangeRule(songHash, Tb_Rename.Text);
-                SongRules.AddRule(newRule);
                 SetupLists();
                 try {
                     Lb_Songs.SelectedIndex = index;
                 } catch (ArgumentOutOfRangeException) { }
                 Lb_Songs.Focus();
-                Tb_Rename.Text = string.Empty;
-            } else {
-                Tb_Rename.Text = "New Name!";
+            }
+        }
+
+        private void Bt_RenameSong_Click(object sender, EventArgs e) {
+            if (!string.IsNullOrWhiteSpace(Tb_Rename.Text)) {
+                if (Lb_Songs.SelectedItem is Song) {
+                    Song selected = (Song)Lb_Songs.SelectedItem;
+
+                    Settings.Instance.AddSongRule(new NameChangeRule(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album, Tb_Rename.Text.Trim()));
+
+                    int index = Lb_Songs.SelectedIndex;
+                    SetupLists();
+                    try {
+                        Lb_Songs.SelectedIndex = index;
+                    } catch (ArgumentOutOfRangeException) { }
+                    Lb_Songs.Focus();
+                    Tb_Rename.Text = string.Empty;
+                } else {
+                    Tb_Rename.Text = "New Name!";
+                }
             }
         }
 

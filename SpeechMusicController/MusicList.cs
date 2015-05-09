@@ -1,4 +1,5 @@
-﻿using SpeechMusicController.Settings;
+﻿using SpeechMusicController.AppSettings;
+using SpeechMusicController.AppSettings.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,12 +32,16 @@ namespace SpeechMusicController {
             random = new Random();
             InternalSongList = new List<Song>();
 
-            var dirLoc = PathSettings.ReadMusicLocation();
-            ScanDir(dirLoc);
-            OrganizeList();
+            var dirLoc = Settings.Instance.GetSetting("MusicFolder");
+            if (!string.IsNullOrEmpty(dirLoc)) {
+                ScanDir(dirLoc);
+                OrganizeList();
 
-            if (SongListUpdated != null) {
-                SongListUpdated();
+                if (SongListUpdated != null) {
+                    SongListUpdated();
+                }
+            } else {
+                System.Windows.Forms.MessageBox.Show("Error: MusicFolder setting is empty");
             }
         }
 
@@ -94,15 +99,16 @@ namespace SpeechMusicController {
 
         private static List<Song> ApplyRules(List<Song> songs) {
             List<Song> tmpList = new List<Song>(songs);
-            foreach (var rule in SongRules.GetRules(SongRuleType.Exclude)) {
-                tmpList.RemoveAll(s => s.GetHashCode() == rule.SongHashCode);
-            }
 
-            foreach (var rule in SongRules.GetRules(SongRuleType.NameChange)) {
-                var song = tmpList.FirstOrDefault(s => s.GetHashCode() == rule.SongHashCode);
-                if (!song.Equals(default(Song))) {
-                    tmpList.Remove(song);
-                    tmpList.Add(new Song(rule.Parameters, song.Artist, song.Album, song.FilePath));
+            foreach (SongRule rule in Settings.Instance.GetSongRules(true, true)) {
+                if (rule.Type == SongRuleType.Exclude) {
+                    tmpList.RemoveAll(curSong => rule.Attributes == curSong.Attributes);
+                } else if (rule.Type == SongRuleType.NameChange) {
+                    var song = tmpList.FirstOrDefault(curSong => rule.Attributes == curSong.Attributes);
+                    if (!song.Equals(default(Song))) {
+                        tmpList.Remove(song);
+                        tmpList.Add(new Song(((NameChangeRule)rule).NewName, song.Attributes.Artist, song.Attributes.Album, song.FilePath));
+                    }
                 }
             }
 
@@ -113,10 +119,10 @@ namespace SpeechMusicController {
             var keywordList = new HashSet<string>();
 
             //Add everything to list
-            foreach (Song s in ActiveSongs) {
-                if (s.Album != null) keywordList.Add(s.Album);
-                if (s.Artist != null) keywordList.Add(s.Artist);
-                if (s.Title != null) keywordList.Add(s.Title);
+            foreach (Song song in ActiveSongs) {
+                if (!string.IsNullOrEmpty(song.Attributes.Album)) keywordList.Add(song.Attributes.Album);
+                if (!string.IsNullOrEmpty(song.Attributes.Artist)) keywordList.Add(song.Attributes.Artist);
+                if (!string.IsNullOrEmpty(song.Attributes.Title)) keywordList.Add(song.Attributes.Title);
             }
 
             return keywordList.ToArray();
@@ -124,22 +130,18 @@ namespace SpeechMusicController {
 
         public static IEnumerable<Song> GetMatchingSongs(string keyword) {
             IEnumerable<Song> retList = ActiveSongs.Where(s =>
-                string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(s.Attributes.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(s.Attributes.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(s.Attributes.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
 
             retList = retList.OrderByDescending(s => {
-                if (string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
-                if (string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;
-                if (string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase)) return -1;
+                if (string.Equals(s.Attributes.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
+                if (string.Equals(s.Attributes.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;
+                if (string.Equals(s.Attributes.Album, keyword, StringComparison.InvariantCultureIgnoreCase)) return -1;
                 return -1;
             });
 
             return retList;
-        }
-
-        public static Song GetInternalSongByHash(int hash) {
-            return InternalSongList.FirstOrDefault(s => s.GetHashCode() == hash);
         }
 
         public static Song GetRandomSong() {
