@@ -30,6 +30,9 @@ namespace SpeechMusicController.AppSettings {
                         try {
                             string fileContent = File.ReadAllText(FilePath);
                             instance = JsonConvert.DeserializeObject<Settings>(fileContent);
+                        } catch (JsonReaderException jre) {
+                            System.Windows.Forms.MessageBox.Show("Invalid JSon in settings file!\n" + jre.ToString());
+                            Environment.Exit(-1);
                         } catch {
                             File.Delete(FilePath);
                             instance = new Settings();
