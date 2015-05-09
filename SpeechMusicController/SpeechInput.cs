@@ -1,4 +1,4 @@
-﻿using SpeechMusicController.Settings;
+﻿using SpeechMusicController.AppSettings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,41 +7,44 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController {
-
     public static class SpeechInput {
-        public static string[] KEYWORDS = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
+        public static string[] Keywords = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
 
         public static event Action<string> MessageSend;
 
-        private static SpeechRecognitionEngine sRecognize = new SpeechRecognitionEngine();
+        private static SpeechRecognitionEngine SRecognize = new SpeechRecognitionEngine();
 
-        private static Aimp3Player player = new Aimp3Player(PathSettings.ReadAIMP3Location());
+        private static IPlayer Player;
 
         static SpeechInput() {
-            Start();
+            string path = Settings.Instance.GetSetting("PlayerPath");
+            if (!string.IsNullOrEmpty(path)) {
+                Player = new Aimp3Player(path);
+                Start();
 
-            SongRules.OnRulesChanged += LoadGrammar;
+                Settings.Instance.OnRulesChanged += LoadGrammar;
+            } else {
+                System.Windows.Forms.MessageBox.Show("Error: PlayerPath setting is empty");
+            }
         }
 
         private static void Start() {
             LoadGrammar();
 
-            try {
-                sRecognize.SetInputToDefaultAudioDevice();
-                sRecognize.RecognizeAsync(RecognizeMode.Multiple);
-                sRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
-            } catch { }
+            SRecognize.SetInputToDefaultAudioDevice();
+            SRecognize.RecognizeAsync(RecognizeMode.Multiple);
+            SRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
         }
 
         public static void LoadGrammar() {
             Choices sList = new Choices();
-            sList.Add(KEYWORDS);
+            sList.Add(Keywords);
             sList.Add(MusicList.GetAllSongKeywords());
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
             Grammar gr = new Grammar(gb);
-            sRecognize.UnloadAllGrammars();
-            sRecognize.LoadGrammar(gr);
+            SRecognize.UnloadAllGrammars();
+            SRecognize.LoadGrammar(gr);
         }
 
         private static void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
@@ -60,24 +63,24 @@ namespace SpeechMusicController {
             SendMessage(input);
             try {
                 if (input == "switch") {
-                    player.Toggle();
+                    Player.Toggle();
                     ListeningTimer.Instance.StopListening();
                 } else if (input == "random") {
-                    player.Play(MusicList.GetRandomSong());
+                    Player.Play(MusicList.GetRandomSong());
                 } else if (input == "next") {
-                    player.Next();
+                    Player.Next();
                 } else if (input == "previous") {
-                    player.Previous();
+                    Player.Previous();
                 } else if (input == "collection") {
                     Random rand = new Random();
-                    player.Play(MusicList.ActiveSongs.OrderBy(s => rand.Next()).ToArray());
+                    Player.Play(MusicList.ActiveSongs.OrderBy(s => rand.Next()).ToArray());
                     ListeningTimer.Instance.StopListening();
                 } else if (input == "volume up") {
-                    player.VolUp();
+                    Player.VolUp();
                 } else if (input == "volume down") {
-                    player.VolDown();
+                    Player.VolDown();
                 } else {
-                    player.Play(MusicList.GetMatchingSongs(input));
+                    Player.Play(MusicList.GetMatchingSongs(input));
                     ListeningTimer.Instance.StopListening();
                 }
             } catch (Exception e1) {

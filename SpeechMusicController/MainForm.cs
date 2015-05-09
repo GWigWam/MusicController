@@ -1,4 +1,4 @@
-﻿using SpeechMusicController.Settings;
+﻿using SpeechMusicController.AppSettings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +22,7 @@ namespace SpeechMusicController {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            foreach (var word in SpeechInput.KEYWORDS) {
+            foreach (var word in SpeechInput.Keywords) {
                 Write(word + ", ");
             }
             WriteLine("Possible: ");
@@ -30,13 +30,13 @@ namespace SpeechMusicController {
             UpdateSuggestions();
 
             SpeechInput.MessageSend += WriteLine;
-            SongRules.OnRulesChanged += UpdateSuggestions;
+            Settings.Instance.OnRulesChanged += UpdateSuggestions;
             MusicList.SongListUpdated += UpdateSuggestions;
         }
 
         private void UpdateSuggestions() {
             var source = new AutoCompleteStringCollection();
-            source.AddRange(SpeechInput.KEYWORDS);
+            source.AddRange(SpeechInput.Keywords);
             source.AddRange(MusicList.GetAllSongKeywords());
             KeyInput.AutoCompleteCustomSource.Clear();
             KeyInput.AutoCompleteCustomSource = source;
@@ -102,7 +102,7 @@ namespace SpeechMusicController {
         }
 
         private void MenuItemExit_Click(object sender, EventArgs e) {
-            Environment.Exit(0);
+            Application.Exit();
         }
 
         private void Bt_Rules_Click(object sender, EventArgs e) {

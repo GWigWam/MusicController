@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpeechMusicController.AppSettings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +23,19 @@ namespace SpeechMusicController {
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Settings.Instance.WriteToDisc(); //Make sure file exists
+
+            Application.ApplicationExit += (sender, e) => Settings.Instance.WriteToDisc();
+#if DEBUG
             Application.Run(new MainForm());
+#else
+            try {
+                Application.Run(new MainForm());
+            } catch (Exception e) {
+                System.Windows.Forms.MessageBox.Show("An error occured! " + e.ToString());
+            }
+#endif
         }
     }
 }
