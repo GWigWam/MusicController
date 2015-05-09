@@ -12,9 +12,8 @@ namespace SpeechMusicController.AppSettings.Model {
 
         public readonly SongRuleType Type;
 
-        public SongRule(string title, string artist, string album, SongRuleType type) {
-            Attributes = new SongAttributes(title, artist, album);
-
+        public SongRule(SongAttributes attributes, SongRuleType type) {
+            Attributes = attributes;
             Type = type;
         }
 

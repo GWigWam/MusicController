@@ -68,7 +68,7 @@ namespace SpeechMusicController {
             if (Lb_Songs.SelectedItem is Song) {
                 Song selected = (Song)Lb_Songs.SelectedItem;
 
-                Settings.Instance.AddSongRule(new ExcludeRule(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album));
+                Settings.Instance.AddSongRule(new ExcludeRule(new SongAttributes(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album)));
 
                 int index = Lb_Songs.SelectedIndex;
                 SetupLists();
@@ -84,7 +84,7 @@ namespace SpeechMusicController {
                 if (Lb_Songs.SelectedItem is Song) {
                     Song selected = (Song)Lb_Songs.SelectedItem;
 
-                    Settings.Instance.AddSongRule(new NameChangeRule(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album, Tb_Rename.Text.Trim()));
+                    Settings.Instance.AddSongRule(new NameChangeRule(new SongAttributes(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album), Tb_Rename.Text.Trim()));
 
                     int index = Lb_Songs.SelectedIndex;
                     SetupLists();

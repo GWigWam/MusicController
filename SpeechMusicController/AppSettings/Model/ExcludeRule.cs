@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace SpeechMusicController.AppSettings.Model {
     internal class ExcludeRule : SongRule {
 
-        public ExcludeRule(string title, string artist, string album)
-            : base(title, artist, album, SongRuleType.Exclude) {
+        public ExcludeRule(SongAttributes attributes)
+            : base(attributes, SongRuleType.Exclude) {
         }
     }
 }

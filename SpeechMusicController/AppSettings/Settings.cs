@@ -11,6 +11,7 @@ namespace SpeechMusicController.AppSettings {
     [JsonObject(Description = "SpeechMusicController's settings")]
     public class Settings {
         private const string FilePath = "settings.json";
+        private static JsonSerializerSettings JSonSettings;
 
         [JsonIgnore]
         public string FullFilePath {
@@ -28,8 +29,11 @@ namespace SpeechMusicController.AppSettings {
                 if (instance == null) {
                     if (File.Exists(FilePath)) {
                         try {
+                            JSonSettings = new JsonSerializerSettings();
+                            JSonSettings.Formatting = Formatting.Indented;
+
                             string fileContent = File.ReadAllText(FilePath);
-                            instance = JsonConvert.DeserializeObject<Settings>(fileContent);
+                            instance = JsonConvert.DeserializeObject<Settings>(fileContent, JSonSettings);
                         } catch (JsonReaderException jre) {
                             System.Windows.Forms.MessageBox.Show("Invalid JSon in settings file!\n" + jre.ToString());
                             Environment.Exit(-1);
@@ -49,13 +53,17 @@ namespace SpeechMusicController.AppSettings {
         private Dictionary<string, string> StringValues;
 
         [JsonProperty]
-        private List<SongRule> SongRules;
+        private List<NameChangeRule> NameChangeRules;
+
+        [JsonProperty]
+        private List<ExcludeRule> ExcludeRules;
 
         public event Action OnRulesChanged;
 
         private Settings() {
             StringValues = new Dictionary<string, string>();
-            SongRules = new List<SongRule>();
+            NameChangeRules = new List<NameChangeRule>();
+            ExcludeRules = new List<ExcludeRule>();
 
             StringValues["MusicFolder"] = string.Empty;
             StringValues["PlayerPath"] = string.Empty;
@@ -79,18 +87,27 @@ namespace SpeechMusicController.AppSettings {
         }
 
         public void AddSongRule(SongRule rule) {
-            SongRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
-            SongRules.Add(rule);
+            if (rule is NameChangeRule) {
+                NameChangeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
+                NameChangeRules.Add(rule as NameChangeRule);
+            } else if (rule is ExcludeRule) {
+                ExcludeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
+                ExcludeRules.Add(rule as ExcludeRule);
+            }
             RulesChanged();
         }
 
         public void RemoveSongRule(SongRule rule) {
-            SongRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
+            if (rule is NameChangeRule) {
+                NameChangeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
+            } else if (rule is ExcludeRule) {
+                ExcludeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
+            }
             RulesChanged();
         }
 
         public SongRule[] GetSongRules(bool getNameChangeRules, bool getExcludeRules) {
-            return SongRules.Where(s => {
+            return ExcludeRules.Concat<SongRule>(NameChangeRules).Where(s => {
                 if (getNameChangeRules && s is NameChangeRule) {
                     return true;
                 } else if (getExcludeRules && s is ExcludeRule) {
@@ -103,7 +120,7 @@ namespace SpeechMusicController.AppSettings {
 
         public void WriteToDisc() {
             using (StreamWriter sw = new StreamWriter(new FileStream(FilePath, FileMode.Create))) {
-                string content = JsonConvert.SerializeObject(instance);
+                string content = JsonConvert.SerializeObject(instance, JSonSettings);
                 sw.Write(content);
             }
         }
