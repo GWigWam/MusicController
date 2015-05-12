@@ -20,7 +20,7 @@ namespace SpeechMusicController {
         }
 
         public override int GetHashCode() {
-            return Title.GetHashCode() + Artist.GetHashCode() + Album.GetHashCode();
+            return (Title ?? string.Empty).GetHashCode() + (Artist ?? string.Empty).GetHashCode() + (Album ?? string.Empty).GetHashCode();
         }
 
         public override bool Equals(object obj) {

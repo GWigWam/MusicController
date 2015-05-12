@@ -47,19 +47,21 @@ namespace SpeechMusicController {
 
         private static void ScanDir(string dirLoc) {
             DirectoryInfo dir = new DirectoryInfo(dirLoc);
-            //Console.WriteLine("Directory {0}", dir.FullName);
-            // list the files
-            try {
-                //Add .mp3 files
-                foreach (FileInfo f in dir.GetFiles("*.mp3")) {
-                    //Console.WriteLine("File {0}", f.Name);
-                    AllFiles.Add(f);
-                }
-            } catch { }
+            if (dir.Exists) {
+                //Console.WriteLine("Directory {0}", dir.FullName);
+                // list the files
+                try {
+                    //Add .mp3 files
+                    foreach (FileInfo f in dir.GetFiles("*.mp3")) {
+                        //Console.WriteLine("File {0}", f.Name);
+                        AllFiles.Add(f);
+                    }
+                } catch { }
 
-            // process each directory
-            foreach (DirectoryInfo d in dir.GetDirectories()) {
-                ScanDir(d.FullName);
+                // process each directory
+                foreach (DirectoryInfo d in dir.GetDirectories()) {
+                    ScanDir(d.FullName);
+                }
             }
         }
 

@@ -33,7 +33,7 @@ namespace SpeechMusicController {
 
             SRecognize.SetInputToDefaultAudioDevice();
             SRecognize.RecognizeAsync(RecognizeMode.Multiple);
-            SRecognize.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(sRecognize_SpeechRecognized);
+            SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
         }
 
         public static void LoadGrammar() {
@@ -47,7 +47,7 @@ namespace SpeechMusicController {
             SRecognize.LoadGrammar(gr);
         }
 
-        private static void sRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
+        private static void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             var input = e.Result.Text;
 
             if (ListeningTimer.Instance.IsListening) {
