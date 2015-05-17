@@ -32,7 +32,7 @@ namespace SpeechMusicController {
         private void FillSongList() {
             Lb_Songs.Items.Clear();
 
-            IEnumerable<Song> songList = MusicList.ActiveSongs.OrderBy(s => s.Attributes.Title);
+            IEnumerable<Song> songList = MusicList.ActiveSongs.OrderBy(s => s.Title);
             var searchWord = Tb_Search.Text;
 
             if (!string.IsNullOrWhiteSpace(searchWord)) {
@@ -67,8 +67,7 @@ namespace SpeechMusicController {
         private void Bt_ExcludeSong_Click(object sender, EventArgs e) {
             if (Lb_Songs.SelectedItem is Song) {
                 Song selected = (Song)Lb_Songs.SelectedItem;
-
-                Settings.Instance.AddSongRule(new ExcludeRule(new SongAttributes(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album)));
+                Settings.Instance.AddSongRule(new ExcludeRule(selected.Attributes));
 
                 int index = Lb_Songs.SelectedIndex;
                 SetupLists();
@@ -84,7 +83,7 @@ namespace SpeechMusicController {
                 if (Lb_Songs.SelectedItem is Song) {
                     Song selected = (Song)Lb_Songs.SelectedItem;
 
-                    Settings.Instance.AddSongRule(new NameChangeRule(new SongAttributes(selected.Attributes.Title, selected.Attributes.Artist, selected.Attributes.Album), Tb_Rename.Text.Trim()));
+                    Settings.Instance.AddSongRule(new NameChangeRule(selected.Attributes, Tb_Rename.Text.Trim()));
 
                     int index = Lb_Songs.SelectedIndex;
                     SetupLists();

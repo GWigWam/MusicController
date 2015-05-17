@@ -12,12 +12,12 @@ namespace SpeechMusicController {
         private static Random random;
 
         //All songs as read from disc
-        private static List<Song> InternalSongList;
+        private static Song[] InternalSongList;
 
         public static event Action SongListUpdated;
 
         //Songs after rules have been applied to them
-        public static List<Song> ActiveSongs {
+        public static IEnumerable<Song> ActiveSongs {
             get {
                 return RemoveDuplicates(ApplyRules(InternalSongList));
             }
@@ -30,7 +30,7 @@ namespace SpeechMusicController {
         public static void ReadListFromDisc() {
             AllFiles = new List<FileInfo>();
             random = new Random();
-            InternalSongList = new List<Song>();
+            InternalSongList = new Song[0];
 
             var dirLoc = Settings.Instance.GetSetting("MusicFolder");
             if (!string.IsNullOrEmpty(dirLoc)) {
@@ -66,6 +66,7 @@ namespace SpeechMusicController {
         }
 
         private static void OrganizeList() {
+            List<Song> OrganizedList = new List<Song>();
             foreach (FileInfo fi in AllFiles) {
                 var fileProps = TagLib.File.Create(fi.FullName);
 
@@ -90,41 +91,41 @@ namespace SpeechMusicController {
                     propArtist == null ? fileArtist : propArtist,
                     propAlbum == null ? null : propAlbum, //Technically not necessary
                     fi.FullName);
-                InternalSongList.Add(song);
+                OrganizedList.Add(song);
             }
+            InternalSongList = OrganizedList.ToArray();
         }
 
-        private static List<Song> RemoveDuplicates(List<Song> songs) {
-            var cleanList = new HashSet<Song>(songs);
-            return cleanList.ToList();
+        private static IEnumerable<Song> RemoveDuplicates(IEnumerable<Song> songs) {
+            return new HashSet<Song>(songs);
         }
 
-        private static List<Song> ApplyRules(List<Song> songs) {
-            List<Song> tmpList = new List<Song>(songs);
+        private static List<Song> ApplyRules(IEnumerable<Song> songs) {
+            List<Song> retList = new List<Song>(songs);
 
             foreach (SongRule rule in Settings.Instance.GetSongRules(true, true)) {
                 if (rule.Type == SongRuleType.Exclude) {
-                    tmpList.RemoveAll(curSong => rule.Attributes == curSong.Attributes);
+                    retList.RemoveAll(curSong => rule.Attributes == curSong.Attributes);
                 } else if (rule.Type == SongRuleType.NameChange) {
-                    var song = tmpList.FirstOrDefault(curSong => rule.Attributes == curSong.Attributes);
-                    if (!song.Equals(default(Song))) {
-                        tmpList.Remove(song);
-                        tmpList.Add(new Song(((NameChangeRule)rule).NewName, song.Attributes.Artist, song.Attributes.Album, song.FilePath));
+                    var song = retList.FirstOrDefault(curSong => rule.Attributes == curSong.Attributes);
+                    if (song != default(Song)) {
+                        retList.Remove(song);
+                        retList.Add(new Song(((NameChangeRule)rule).NewName, song.Artist, song.Album, song.FilePath));
                     }
                 }
             }
 
-            return tmpList;
+            return retList;
         }
 
         public static string[] GetAllSongKeywords() {
-            var keywordList = new HashSet<string>();
+            var keywordList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             //Add everything to list
             foreach (Song song in ActiveSongs) {
-                if (!string.IsNullOrEmpty(song.Attributes.Album)) keywordList.Add(song.Attributes.Album);
-                if (!string.IsNullOrEmpty(song.Attributes.Artist)) keywordList.Add(song.Attributes.Artist);
-                if (!string.IsNullOrEmpty(song.Attributes.Title)) keywordList.Add(song.Attributes.Title);
+                if (!string.IsNullOrEmpty(song.Album)) keywordList.Add(song.Album);
+                if (!string.IsNullOrEmpty(song.Artist)) keywordList.Add(song.Artist);
+                if (!string.IsNullOrEmpty(song.Title)) keywordList.Add(song.Title);
             }
 
             return keywordList.ToArray();
@@ -132,14 +133,14 @@ namespace SpeechMusicController {
 
         public static IEnumerable<Song> GetMatchingSongs(string keyword) {
             IEnumerable<Song> retList = ActiveSongs.Where(s =>
-                string.Equals(s.Attributes.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Attributes.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Attributes.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
 
             retList = retList.OrderByDescending(s => {
-                if (string.Equals(s.Attributes.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
-                if (string.Equals(s.Attributes.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;
-                if (string.Equals(s.Attributes.Album, keyword, StringComparison.InvariantCultureIgnoreCase)) return -1;
+                if (string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
+                if (string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;
+                if (string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase)) return -1;
                 return -1;
             });
 
@@ -147,7 +148,7 @@ namespace SpeechMusicController {
         }
 
         public static Song GetRandomSong() {
-            return ActiveSongs[random.Next(0, ActiveSongs.Count)];
+            return ActiveSongs.ElementAt(random.Next(0, ActiveSongs.Count()));
         }
     }
 }

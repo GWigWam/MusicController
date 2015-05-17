@@ -32,7 +32,6 @@ namespace SpeechMusicController {
                 string key = (string)Lb_List.SelectedItem;
                 Settings.Instance.SetSetting(key, Tb_NewString.Text.Trim());
 
-                Bt_SaveToFile.Enabled = true;
                 Bt_Ok.Enabled = false;
             }
         }
@@ -43,10 +42,8 @@ namespace SpeechMusicController {
 
         private void Tb_NewString_TextChanged(object sender, EventArgs e) {
             if (Tb_NewString.Text != Settings.Instance.GetSetting((string)Lb_List.SelectedItem)) {
-                Bt_SaveToFile.Enabled = false;
                 Bt_Ok.Enabled = true;
             } else {
-                Bt_SaveToFile.Enabled = true;
                 Bt_Ok.Enabled = false;
             }
         }

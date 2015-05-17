@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Speech.Recognition;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,7 +40,11 @@ namespace SpeechMusicController {
         public static void LoadGrammar() {
             Choices sList = new Choices();
             sList.Add(Keywords);
-            sList.Add(MusicList.GetAllSongKeywords());
+
+            string[] keywords = MusicList.GetAllSongKeywords();
+            keywords = keywords.Select(s => Regex.Replace(s, @"\(|\)", "").Trim()).ToArray();
+
+            sList.Add(keywords);
             GrammarBuilder gb = new GrammarBuilder();
             gb.Append(sList);
             Grammar gr = new Grammar(gb);

@@ -61,7 +61,6 @@
             // 
             // Bt_SaveToFile
             // 
-            this.Bt_SaveToFile.Enabled = false;
             this.Bt_SaveToFile.Location = new System.Drawing.Point(281, 156);
             this.Bt_SaveToFile.Name = "Bt_SaveToFile";
             this.Bt_SaveToFile.Size = new System.Drawing.Size(85, 23);

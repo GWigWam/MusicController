@@ -12,6 +12,7 @@ namespace SpeechMusicController.AppSettings {
     public class Settings {
         private const string FilePath = "settings.json";
         private static JsonSerializerSettings JSonSettings;
+        private static bool HasUnsavedChanges;
 
         [JsonIgnore]
         public string FullFilePath {
@@ -34,6 +35,11 @@ namespace SpeechMusicController.AppSettings {
 
                             string fileContent = File.ReadAllText(FilePath);
                             instance = JsonConvert.DeserializeObject<Settings>(fileContent, JSonSettings);
+
+                            if (instance == null) {
+                                File.Delete(FilePath);
+                                instance = new Settings();
+                            }
                         } catch (JsonReaderException jre) {
                             System.Windows.Forms.MessageBox.Show("Invalid JSon in settings file!\n" + jre.ToString());
                             Environment.Exit(-1);
@@ -67,6 +73,8 @@ namespace SpeechMusicController.AppSettings {
 
             StringValues["MusicFolder"] = string.Empty;
             StringValues["PlayerPath"] = string.Empty;
+
+            HasUnsavedChanges = true;
         }
 
         public void SetSetting(string name, string value) {
@@ -118,14 +126,18 @@ namespace SpeechMusicController.AppSettings {
             }).ToArray();
         }
 
-        public void WriteToDisc() {
-            using (StreamWriter sw = new StreamWriter(new FileStream(FilePath, FileMode.Create))) {
-                string content = JsonConvert.SerializeObject(instance, JSonSettings);
-                sw.Write(content);
+        public async void WriteToDisc() {
+            if (HasUnsavedChanges) {
+                using (StreamWriter sw = new StreamWriter(new FileStream(FilePath, FileMode.Create))) {
+                    string content = JsonConvert.SerializeObject(instance, JSonSettings);
+                    await sw.WriteAsync(content);
+                    HasUnsavedChanges = false;
+                }
             }
         }
 
         private void RulesChanged() {
+            HasUnsavedChanges = true;
             if (OnRulesChanged != null) {
                 OnRulesChanged();
             }

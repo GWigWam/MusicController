@@ -5,11 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController {
-
-    public struct Song {
+    public class Song {
         public string FilePath;
 
-        public SongAttributes Attributes;
+        public SongAttributes Attributes { get; private set; }
+
+        public string Title {
+            get {
+                return Attributes.Title;
+            }
+            set {
+                Attributes = new SongAttributes(value, Attributes.Artist, Attributes.Album);
+            }
+        }
+
+        public string Artist {
+            get {
+                return Attributes.Artist;
+            }
+            set {
+                Attributes = new SongAttributes(Attributes.Title, value, Attributes.Album);
+            }
+        }
+
+        public string Album {
+            get {
+                return Attributes.Album;
+            }
+            set {
+                Attributes = new SongAttributes(Attributes.Title, Attributes.Artist, value);
+            }
+        }
 
         public Song(string title, string artist, string album, string filePath) {
             if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(filePath)) {
