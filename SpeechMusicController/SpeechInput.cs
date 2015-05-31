@@ -30,10 +30,14 @@ namespace SpeechMusicController {
         }
 
         private static void Start() {
-            LoadGrammar();
+            try {
+                LoadGrammar();
 
-            SRecognize.SetInputToDefaultAudioDevice();
-            SRecognize.RecognizeAsync(RecognizeMode.Multiple);
+                SRecognize.SetInputToDefaultAudioDevice();
+                SRecognize.RecognizeAsync(RecognizeMode.Multiple);
+            } catch (Exception e) {
+                System.Windows.Forms.MessageBox.Show("Error while starting SpeechInput\n" + e.ToString());
+            }
             SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
         }
 
