@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 
 namespace SpeechMusicController {
-    internal class Aimp3Player : IPlayer, IDisposable {
+    public class Aimp3Player : IPlayer, IDisposable {
         private Process aimp3;
         private const int MaxCharInFilename = 32000; //32,768 actually, but keep some headroom
 
@@ -15,12 +15,13 @@ namespace SpeechMusicController {
             aimp3.StartInfo.FileName = playerLoc;
         }
 
-        public void Play(Song song) {
-            aimp3.StartInfo.Arguments = string.Format("/ADD_PLAY \"{0}\"", song.FilePath);//Add " at begin and end so AIMP3 gets it
+        public void Play(Uri song) {
+            //Add " at begin and end so AIMP3 gets it
+            aimp3.StartInfo.Arguments = string.Format("/ADD_PLAY \"{0}\"", song.LocalPath);
             aimp3.Start();
         }
 
-        public async void Play(IEnumerable<Song> playList) {
+        public async void Play(IEnumerable<Uri> playList) {
             if (playList.Count() >= 1) {
                 //Play 1st song
                 Play(playList.First());
@@ -46,13 +47,13 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Insert(IEnumerable<Song> inserList) {
+        private void Insert(IEnumerable<Uri> inserList) {
             string insertString = "/INSERT ";
-            List<Song> insertLater = new List<Song>();
+            var insertLater = new List<Uri>();
 
-            foreach (Song curSong in inserList) {
+            foreach (Uri curSong in inserList) {
                 if (insertString.Length < MaxCharInFilename) {
-                    insertString += string.Format("\"{0}\" ", curSong.FilePath);
+                    insertString += string.Format("\"{0}\" ", curSong.LocalPath);
                 } else {
                     insertLater.Add(curSong);
                 }

@@ -47,14 +47,14 @@ namespace SpeechMusicController {
                     ListeningTimer.Instance.StopListening();
                 }},
                 { "collection", () => {
-                    Player.Play(MusicList.ActiveSongs.OrderBy(s => random.Next()).ToArray());
+                    Player.Play(MusicList.ActiveSongs.OrderBy(s => random.Next()).Select(s => s.FilePath));
                     ListeningTimer.Instance.StopListening();
                 }},
                 { "full collection", () => {
-                    Player.Play(MusicList.AllSongs.OrderBy(s => random.Next()).ToArray());
+                    Player.Play(MusicList.AllSongs.OrderBy(s => random.Next()).Select(s => s.FilePath));
                     ListeningTimer.Instance.StopListening();
                 }},
-                { "random", () => Player.Play(MusicList.GetRandomSong()) },
+                { "random", () => Player.Play(MusicList.GetRandomSong().FilePath) },
                 { "next", Player.Next },
                 { "previous", Player.Previous },
                 { "volume up", Player.VolUp },
@@ -105,7 +105,7 @@ namespace SpeechMusicController {
                 if (SpeechCommands.ContainsKey(input)) {
                     SpeechCommands[input]();
                 } else {
-                    Player.Play(MusicList.GetMatchingSongs(input));
+                    Player.Play(MusicList.GetMatchingSongs(input).Select(s => s.FilePath));
                     ListeningTimer.Instance.StopListening();
                 }
             } catch (Exception e) {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpeechMusicController {
     public class Song {
-        public string FilePath;
+        public Uri FilePath;
 
         public SongAttributes Attributes { get; private set; }
 
@@ -37,12 +37,25 @@ namespace SpeechMusicController {
             }
         }
 
-        public Song(string title, string artist, string album, string filePath) {
-            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(filePath)) {
-                throw new ArgumentException("Invallid, name & filepath cannot be null");
+        public Song(string title, string artist, string album, string filePath)
+            : this(title, artist, album) {
+            if (Uri.IsWellFormedUriString(filePath, UriKind.Absolute)) {
+                throw new ArgumentException("Invallid filepath");
+            }
+            FilePath = new Uri(filePath, UriKind.Absolute);
+        }
+
+        public Song(string title, string artist, string album, Uri filePath)
+            : this(title, artist, album) {
+            FilePath = filePath;
+        }
+
+        //Use for creating everything except FilePath
+        private Song(string title, string artist, string album) {
+            if (string.IsNullOrWhiteSpace(title)) {
+                throw new ArgumentException("Invallid, name cannot be null");
             }
             Attributes = new SongAttributes(title, artist, album);
-            FilePath = filePath;
         }
 
         public override string ToString() {

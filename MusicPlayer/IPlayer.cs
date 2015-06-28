@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace SpeechMusicController {
 
-    internal interface IPlayer {
+    public interface IPlayer {
 
-        void Play(Song song);
+        void Play(Uri song);
 
-        void Play(IEnumerable<Song> playList);
+        void Play(IEnumerable<Uri> playList);
 
         void Play();
 

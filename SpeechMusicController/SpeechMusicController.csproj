@@ -54,7 +54,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPlayer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,7 +67,6 @@
     <Compile Include="ListeningTimer.Designer.cs">
       <DependentUpon>ListeningTimer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Aimp3Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RulesEdit.cs">
@@ -116,7 +114,12 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\MusicPlayer\MusicPlayer.csproj">
+      <Project>{b9bad4ec-7748-4267-bdda-7eeb72e91bb1}</Project>
+      <Name>MusicPlayer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
