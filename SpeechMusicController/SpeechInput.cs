@@ -9,24 +9,58 @@ using System.Threading.Tasks;
 
 namespace SpeechMusicController {
     public static class SpeechInput {
-        public static string[] Keywords = new string[] { "music", "switch", "random", "next", "previous", "collection", "volume up", "volume down" };
+
+        public static IEnumerable<string> Keywords {
+            get {
+                yield return "music";
+                foreach (var command in SpeechCommands.Keys) {
+                    yield return command;
+                }
+            }
+        }
+
+        public static Dictionary<string, Action> SpeechCommands;
 
         public static event Action<string> MessageSend;
 
         private static SpeechRecognitionEngine SRecognize = new SpeechRecognitionEngine();
-
+        private static Random random = new Random();
         private static IPlayer Player;
 
         static SpeechInput() {
             string path = Settings.Instance.GetSetting("PlayerPath");
             if (!string.IsNullOrEmpty(path)) {
                 Player = new Aimp3Player(path);
+                InitCommands();
                 Start();
 
                 Settings.Instance.OnRulesChanged += LoadGrammar;
             } else {
                 System.Windows.Forms.MessageBox.Show("Error: PlayerPath setting is empty");
             }
+        }
+
+        private static void InitCommands() {
+            SpeechCommands = new Dictionary<string, Action>(){
+                { "switch", () => {
+                    Player.Toggle();
+                    ListeningTimer.Instance.StopListening();
+                }},
+                { "collection", () => {
+                    Player.Play(MusicList.ActiveSongs.OrderBy(s => random.Next()).ToArray());
+                    ListeningTimer.Instance.StopListening();
+                }},
+                { "full collection", () => {
+                    Player.Play(MusicList.AllSongs.OrderBy(s => random.Next()).ToArray());
+                    ListeningTimer.Instance.StopListening();
+                }},
+                { "random", () => Player.Play(MusicList.GetRandomSong()) },
+                { "next", Player.Next },
+                { "previous", Player.Previous },
+                { "volume up", Player.VolUp },
+                { "volume down", Player.VolDown },
+                { "play", Player.Play }
+            };
         }
 
         private static void Start() {
@@ -42,18 +76,15 @@ namespace SpeechMusicController {
         }
 
         public static void LoadGrammar() {
-            Choices sList = new Choices();
-            sList.Add(Keywords);
+            var keywords = new Choices();
+            keywords.Add(Keywords.ToArray());
+            keywords.Add(MusicList.GetAllSongKeywords());
 
-            string[] keywords = MusicList.GetAllSongKeywords();
-            keywords = keywords.Select(s => Regex.Replace(s, @"\(|\)", "").Trim()).ToArray();
+            var grammerBuilder = new GrammarBuilder();
+            grammerBuilder.Append(keywords);
 
-            sList.Add(keywords);
-            GrammarBuilder gb = new GrammarBuilder();
-            gb.Append(sList);
-            Grammar gr = new Grammar(gb);
             SRecognize.UnloadAllGrammars();
-            SRecognize.LoadGrammar(gr);
+            SRecognize.LoadGrammar(new Grammar(grammerBuilder));
         }
 
         private static void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
@@ -71,29 +102,14 @@ namespace SpeechMusicController {
         public static void ExecuteCommand(string input) {
             SendMessage(input);
             try {
-                if (input == "switch") {
-                    Player.Toggle();
-                    ListeningTimer.Instance.StopListening();
-                } else if (input == "random") {
-                    Player.Play(MusicList.GetRandomSong());
-                } else if (input == "next") {
-                    Player.Next();
-                } else if (input == "previous") {
-                    Player.Previous();
-                } else if (input == "collection") {
-                    Random rand = new Random();
-                    Player.Play(MusicList.ActiveSongs.OrderBy(s => rand.Next()).ToArray());
-                    ListeningTimer.Instance.StopListening();
-                } else if (input == "volume up") {
-                    Player.VolUp();
-                } else if (input == "volume down") {
-                    Player.VolDown();
+                if (SpeechCommands.ContainsKey(input)) {
+                    SpeechCommands[input]();
                 } else {
                     Player.Play(MusicList.GetMatchingSongs(input));
                     ListeningTimer.Instance.StopListening();
                 }
-            } catch (Exception e1) {
-                SendMessage(e1.Message);
+            } catch (Exception e) {
+                SendMessage(e.ToString());
             }
         }
 

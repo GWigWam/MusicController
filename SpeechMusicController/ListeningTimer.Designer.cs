@@ -51,7 +51,9 @@
             // ListeningTimer
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.CausesValidation = false;
             this.ClientSize = new System.Drawing.Size(100, 100);
+            this.ControlBox = false;
             this.Controls.Add(this.NotifyText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;

@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 
 namespace SpeechMusicController {
     internal static class MusicList {
-        private static List<FileInfo> AllFiles;
         private static Random random;
 
         //All songs as read from disc
@@ -23,19 +22,24 @@ namespace SpeechMusicController {
             }
         }
 
+        public static IEnumerable<Song> AllSongs {
+            get {
+                return RemoveDuplicates(InternalSongList);
+            }
+        }
+
         static MusicList() {
+            random = new Random();
             ReadListFromDisc();
         }
 
         public static void ReadListFromDisc() {
-            AllFiles = new List<FileInfo>();
-            random = new Random();
             InternalSongList = new Song[0];
 
             var dirLoc = Settings.Instance.GetSetting("MusicFolder");
             if (!string.IsNullOrEmpty(dirLoc)) {
-                ScanDir(dirLoc);
-                OrganizeList();
+                FileInfo[] allFiles = ScanDir(dirLoc).ToArray();
+                InternalSongList = OrganizeList(allFiles).ToArray();
 
                 if (SongListUpdated != null) {
                     SongListUpdated();
@@ -45,29 +49,20 @@ namespace SpeechMusicController {
             }
         }
 
-        private static void ScanDir(string dirLoc) {
-            DirectoryInfo dir = new DirectoryInfo(dirLoc);
+        private static IEnumerable<FileInfo> ScanDir(string dirLoc) {
+            var dir = new DirectoryInfo(dirLoc);
             if (dir.Exists) {
                 //Console.WriteLine("Directory {0}", dir.FullName);
                 // list the files
-                try {
-                    //Add .mp3 files
-                    foreach (FileInfo f in dir.GetFiles("*.mp3")) {
-                        //Console.WriteLine("File {0}", f.Name);
-                        AllFiles.Add(f);
-                    }
-                } catch { }
-
-                // process each directory
-                foreach (DirectoryInfo d in dir.GetDirectories()) {
-                    ScanDir(d.FullName);
+                foreach (FileInfo f in dir.GetFiles("*.mp3", SearchOption.AllDirectories)) {
+                    yield return f;
                 }
             }
         }
 
-        private static void OrganizeList() {
+        private static IEnumerable<Song> OrganizeList(FileInfo[] allFiles) {
             List<Song> OrganizedList = new List<Song>();
-            foreach (FileInfo fi in AllFiles) {
+            foreach (FileInfo fi in allFiles) {
                 var fileProps = TagLib.File.Create(fi.FullName);
 
                 var propTitle = string.IsNullOrWhiteSpace(fileProps.Tag.Title) ? null : fileProps.Tag.Title;
@@ -91,9 +86,8 @@ namespace SpeechMusicController {
                     propArtist == null ? fileArtist : propArtist,
                     propAlbum == null ? null : propAlbum, //Technically not necessary
                     fi.FullName);
-                OrganizedList.Add(song);
+                yield return song;
             }
-            InternalSongList = OrganizedList.ToArray();
         }
 
         private static IEnumerable<Song> RemoveDuplicates(IEnumerable<Song> songs) {
@@ -122,21 +116,36 @@ namespace SpeechMusicController {
             var keywordList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             //Add everything to list
-            foreach (Song song in ActiveSongs) {
+            foreach (Song song in AllSongs) {
                 if (!string.IsNullOrEmpty(song.Album)) keywordList.Add(song.Album);
                 if (!string.IsNullOrEmpty(song.Artist)) keywordList.Add(song.Artist);
                 if (!string.IsNullOrEmpty(song.Title)) keywordList.Add(song.Title);
             }
 
-            return keywordList.ToArray();
+            return keywordList.Select(s => Regex.Replace(s, @"\(|\)", "").Trim()).ToArray();
         }
 
         public static IEnumerable<Song> GetMatchingSongs(string keyword) {
+            //Get matches from active songs
             IEnumerable<Song> retList = ActiveSongs.Where(s =>
                 string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
                 string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)
+            );
 
+            if (retList.Count() == 0) {
+                //If no matches in active, search for matches in all songs
+                retList = AllSongs.Where(s =>
+                    string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                    string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                    string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)
+                );
+            }
+
+            //Shuffle
+            retList = retList.OrderBy(s => random.Next());
+
+            //Sort by relevance
             retList = retList.OrderByDescending(s => {
                 if (string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) return 1;
                 if (string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) return 0;

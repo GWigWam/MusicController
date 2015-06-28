@@ -36,7 +36,7 @@ namespace SpeechMusicController {
 
         private void UpdateSuggestions() {
             var source = new AutoCompleteStringCollection();
-            source.AddRange(SpeechInput.Keywords);
+            source.AddRange(SpeechInput.Keywords.ToArray());
             source.AddRange(MusicList.GetAllSongKeywords());
             KeyInput.AutoCompleteCustomSource.Clear();
             KeyInput.AutoCompleteCustomSource = source;
