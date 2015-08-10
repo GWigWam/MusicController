@@ -62,4 +62,21 @@ namespace SpeechMusicController {
             return string.Format("{0} - {1} ({2})", Attributes.Title, Attributes.Artist, Attributes.Album);
         }
     }
+
+    public class SongComparerByTitleAndArtist : IEqualityComparer<Song> {
+        private const int CharMultiplier = 90;
+
+        public bool Equals(Song x, Song y) {
+            // In most cases (false) only 1 calculation will be nessisary
+            return GetHashCode(x) == GetHashCode(y);
+        }
+
+        public int GetHashCode(Song obj) {
+            if (object.ReferenceEquals(obj, null)) {
+                return 0;
+            } else {
+                return obj.Attributes.Title.GetHashCode() * obj.Attributes.Artist.GetHashCode();
+            }
+        }
+    }
 }

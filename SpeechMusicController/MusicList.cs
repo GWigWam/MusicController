@@ -91,7 +91,7 @@ namespace SpeechMusicController {
         }
 
         private static IEnumerable<Song> RemoveDuplicates(IEnumerable<Song> songs) {
-            return new HashSet<Song>(songs);
+            return new HashSet<Song>(songs, new SongComparerByTitleAndArtist());
         }
 
         private static List<Song> ApplyRules(IEnumerable<Song> songs) {
