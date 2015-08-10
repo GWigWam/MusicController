@@ -8,9 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController {
-    public static class SpeechInput {
+    public class SpeechInput {
 
-        public static IEnumerable<string> Keywords {
+        public IEnumerable<string> Keywords {
             get {
                 yield return "music";
                 foreach (var command in SpeechCommands.Keys) {
@@ -19,15 +19,15 @@ namespace SpeechMusicController {
             }
         }
 
-        public static Dictionary<string, Action> SpeechCommands;
+        public Dictionary<string, Action> SpeechCommands;
 
-        public static event Action<string> MessageSend;
+        public event Action<string> MessageSend;
 
-        private static SpeechRecognitionEngine SRecognize = new SpeechRecognitionEngine();
-        private static Random random = new Random();
-        private static IPlayer Player;
+        private SpeechRecognitionEngine SRecognize = new SpeechRecognitionEngine();
+        private Random random = new Random();
+        private IPlayer Player;
 
-        static SpeechInput() {
+        public SpeechInput() {
             string path = Settings.Instance.GetSetting("PlayerPath");
             if (!string.IsNullOrEmpty(path)) {
                 Player = new Aimp3Player(path);
@@ -40,7 +40,7 @@ namespace SpeechMusicController {
             }
         }
 
-        private static void InitCommands() {
+        private void InitCommands() {
             SpeechCommands = new Dictionary<string, Action>(){
                 { "switch", () => {
                     Player.Toggle();
@@ -63,7 +63,7 @@ namespace SpeechMusicController {
             };
         }
 
-        private static void Start() {
+        private void Start() {
             try {
                 LoadGrammar();
 
@@ -75,7 +75,7 @@ namespace SpeechMusicController {
             SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
         }
 
-        public static void LoadGrammar() {
+        public void LoadGrammar() {
             var keywords = new Choices();
             keywords.Add(Keywords.ToArray());
             keywords.Add(MusicList.GetAllSongKeywords());
@@ -87,7 +87,7 @@ namespace SpeechMusicController {
             SRecognize.LoadGrammar(new Grammar(grammerBuilder));
         }
 
-        private static void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
+        private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             var input = e.Result.Text;
 
             if (ListeningTimer.Instance.IsListening) {
@@ -99,7 +99,7 @@ namespace SpeechMusicController {
             }
         }
 
-        public static void ExecuteCommand(string input) {
+        public void ExecuteCommand(string input) {
             SendMessage(input);
             try {
                 if (SpeechCommands.ContainsKey(input)) {
@@ -113,7 +113,7 @@ namespace SpeechMusicController {
             }
         }
 
-        private static void SendMessage(string message) {
+        private void SendMessage(string message) {
             if (MessageSend != null) {
                 MessageSend(message);
             }

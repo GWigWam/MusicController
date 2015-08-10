@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace SpeechMusicController {
     public partial class MainForm : Form {
+        private SpeechInput SpeechControll;
 
         public MainForm() {
             InitializeComponent();
@@ -22,14 +23,16 @@ namespace SpeechMusicController {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            foreach (var word in SpeechInput.Keywords) {
+            SpeechControll = new SpeechInput();
+
+            foreach (var word in SpeechControll.Keywords) {
                 Write(word + ", ");
             }
             WriteLine("Possible: ");
 
             UpdateSuggestions();
 
-            SpeechInput.MessageSend += (s) => {
+            SpeechControll.MessageSend += (s) => {
                 Action<string> update = WriteLine;
                 Invoke(update, s);
             };
@@ -45,7 +48,7 @@ namespace SpeechMusicController {
 
         private void UpdateSuggestions() {
             var source = new AutoCompleteStringCollection();
-            source.AddRange(SpeechInput.Keywords.ToArray());
+            source.AddRange(SpeechControll.Keywords.ToArray());
             source.AddRange(MusicList.GetAllSongKeywords());
             KeyInput.AutoCompleteCustomSource.Clear();
             KeyInput.AutoCompleteCustomSource = source;
@@ -63,7 +66,7 @@ namespace SpeechMusicController {
 
         private void KeyInput_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) {
-                SpeechInput.ExecuteCommand(KeyInput.Text.ToLower());
+                SpeechControll.ExecuteCommand(KeyInput.Text.ToLower());
                 KeyInput.Text = "";
             } else if (e.KeyCode == Keys.Escape) {
                 HideWindow();
