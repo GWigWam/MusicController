@@ -29,9 +29,18 @@ namespace SpeechMusicController {
 
             UpdateSuggestions();
 
-            SpeechInput.MessageSend += WriteLine;
-            Settings.Instance.OnRulesChanged += UpdateSuggestions;
-            MusicList.SongListUpdated += UpdateSuggestions;
+            SpeechInput.MessageSend += (s) => {
+                Action<string> update = WriteLine;
+                Invoke(update, s);
+            };
+            Settings.Instance.OnRulesChanged += () => {
+                Action update = UpdateSuggestions;
+                Invoke(update);
+            };
+            MusicList.SongListUpdated += () => {
+                Action update = UpdateSuggestions;
+                Invoke(update);
+            };
         }
 
         private void UpdateSuggestions() {
@@ -90,7 +99,7 @@ namespace SpeechMusicController {
         }
 
         public void Write(string message) {
-            textBox1.Text = message + textBox1.Text;
+            Tb_Output.Text = message + Tb_Output.Text;
         }
 
         public void WriteLine(string message) {
@@ -113,11 +122,25 @@ namespace SpeechMusicController {
         #region Refresh
 
         private void Bt_Refresh_Click(object sender, EventArgs e) {
-            MusicList.ReadListFromDisc();
+            UpdateMusicList();
         }
 
         private void MenuItemRefresh_Click(object sender, EventArgs e) {
-            MusicList.ReadListFromDisc();
+            UpdateMusicList();
+        }
+
+        private async void UpdateMusicList() {
+            Bt_Refresh.Enabled = false;
+            KeyInput.Enabled = false;
+            KeyInput.Text = "Refreshing...";
+
+            await Task.Run(() => {
+                MusicList.ReadListFromDisc();
+            });
+
+            KeyInput.Text = "";
+            KeyInput.Enabled = true;
+            Bt_Refresh.Enabled = true;
         }
 
         #endregion Refresh

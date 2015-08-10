@@ -25,7 +25,7 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.Tb_Output = new System.Windows.Forms.TextBox();
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MenuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,16 +39,16 @@
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // textBox1
+            // Tb_Output
             // 
-            this.textBox1.AcceptsReturn = true;
-            this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.textBox1.Location = new System.Drawing.Point(12, 38);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(179, 80);
-            this.textBox1.TabIndex = 0;
+            this.Tb_Output.AcceptsReturn = true;
+            this.Tb_Output.Cursor = System.Windows.Forms.Cursors.Default;
+            this.Tb_Output.Location = new System.Drawing.Point(12, 38);
+            this.Tb_Output.Multiline = true;
+            this.Tb_Output.Name = "Tb_Output";
+            this.Tb_Output.ReadOnly = true;
+            this.Tb_Output.Size = new System.Drawing.Size(179, 80);
+            this.Tb_Output.TabIndex = 0;
             // 
             // NotifyIcon
             // 
@@ -142,7 +142,7 @@
             this.Controls.Add(this.Bt_Refresh);
             this.Controls.Add(this.Bt_Rules);
             this.Controls.Add(this.KeyInput);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.Tb_Output);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -162,7 +162,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox Tb_Output;
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem MenuItemExit;

@@ -13,6 +13,7 @@ namespace SpeechMusicController {
         private const int ListeningTimeIncrement = 10000;
 
         private static ListeningTimer instance;
+
         public static ListeningTimer Instance {
             get {
                 if (instance == null) {
@@ -45,13 +46,13 @@ namespace SpeechMusicController {
         }
 
         public void IncrementTime(int TimeMS = ListeningTimeIncrement) {
+            System.Media.SystemSounds.Beep.Play();
             if (IsListening) {
                 ListeningUntil += TimeMS;
             } else {
                 ListeningUntil = Environment.TickCount + TimeMS;
             }
             Hidden = false;
-            System.Media.SystemSounds.Beep.Play();
         }
 
         public void StopListening() {
@@ -60,7 +61,7 @@ namespace SpeechMusicController {
 
         private ListeningTimer(int TimeUntilEnd = 0) {
             InitializeComponent();
-            
+
             Screen screen = Screen.AllScreens[0];
             this.Left = screen.WorkingArea.Right - this.Width - 100;
             this.Top = screen.WorkingArea.Bottom - this.Height - 100;
