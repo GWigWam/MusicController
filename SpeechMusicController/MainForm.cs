@@ -23,7 +23,17 @@ namespace SpeechMusicController {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            SpeechControll = new SpeechInput();
+            Init();
+        }
+
+        private void Init() {
+            string path = Settings.Instance.GetSetting("PlayerPath");
+            if (!string.IsNullOrEmpty(path)) {
+                SpeechControll = new SpeechInput(path);
+            } else {
+                System.Windows.Forms.MessageBox.Show("Error: PlayerPath setting is empty");
+                return;
+            }
 
             foreach (var word in SpeechControll.Keywords) {
                 Write(word + ", ");
@@ -136,6 +146,10 @@ namespace SpeechMusicController {
             Bt_Refresh.Enabled = false;
             KeyInput.Enabled = false;
             KeyInput.Text = "Refreshing...";
+
+            if (SpeechControll == null) {
+                Init();
+            }
 
             await Task.Run(() => {
                 MusicList.ReadListFromDisc();

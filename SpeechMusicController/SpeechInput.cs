@@ -13,8 +13,10 @@ namespace SpeechMusicController {
         public IEnumerable<string> Keywords {
             get {
                 yield return "music";
-                foreach (var command in SpeechCommands.Keys) {
-                    yield return command;
+                if (SpeechCommands != null) {
+                    foreach (var command in SpeechCommands.Keys) {
+                        yield return command;
+                    }
                 }
             }
         }
@@ -27,17 +29,12 @@ namespace SpeechMusicController {
         private Random random = new Random();
         private IPlayer Player;
 
-        public SpeechInput() {
-            string path = Settings.Instance.GetSetting("PlayerPath");
-            if (!string.IsNullOrEmpty(path)) {
-                Player = new Aimp3Player(path);
-                InitCommands();
-                Start();
+        public SpeechInput(string playerPath) {
+            Player = new Aimp3Player(playerPath);
+            InitCommands();
+            Start();
 
-                Settings.Instance.OnRulesChanged += LoadGrammar;
-            } else {
-                System.Windows.Forms.MessageBox.Show("Error: PlayerPath setting is empty");
-            }
+            Settings.Instance.OnRulesChanged += LoadGrammar;
         }
 
         private void InitCommands() {
