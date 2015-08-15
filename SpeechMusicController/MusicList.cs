@@ -72,9 +72,6 @@ namespace SpeechMusicController {
                 //Strip .mp3
                 var fileTitle = fi.Name.Substring(0, fi.Name.Length - 4);
 
-                //Get rid of '(' & ')'
-                fileTitle = Regex.Replace(fileTitle, @"(\(|\))", "").Trim();
-
                 string fileArtist = null;
                 if (fileTitle.Contains(" - ")) {
                     fileArtist = fileTitle.Substring(0, fileTitle.IndexOf(" - ")).Trim();
@@ -82,9 +79,9 @@ namespace SpeechMusicController {
                 }
 
                 Song song = new Song(
-                    propTitle == null ? fileTitle : propTitle,
+                    propTitle == null ? Regex.Replace(fileTitle, @"(\(|\))", "").Trim() : Regex.Replace(propTitle, @"(\(|\))", "").Trim(),
                     propArtist == null ? fileArtist : propArtist,
-                    propAlbum == null ? null : propAlbum, //Technically not necessary
+                    propAlbum,
                     fi.FullName);
                 yield return song;
             }
@@ -122,7 +119,8 @@ namespace SpeechMusicController {
                 if (!string.IsNullOrEmpty(song.Title)) keywordList.Add(song.Title);
             }
 
-            return keywordList.Select(s => Regex.Replace(s, @"\(|\)", "").Trim()).ToArray();
+            //return keywordList.Select(s => Regex.Replace(s, @"\(|\)", "").Trim()).ToArray();
+            return keywordList.ToArray();
         }
 
         public static IEnumerable<Song> GetMatchingSongs(string keyword) {
