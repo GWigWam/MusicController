@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController {
+
     public class Song {
         public Uri FilePath;
 
@@ -39,7 +40,7 @@ namespace SpeechMusicController {
 
         public Song(string title, string artist, string album, string filePath)
             : this(title, artist, album) {
-            if (Uri.IsWellFormedUriString(filePath, UriKind.Absolute)) {
+            if(Uri.IsWellFormedUriString(filePath, UriKind.Absolute)) {
                 throw new ArgumentException("Invallid filepath");
             }
             FilePath = new Uri(filePath, UriKind.Absolute);
@@ -52,27 +53,23 @@ namespace SpeechMusicController {
 
         //Use for creating everything except FilePath
         private Song(string title, string artist, string album) {
-            if (string.IsNullOrWhiteSpace(title)) {
+            if(string.IsNullOrWhiteSpace(title)) {
                 throw new ArgumentException("Invallid, name cannot be null");
             }
             Attributes = new SongAttributes(title, artist, album);
         }
 
-        public override string ToString() {
-            return string.Format("{0} - {1} ({2})", Attributes.Title, Attributes.Artist, Attributes.Album);
-        }
+        public override string ToString() => $"{Attributes.Title} - {Attributes.Artist} ({Attributes.Album})";
     }
 
     public class SongComparerByTitleAndArtist : IEqualityComparer<Song> {
         private const int CharMultiplier = 90;
 
-        public bool Equals(Song x, Song y) {
-            // In most cases (false) only 1 calculation will be nessisary
-            return GetHashCode(x) == GetHashCode(y);
-        }
+        // In most cases (false) only 1 calculation will be nessisary
+        public bool Equals(Song x, Song y) => GetHashCode(x) == GetHashCode(y);
 
         public int GetHashCode(Song obj) {
-            if (object.ReferenceEquals(obj, null)) {
+            if(object.ReferenceEquals(obj, null)) {
                 return 0;
             } else {
                 return obj.Attributes.Title.GetHashCode() * obj.Attributes.Artist.GetHashCode();

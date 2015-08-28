@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController.AppSettings.Model {
+
     public abstract class SongRule {
         public readonly SongAttributes Attributes;
 
@@ -17,9 +18,7 @@ namespace SpeechMusicController.AppSettings.Model {
             Type = type;
         }
 
-        public override string ToString() {
-            return string.Format("{0}: {1} - {2} ({3})", Type, Attributes.Title, Attributes.Artist, Attributes.Album);
-        }
+        public override string ToString() => $"{Type}: {Attributes.Title} - {Attributes.Artist} ({Attributes.Album})";
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

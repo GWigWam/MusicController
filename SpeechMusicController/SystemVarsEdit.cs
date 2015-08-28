@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
+
     public partial class SystemVarsEdit : Form {
 
         public SystemVarsEdit() {
@@ -28,7 +29,7 @@ namespace SpeechMusicController {
         }
 
         private void Bt_Ok_Click(object sender, EventArgs e) {
-            if (Lb_List.SelectedItem as string != null && !string.IsNullOrEmpty(Tb_NewString.Text)) {
+            if(Lb_List.SelectedItem as string != null && !string.IsNullOrEmpty(Tb_NewString.Text)) {
                 string key = (string)Lb_List.SelectedItem;
                 Settings.Instance.SetSetting(key, Tb_NewString.Text.Trim());
 
@@ -36,12 +37,10 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Bt_SaveToFile_Click(object sender, EventArgs e) {
-            Settings.Instance.WriteToDisc();
-        }
+        private void Bt_SaveToFile_Click(object sender, EventArgs e) => Settings.Instance.WriteToDisc();
 
         private void Tb_NewString_TextChanged(object sender, EventArgs e) {
-            if (Tb_NewString.Text != Settings.Instance.GetSetting((string)Lb_List.SelectedItem)) {
+            if(Tb_NewString.Text != Settings.Instance.GetSetting((string)Lb_List.SelectedItem)) {
                 Bt_Ok.Enabled = true;
             } else {
                 Bt_Ok.Enabled = false;

@@ -8,13 +8,14 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController {
+
     public class SpeechInput {
 
         public IEnumerable<string> Keywords {
             get {
                 yield return "music";
-                if (SpeechCommands != null) {
-                    foreach (var command in SpeechCommands.Keys) {
+                if(SpeechCommands != null) {
+                    foreach(var command in SpeechCommands.Keys) {
                         yield return command;
                     }
                 }
@@ -66,7 +67,7 @@ namespace SpeechMusicController {
 
                 SRecognize.SetInputToDefaultAudioDevice();
                 SRecognize.RecognizeAsync(RecognizeMode.Multiple);
-            } catch (Exception e) {
+            } catch(Exception e) {
                 System.Windows.Forms.MessageBox.Show("Error while starting SpeechInput\n" + e.ToString());
             }
             SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
@@ -85,35 +86,32 @@ namespace SpeechMusicController {
         }
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
+            SendMessage($"{e.Result.Text} ({e.Result.Confidence * 100:#}%)");
+
             var input = e.Result.Text;
 
-            if (ListeningTimer.Instance.IsListening) {
+            if(ListeningTimer.Instance.IsListening) {
                 ExecuteCommand(input);
             }
 
-            if (input == "music") {
+            if(input == "music") {
                 ListeningTimer.Instance.IncrementTime();
             }
         }
 
         public void ExecuteCommand(string input) {
-            SendMessage(input);
             try {
-                if (SpeechCommands.ContainsKey(input)) {
+                if(SpeechCommands.ContainsKey(input)) {
                     SpeechCommands[input]();
                 } else {
                     Player.Play(MusicList.GetMatchingSongs(input).Select(s => s.FilePath));
                     ListeningTimer.Instance.StopListening();
                 }
-            } catch (Exception e) {
+            } catch(Exception e) {
                 SendMessage(e.ToString());
             }
         }
 
-        private void SendMessage(string message) {
-            if (MessageSend != null) {
-                MessageSend(message);
-            }
-        }
+        private void SendMessage(string mesage) => MessageSend?.Invoke(mesage ?? "");
     }
 }

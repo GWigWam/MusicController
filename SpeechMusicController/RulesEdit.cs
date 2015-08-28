@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
+
     public partial class RulesEdit : Form {
 
         public RulesEdit() {
@@ -25,7 +26,6 @@ namespace SpeechMusicController {
 
         private void FillRuleList() {
             Lb_Rules.Items.Clear();
-
             Lb_Rules.Items.AddRange(Settings.Instance.GetSongRules(true, true));
         }
 
@@ -35,23 +35,21 @@ namespace SpeechMusicController {
             IEnumerable<Song> songList = MusicList.ActiveSongs.OrderBy(s => s.Title);
             var searchWord = Tb_Search.Text;
 
-            if (!string.IsNullOrWhiteSpace(searchWord)) {
+            if(!string.IsNullOrWhiteSpace(searchWord)) {
                 songList = songList.Where(s => s.ToString().ToLower().Contains(searchWord.ToLower()));
             }
 
-            foreach (var song in songList) {
+            foreach(var song in songList) {
                 Lb_Songs.Items.Add(song);
             }
         }
 
-        private void Tb_Rename_Click(object sender, EventArgs e) {
-            Tb_Rename.Text = string.Empty;
-        }
+        private void Tb_Rename_Click(object sender, EventArgs e) => Tb_Rename.Text = string.Empty;
 
         private void Bt_DeleteRule_Click(object sender, EventArgs e) {
             SongRule selected = (Lb_Rules.SelectedItem as SongRule);
 
-            if (selected != null) {
+            if(selected != null) {
                 Settings.Instance.RemoveSongRule(selected);
 
                 int index = Lb_Rules.SelectedIndex;
@@ -59,13 +57,13 @@ namespace SpeechMusicController {
 
                 try {
                     Lb_Rules.SelectedIndex = index;
-                } catch (ArgumentOutOfRangeException) { }
+                } catch(ArgumentOutOfRangeException) { }
                 Lb_Rules.Focus();
             }
         }
 
         private void Bt_ExcludeSong_Click(object sender, EventArgs e) {
-            if (Lb_Songs.SelectedItem is Song) {
+            if(Lb_Songs.SelectedItem is Song) {
                 Song selected = (Song)Lb_Songs.SelectedItem;
                 Settings.Instance.AddSongRule(new ExcludeRule(selected.Attributes));
 
@@ -73,14 +71,14 @@ namespace SpeechMusicController {
                 SetupLists();
                 try {
                     Lb_Songs.SelectedIndex = index;
-                } catch (ArgumentOutOfRangeException) { }
+                } catch(ArgumentOutOfRangeException) { }
                 Lb_Songs.Focus();
             }
         }
 
         private void Bt_RenameSong_Click(object sender, EventArgs e) {
-            if (!string.IsNullOrWhiteSpace(Tb_Rename.Text)) {
-                if (Lb_Songs.SelectedItem is Song) {
+            if(!string.IsNullOrWhiteSpace(Tb_Rename.Text)) {
+                if(Lb_Songs.SelectedItem is Song) {
                     Song selected = (Song)Lb_Songs.SelectedItem;
 
                     Settings.Instance.AddSongRule(new NameChangeRule(selected.Attributes, Tb_Rename.Text.Trim()));
@@ -89,7 +87,7 @@ namespace SpeechMusicController {
                     SetupLists();
                     try {
                         Lb_Songs.SelectedIndex = index;
-                    } catch (ArgumentOutOfRangeException) { }
+                    } catch(ArgumentOutOfRangeException) { }
                     Lb_Songs.Focus();
                     Tb_Rename.Text = string.Empty;
                 } else {
@@ -99,7 +97,7 @@ namespace SpeechMusicController {
         }
 
         private void Lb_Rules_Click(object sender, EventArgs e) {
-            if (Lb_Rules.SelectedIndex >= 0) {
+            if(Lb_Rules.SelectedIndex >= 0) {
                 Lb_Songs.ClearSelected();
 
                 Bt_DeleteRule.Enabled = true;
@@ -110,7 +108,7 @@ namespace SpeechMusicController {
         }
 
         private void Lb_Songs_Click(object sender, EventArgs e) {
-            if (Lb_Songs.SelectedIndex >= 0) {
+            if(Lb_Songs.SelectedIndex >= 0) {
                 Lb_Rules.ClearSelected();
 
                 Bt_DeleteRule.Enabled = false;
@@ -120,8 +118,6 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Tb_Search_TextChanged(object sender, EventArgs e) {
-            FillSongList();
-        }
+        private void Tb_Search_TextChanged(object sender, EventArgs e) => FillSongList();
     }
 }

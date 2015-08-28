@@ -1,41 +1,35 @@
 ﻿using SpeechMusicController.AppSettings;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
+
     public partial class MainForm : Form {
         private SpeechInput SpeechControll;
 
         public MainForm() {
             InitializeComponent();
 
-            this.WindowState = FormWindowState.Minimized;
-            this.ShowInTaskbar = false;
-            this.ActiveControl = KeyInput;
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
+            ActiveControl = KeyInput;
             MoveToDefaultLocation();
         }
 
-        private void Form1_Load(object sender, EventArgs e) {
-            Init();
-        }
+        private void Form1_Load(object sender, EventArgs e) => Init();
 
         private void Init() {
             string path = Settings.Instance.GetSetting("PlayerPath");
-            if (!string.IsNullOrEmpty(path)) {
+            if(!string.IsNullOrEmpty(path)) {
                 SpeechControll = new SpeechInput(path);
             } else {
-                System.Windows.Forms.MessageBox.Show("Error: PlayerPath setting is empty");
+                MessageBox.Show("Error: PlayerPath setting is empty");
                 return;
             }
 
-            foreach (var word in SpeechControll.Keywords) {
+            foreach(var word in SpeechControll.Keywords) {
                 Write(word + ", ");
             }
             WriteLine("Possible: ");
@@ -67,7 +61,7 @@ namespace SpeechMusicController {
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
-            if (FormWindowState.Minimized == this.WindowState) {
+            if(FormWindowState.Minimized == this.WindowState) {
                 HideWindow();
             } else {
                 ShowWindow();
@@ -75,20 +69,18 @@ namespace SpeechMusicController {
         }
 
         private void KeyInput_KeyUp(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Enter) {
+            if(e.KeyCode == Keys.Enter) {
                 SpeechControll.ExecuteCommand(KeyInput.Text.ToLower());
                 KeyInput.Text = "";
-            } else if (e.KeyCode == Keys.Escape) {
+            } else if(e.KeyCode == Keys.Escape) {
                 HideWindow();
             }
         }
 
-        private void Form1_Deactivate(object sender, EventArgs e) {
-            HideWindow();
-        }
+        private void Form1_Deactivate(object sender, EventArgs e) => HideWindow();
 
         private void NotifyIcon_MouseClick(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Left) {
+            if(e.Button == MouseButtons.Left) {
                 ShowWindow();
             }
         }
@@ -111,21 +103,13 @@ namespace SpeechMusicController {
             this.Top = screen.WorkingArea.Bottom - this.Height;
         }
 
-        public void Write(string message) {
-            Tb_Output.Text = message + Tb_Output.Text;
-        }
+        public void Write(string message) => Tb_Output.Text = message + Tb_Output.Text;
 
-        public void WriteLine(string message) {
-            Write("\r\n" + message);
-        }
+        public void WriteLine(string message) => Write("\r\n" + message);
 
-        private void MenuItemShow_Click(object sender, EventArgs e) {
-            ShowWindow();
-        }
+        private void MenuItemShow_Click(object sender, EventArgs e) => ShowWindow();
 
-        private void MenuItemExit_Click(object sender, EventArgs e) {
-            Application.Exit();
-        }
+        private void MenuItemExit_Click(object sender, EventArgs e) => Application.Exit();
 
         private void Bt_Rules_Click(object sender, EventArgs e) {
             var rulesEdit = new RulesEdit();
@@ -134,20 +118,16 @@ namespace SpeechMusicController {
 
         #region Refresh
 
-        private void Bt_Refresh_Click(object sender, EventArgs e) {
-            UpdateMusicList();
-        }
+        private void Bt_Refresh_Click(object sender, EventArgs e) => UpdateMusicList();
 
-        private void MenuItemRefresh_Click(object sender, EventArgs e) {
-            UpdateMusicList();
-        }
+        private void MenuItemRefresh_Click(object sender, EventArgs e) => UpdateMusicList();
 
         private async void UpdateMusicList() {
             Bt_Refresh.Enabled = false;
             KeyInput.Enabled = false;
             KeyInput.Text = "Refreshing...";
 
-            if (SpeechControll == null) {
+            if(SpeechControll == null) {
                 Init();
             }
 

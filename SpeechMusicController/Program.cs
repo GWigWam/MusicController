@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SpeechMusicController {
+
     internal static class Program {
 
         /// <summary>
@@ -14,8 +15,8 @@ namespace SpeechMusicController {
         [STAThread]
         private static void Main(string[] args) {
             try {
-                for (int i = 0; i < args.Length; i++) {
-                    if (args[i] == "-delayed" || args[i] == "/delayed") {
+                for(int i = 0; i < args.Length; i++) {
+                    if(args[i] == "-delayed" || args[i] == "/delayed") {
                         System.Threading.Thread.Sleep(Int32.Parse(args[i + 1]));
                     }
                 }

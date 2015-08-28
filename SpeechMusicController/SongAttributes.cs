@@ -19,20 +19,12 @@ namespace SpeechMusicController {
             Album = album ?? string.Empty;
         }
 
-        public override int GetHashCode() {
-            return (Title ?? string.Empty).GetHashCode() + (Artist ?? string.Empty).GetHashCode() + (Album ?? string.Empty).GetHashCode();
-        }
+        public override int GetHashCode() => (Title ?? string.Empty).GetHashCode() + (Artist ?? string.Empty).GetHashCode() + (Album ?? string.Empty).GetHashCode();
 
-        public override bool Equals(object obj) {
-            return GetHashCode() == obj.GetHashCode();
-        }
+        public override bool Equals(object obj) => GetHashCode() == obj.GetHashCode();
 
-        public static bool operator ==(SongAttributes s1, SongAttributes s2) {
-            return s1.Equals(s2);
-        }
+        public static bool operator ==(SongAttributes s1, SongAttributes s2) => s1.Equals(s2);
 
-        public static bool operator !=(SongAttributes s1, SongAttributes s2) {
-            return !(s1 == s2);
-        }
+        public static bool operator !=(SongAttributes s1, SongAttributes s2) => !(s1 == s2);
     }
 }

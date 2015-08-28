@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SpeechMusicController.AppSettings {
+
     [JsonObject(Description = "SpeechMusicController's settings")]
     public class Settings {
         private const string FilePath = "settings.json";
@@ -15,20 +16,15 @@ namespace SpeechMusicController.AppSettings {
         private static bool HasUnsavedChanges;
 
         [JsonIgnore]
-        public string FullFilePath {
-            get {
-                var path = Path.GetFullPath(FilePath);
-                return path;
-            }
-        }
+        public string FullFilePath => Path.GetFullPath(FilePath);
 
         private static Settings instance;
 
         [JsonIgnore]
         public static Settings Instance {
             get {
-                if (instance == null) {
-                    if (File.Exists(FilePath)) {
+                if(instance == null) {
+                    if(File.Exists(FilePath)) {
                         try {
                             JSonSettings = new JsonSerializerSettings();
                             JSonSettings.Formatting = Formatting.Indented;
@@ -36,11 +32,11 @@ namespace SpeechMusicController.AppSettings {
                             string fileContent = File.ReadAllText(FilePath);
                             instance = JsonConvert.DeserializeObject<Settings>(fileContent, JSonSettings);
 
-                            if (instance == null) {
+                            if(instance == null) {
                                 File.Delete(FilePath);
                                 instance = new Settings();
                             }
-                        } catch (JsonReaderException jre) {
+                        } catch(JsonReaderException jre) {
                             System.Windows.Forms.MessageBox.Show("Invalid JSon in settings file!\n" + jre.ToString());
                             Environment.Exit(-1);
                         } catch {
@@ -83,22 +79,20 @@ namespace SpeechMusicController.AppSettings {
         }
 
         public string GetSetting(string name) {
-            if (!string.IsNullOrEmpty(name) && StringValues.ContainsKey(name)) {
+            if(!string.IsNullOrEmpty(name) && StringValues.ContainsKey(name)) {
                 return StringValues[name];
             } else {
                 return null;
             }
         }
 
-        public string[] GetAllSettingNames() {
-            return StringValues.Keys.ToArray();
-        }
+        public string[] GetAllSettingNames() => StringValues.Keys.ToArray();
 
         public void AddSongRule(SongRule rule) {
-            if (rule is NameChangeRule) {
+            if(rule is NameChangeRule) {
                 NameChangeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
                 NameChangeRules.Add(rule as NameChangeRule);
-            } else if (rule is ExcludeRule) {
+            } else if(rule is ExcludeRule) {
                 ExcludeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
                 ExcludeRules.Add(rule as ExcludeRule);
             }
@@ -106,9 +100,9 @@ namespace SpeechMusicController.AppSettings {
         }
 
         public void RemoveSongRule(SongRule rule) {
-            if (rule is NameChangeRule) {
+            if(rule is NameChangeRule) {
                 NameChangeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
-            } else if (rule is ExcludeRule) {
+            } else if(rule is ExcludeRule) {
                 ExcludeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
             }
             RulesChanged();
@@ -116,9 +110,9 @@ namespace SpeechMusicController.AppSettings {
 
         public SongRule[] GetSongRules(bool getNameChangeRules, bool getExcludeRules) {
             return ExcludeRules.Concat<SongRule>(NameChangeRules).Where(s => {
-                if (getNameChangeRules && s is NameChangeRule) {
+                if(getNameChangeRules && s is NameChangeRule) {
                     return true;
-                } else if (getExcludeRules && s is ExcludeRule) {
+                } else if(getExcludeRules && s is ExcludeRule) {
                     return true;
                 } else {
                     return false;
@@ -127,8 +121,8 @@ namespace SpeechMusicController.AppSettings {
         }
 
         public async void WriteToDisc() {
-            if (HasUnsavedChanges) {
-                using (StreamWriter sw = new StreamWriter(new FileStream(FilePath, FileMode.Create))) {
+            if(HasUnsavedChanges) {
+                using(StreamWriter sw = new StreamWriter(new FileStream(FilePath, FileMode.Create))) {
                     string content = JsonConvert.SerializeObject(instance, JSonSettings);
                     await sw.WriteAsync(content);
                     HasUnsavedChanges = false;
@@ -138,9 +132,7 @@ namespace SpeechMusicController.AppSettings {
 
         private void RulesChanged() {
             HasUnsavedChanges = true;
-            if (OnRulesChanged != null) {
-                OnRulesChanged();
-            }
+            OnRulesChanged?.Invoke();
         }
     }
 }
