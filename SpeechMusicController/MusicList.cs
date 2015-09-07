@@ -115,7 +115,7 @@ namespace SpeechMusicController {
             return keywordList.ToArray();
         }
 
-        public static IEnumerable<Song> GetMatchingSongs(string keyword) {
+        public static Song[] GetMatchingSongs(string keyword) {
             //Get matches from active songs
             IEnumerable<Song> retList = ActiveSongs.Where(s =>
                 string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
@@ -146,7 +146,7 @@ namespace SpeechMusicController {
                 return -1;
             });
 
-            return retList;
+            return retList.ToArray();
         }
 
         public static Song GetRandomSong() => ActiveSongs.ElementAt(random.Next(0, ActiveSongs.Count()));
