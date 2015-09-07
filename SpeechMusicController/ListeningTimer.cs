@@ -11,14 +11,10 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
 
     public partial class ListeningTimer : Form {
-        private const int ListeningTimeIncrement = 10000;
+        private const int ListeningTimeIncrement = 6000;
 
-        private static ListeningTimer instance;
-
-        public static ListeningTimer Instance => instance ?? (instance = new ListeningTimer());
-
-        private bool Hidden = false;
-        private long ListeningUntil = Environment.TickCount;
+        private bool Hidden;
+        private long ListeningUntil;
 
         public long TimeLeftMs {
             get {
@@ -28,7 +24,6 @@ namespace SpeechMusicController {
         }
 
         public int TimeLeftSec => (int)Math.Floor(TimeLeftMs / 1000D);
-
         public bool IsListening => TimeLeftSec > 0;
 
         public void IncrementTime(int TimeMS = ListeningTimeIncrement) {
@@ -37,20 +32,21 @@ namespace SpeechMusicController {
                 ListeningUntil += TimeMS;
             } else {
                 ListeningUntil = Environment.TickCount + TimeMS;
+                CountdownTimer.Start();
             }
-            CountdownTimer.Start();
             Hidden = false;
         }
 
         public void StopListening() => ListeningUntil = Environment.TickCount;
 
-        private ListeningTimer(int TimeUntilEnd = 0) {
+        public ListeningTimer() {
             InitializeComponent();
+        }
 
+        private void ListeningTimer_Load(object sender, EventArgs e) {
             Screen screen = Screen.AllScreens[0];
             this.Left = screen.WorkingArea.Right - this.Width - 100;
             this.Top = screen.WorkingArea.Bottom - this.Height - 100;
-            ListeningUntil = Environment.TickCount + TimeUntilEnd;
             UpdateText();
         }
 

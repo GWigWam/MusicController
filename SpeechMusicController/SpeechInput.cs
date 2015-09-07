@@ -28,9 +28,11 @@ namespace SpeechMusicController {
 
         private SpeechRecognitionEngine SRecognize = new SpeechRecognitionEngine();
         private Random random = new Random();
+        private ListeningTimer Timer;
         private IPlayer Player;
 
         public SpeechInput(string playerPath) {
+            Timer = new ListeningTimer();
             Player = new Aimp3Player(playerPath);
             InitCommands();
             Start();
@@ -42,15 +44,15 @@ namespace SpeechMusicController {
             SpeechCommands = new Dictionary<string, Action>(){
                 { "switch", () => {
                     Player.Toggle();
-                    ListeningTimer.Instance.StopListening();
+                    Timer.StopListening();
                 }},
                 { "collection", () => {
                     Player.Play(MusicList.ActiveSongs.OrderBy(s => random.Next()).Select(s => s.FilePath));
-                    ListeningTimer.Instance.StopListening();
+                    Timer.StopListening();
                 }},
                 { "full collection", () => {
                     Player.Play(MusicList.AllSongs.OrderBy(s => random.Next()).Select(s => s.FilePath));
-                    ListeningTimer.Instance.StopListening();
+                    Timer.StopListening();
                 }},
                 { "random", () => Player.Play(MusicList.GetRandomSong().FilePath) },
                 { "next", Player.Next },
@@ -90,12 +92,10 @@ namespace SpeechMusicController {
 
             var input = e.Result.Text;
 
-            if(ListeningTimer.Instance.IsListening) {
-                ExecuteCommand(input);
-            }
-
             if(input == "music") {
-                ListeningTimer.Instance.IncrementTime();
+                Timer.IncrementTime();
+            } else if(Timer.IsListening) {
+                ExecuteCommand(input);
             }
         }
 
@@ -105,7 +105,7 @@ namespace SpeechMusicController {
                     SpeechCommands[input]();
                 } else {
                     Player.Play(MusicList.GetMatchingSongs(input).Select(s => s.FilePath));
-                    ListeningTimer.Instance.StopListening();
+                    Timer.StopListening();
                 }
             } catch(Exception e) {
                 SendMessage(e.ToString());

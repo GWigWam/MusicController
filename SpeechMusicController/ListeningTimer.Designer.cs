@@ -67,6 +67,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "NotifyForm";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.ListeningTimer_Load);
             this.MouseEnter += new System.EventHandler(this.NotifyForm_MouseEnter);
             this.ResumeLayout(false);
             this.PerformLayout();
