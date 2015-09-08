@@ -47,6 +47,7 @@
             this.Tb_Output.Multiline = true;
             this.Tb_Output.Name = "Tb_Output";
             this.Tb_Output.ReadOnly = true;
+            this.Tb_Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.Tb_Output.Size = new System.Drawing.Size(179, 80);
             this.Tb_Output.TabIndex = 0;
             // 
