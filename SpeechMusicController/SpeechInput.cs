@@ -1,38 +1,41 @@
 ﻿using SpeechMusicController.AppSettings;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Speech.Recognition;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SpeechMusicController {
 
-    public class SpeechInput {
+    internal class SpeechInput {
+        private IReadOnlyList<SpeechCommand> SpeechCommands;
+
+        public event Action<string> MessageSend;
+
+        private CommandModeTimer ModeTimer;
+        private SpeechRecognitionEngine SRecognize;
+        private Random RNG;
+        private IPlayer Player;
 
         public IEnumerable<string> Keywords {
             get {
-                yield return "music";
+                if(ModeTimer != null) {
+                    foreach(var modeName in CommandModeTimer.ModeNames) {
+                        yield return modeName;
+                    }
+                }
                 if(SpeechCommands != null) {
-                    foreach(var command in SpeechCommands.Keys) {
+                    foreach(var command in SpeechCommands.Select(sc => sc.Keyword)) {
                         yield return command;
                     }
                 }
             }
         }
 
-        public Dictionary<string, Action> SpeechCommands;
-
-        public event Action<string> MessageSend;
-
-        private SpeechRecognitionEngine SRecognize = new SpeechRecognitionEngine();
-        private Random random = new Random();
-        private ListeningTimer Timer;
-        private IPlayer Player;
-
         public SpeechInput(string playerPath) {
-            Timer = new ListeningTimer();
+            ModeTimer = new CommandModeTimer();
+            RNG = new Random();
+            SRecognize = new SpeechRecognitionEngine();
             Player = new Aimp3Player(playerPath);
             InitCommands();
             Start();
@@ -41,25 +44,22 @@ namespace SpeechMusicController {
         }
 
         private void InitCommands() {
-            SpeechCommands = new Dictionary<string, Action>(){
-                { "switch", () => {
-                    Player.Toggle();
-                    Timer.StopListening();
-                }},
-                { "collection", () => {
-                    Player.Play(MusicList.ActiveSongs.OrderBy(s => random.Next()).Select(s => s.FilePath));
-                    Timer.StopListening();
-                }},
-                { "full collection", () => {
-                    Player.Play(MusicList.AllSongs.OrderBy(s => random.Next()).Select(s => s.FilePath));
-                    Timer.StopListening();
-                }},
-                { "random", () => Player.Play(MusicList.GetRandomSong().FilePath) },
-                { "next", Player.Next },
-                { "previous", Player.Previous },
-                { "volume up", Player.VolUp },
-                { "volume down", Player.VolDown },
-                { "play", Player.Play }
+            SpeechCommands = new List<SpeechCommand>() {
+                new SpeechCommand("collection", () => {
+                    Player.Play(MusicList.ActiveSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
+                    ResetModes();
+                }),
+                new SpeechCommand("full collection", () => {
+                    Player.Play(MusicList.AllSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
+                    ResetModes();
+                }),
+                new SpeechCommand("switch", Player.Toggle),
+                new SpeechCommand("random", () => Player.Play(MusicList.GetRandomSong().FilePath)),
+                new SpeechCommand("next", Player.Next),
+                new SpeechCommand("previous", Player.Previous),
+                new SpeechCommand("volume up", Player.VolUp),
+                new SpeechCommand("volume down", Player.VolDown),
+                new SpeechCommand("play", Player.Play)
             };
         }
 
@@ -89,27 +89,38 @@ namespace SpeechMusicController {
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
             SendMessage($"{e.Result.Text} ({e.Result.Confidence * 100:#}%)");
-
-            var input = e.Result.Text;
-
-            if(input == "music") {
-                Timer.IncrementTime();
-            } else if(Timer.IsListening) {
-                ExecuteCommand(input);
-            }
+            ExecuteCommand(e.Result.Text);
         }
 
-        public void ExecuteCommand(string input) {
+        public void ExecuteCommand(string input, bool ignoreActiveMatchMode = false) {
             try {
-                if(SpeechCommands.ContainsKey(input)) {
-                    SpeechCommands[input]();
+                if(CommandModeTimer.ModeNames.Contains(input, StringComparer.InvariantCultureIgnoreCase)) {
+                    ModeTimer.ActivateMode(input);
                 } else {
-                    Player.Play(MusicList.GetMatchingSongs(input).Select(s => s.FilePath));
-                    Timer.StopListening();
+                    SpeechCommand matchingCommand = SpeechCommands.FirstOrDefault(sc => sc.Keyword.Equals(input, StringComparison.InvariantCultureIgnoreCase));
+                    if(matchingCommand != null) {
+                        if(ModeTimer.MusicModeActive || ignoreActiveMatchMode) {
+                            matchingCommand.Procedure?.Invoke();
+                        }
+                    } else {
+                        Song[] songs;
+                        if(ModeTimer.MusicModeActive || ignoreActiveMatchMode) {
+                            songs = MusicList.GetMatchingSongs(input);
+                        } else {
+                            songs = MusicList.GetMatchingSongs(input, ModeTimer.SongModeActive, ModeTimer.ArtistModeActive, ModeTimer.AlbumModeActive);
+                        }
+                        Player.Play(songs.Select(s => s.FilePath));
+
+                        ResetModes();
+                    }
                 }
             } catch(Exception e) {
                 SendMessage(e.ToString());
             }
+        }
+
+        private void ResetModes() {
+            ModeTimer.ActivateMode(CommandMode.None, 0);
         }
 
         private void SendMessage(string mesage) => MessageSend?.Invoke(mesage ?? "");

@@ -115,38 +115,29 @@ namespace SpeechMusicController {
             return keywordList.ToArray();
         }
 
-        public static Song[] GetMatchingSongs(string keyword) {
-            //Get matches from active songs
-            IEnumerable<Song> retList = ActiveSongs.Where(s =>
-                string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)
-            );
-
-            if(retList.Count() == 0) {
-                //If no matches in active, search for matches in all songs
-                retList = AllSongs.Where(s =>
-                    string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                    string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                    string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)
+        public static Song[] GetMatchingSongs(string keyword, bool matchOnTitle = true, bool matchOnArtist = true, bool matchOnAlbum = true) {
+            if(matchOnTitle || matchOnArtist || matchOnAlbum) {
+                //Get matches from active songs
+                IEnumerable<Song> retList = ActiveSongs.Where(s =>
+                    (matchOnTitle && string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) ||
+                    (matchOnArtist && string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) ||
+                    (matchOnAlbum && string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase))
                 );
+
+                if(retList.Count() == 0) {
+                    //If no matches in active, search for matches in all songs
+                    retList = AllSongs.Where(s =>
+                        (matchOnTitle && string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase)) ||
+                        (matchOnArtist && string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase)) ||
+                        (matchOnAlbum && string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase))
+                    );
+                }
+
+                //Shuffle & return
+                return retList.OrderBy(s => random.Next()).ToArray();
+            } else {
+                return new Song[0];
             }
-
-            //Shuffle
-            retList = retList.OrderBy(s => random.Next());
-
-            //Sort by relevance
-            retList = retList.OrderByDescending(s => {
-                if(string.Equals(s.Title, keyword, StringComparison.InvariantCultureIgnoreCase))
-                    return 1;
-                if(string.Equals(s.Artist, keyword, StringComparison.InvariantCultureIgnoreCase))
-                    return 0;
-                if(string.Equals(s.Album, keyword, StringComparison.InvariantCultureIgnoreCase))
-                    return -1;
-                return -1;
-            });
-
-            return retList.ToArray();
         }
 
         public static Song GetRandomSong() => ActiveSongs.ElementAt(random.Next(0, ActiveSongs.Count()));

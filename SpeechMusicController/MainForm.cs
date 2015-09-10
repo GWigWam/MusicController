@@ -70,7 +70,7 @@ namespace SpeechMusicController {
 
         private void KeyInput_KeyUp(object sender, KeyEventArgs e) {
             if(e.KeyCode == Keys.Enter) {
-                SpeechControll.ExecuteCommand(KeyInput.Text.ToLower());
+                SpeechControll.ExecuteCommand(KeyInput.Text.ToLower(), true);
                 KeyInput.Text = "";
             } else if(e.KeyCode == Keys.Escape) {
                 HideWindow();
