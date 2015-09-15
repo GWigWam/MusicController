@@ -48,6 +48,7 @@ namespace SpeechMusicController {
                 Action update = UpdateSuggestions;
                 Invoke(update);
             };
+            new MessageOverlay("SpeechMusicController is listening!", 1500).Show();
         }
 
         private void UpdateSuggestions() {

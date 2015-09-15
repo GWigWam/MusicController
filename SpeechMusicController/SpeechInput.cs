@@ -53,7 +53,10 @@ namespace SpeechMusicController {
                     Player.Play(MusicList.AllSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
                     ResetModes();
                 }),
-                new SpeechCommand("switch", Player.Toggle),
+                new SpeechCommand("switch", () => {
+                        Player.Toggle();
+                        ResetModes();
+                    }),
                 new SpeechCommand("random", () => Player.Play(MusicList.GetRandomSong().FilePath)),
                 new SpeechCommand("next", Player.Next),
                 new SpeechCommand("previous", Player.Previous),
@@ -95,6 +98,7 @@ namespace SpeechMusicController {
         public void ExecuteCommand(string input, bool ignoreActiveMatchMode = false) {
             try {
                 if(CommandModeTimer.ModeNames.Contains(input, StringComparer.InvariantCultureIgnoreCase)) {
+                    new MessageOverlay(input).Show();
                     ModeTimer.ActivateMode(input);
                 } else {
                     SpeechCommand matchingCommand = SpeechCommands.FirstOrDefault(sc => sc.Keyword.Equals(input, StringComparison.InvariantCultureIgnoreCase));
@@ -109,9 +113,11 @@ namespace SpeechMusicController {
                         } else {
                             songs = MusicList.GetMatchingSongs(input, ModeTimer.SongModeActive, ModeTimer.ArtistModeActive, ModeTimer.AlbumModeActive);
                         }
-                        Player.Play(songs.Select(s => s.FilePath));
+                        if(songs.Length > 0) {
+                            Player.Play(songs.Select(s => s.FilePath));
 
-                        ResetModes();
+                            ResetModes();
+                        }
                     }
                 }
             } catch(Exception e) {
