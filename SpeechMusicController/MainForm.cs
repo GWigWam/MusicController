@@ -1,5 +1,6 @@
 ﻿using SpeechMusicController.AppSettings;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -7,6 +8,8 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
 
     public partial class MainForm : Form {
+        private SongRules CurrentSongRules;
+        private MusicList MusicCollection;
         private SpeechInput SpeechControll;
 
         public MainForm() {
@@ -21,9 +24,24 @@ namespace SpeechMusicController {
         private void Form1_Load(object sender, EventArgs e) => Init();
 
         private void Init() {
-            string path = Settings.Instance.GetSetting("PlayerPath");
-            if(!string.IsNullOrEmpty(path)) {
-                SpeechControll = new SpeechInput(path);
+            string rulesPath = Settings.Instance.GetSetting("SongRulesPath");
+            if(!string.IsNullOrEmpty(rulesPath)) {
+                CurrentSongRules = SettingsFile.ReadSettingFile<SongRules>(rulesPath);
+
+                if(CurrentSongRules == null) {
+                    File.Delete(rulesPath);
+                    CurrentSongRules = new SongRules(rulesPath);
+                }
+            } else {
+                MessageBox.Show("Error: RulesPath setting is empty");
+                return;
+            }
+
+            MusicCollection = new MusicList(CurrentSongRules);
+
+            string playerPath = Settings.Instance.GetSetting("PlayerPath");
+            if(!string.IsNullOrEmpty(playerPath)) {
+                SpeechControll = new SpeechInput(MusicCollection, playerPath);
             } else {
                 MessageBox.Show("Error: PlayerPath setting is empty");
                 return;
@@ -40,11 +58,11 @@ namespace SpeechMusicController {
                 Action<string> update = WriteLine;
                 Invoke(update, s);
             };
-            Settings.Instance.OnRulesChanged += () => {
+            CurrentSongRules.OnChange += (s, a) => {
                 Action update = UpdateSuggestions;
                 Invoke(update);
             };
-            MusicList.SongListUpdated += () => {
+            MusicCollection.SongListUpdated += () => {
                 Action update = UpdateSuggestions;
                 Invoke(update);
             };
@@ -54,7 +72,7 @@ namespace SpeechMusicController {
         private void UpdateSuggestions() {
             var source = new AutoCompleteStringCollection();
             source.AddRange(SpeechControll.Keywords.ToArray());
-            source.AddRange(MusicList.GetAllSongKeywords());
+            source.AddRange(MusicCollection.GetAllSongKeywords());
             KeyInput.AutoCompleteCustomSource.Clear();
             KeyInput.AutoCompleteCustomSource = source;
             KeyInput.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
@@ -113,7 +131,7 @@ namespace SpeechMusicController {
         private void MenuItemExit_Click(object sender, EventArgs e) => Application.Exit();
 
         private void Bt_Rules_Click(object sender, EventArgs e) {
-            var rulesEdit = new RulesEdit();
+            var rulesEdit = new RulesEdit(CurrentSongRules, MusicCollection);
             rulesEdit.Show();
         }
 
@@ -133,7 +151,7 @@ namespace SpeechMusicController {
             }
 
             await Task.Run(() => {
-                MusicList.ReadListFromDisc();
+                MusicCollection.ReadListFromDisc();
             });
 
             KeyInput.Text = "";
@@ -146,6 +164,10 @@ namespace SpeechMusicController {
         private void Bt_Settings_Click(object sender, EventArgs e) {
             var sysVar = new SystemVarsEdit();
             sysVar.Show();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            CurrentSongRules?.WriteToDisc();
         }
     }
 }

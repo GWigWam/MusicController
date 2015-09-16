@@ -16,6 +16,7 @@ namespace SpeechMusicController {
         private SpeechRecognitionEngine SRecognize;
         private Random RNG;
         private IPlayer Player;
+        private MusicList MusicCollection;
 
         public IEnumerable<string> Keywords {
             get {
@@ -32,32 +33,37 @@ namespace SpeechMusicController {
             }
         }
 
-        public SpeechInput(string playerPath) {
+        public SpeechInput(MusicList musicCollection, string playerPath) {
             ModeTimer = new CommandModeTimer();
             RNG = new Random();
             SRecognize = new SpeechRecognitionEngine();
             Player = new Aimp3Player(playerPath);
+            if(musicCollection != null) {
+                MusicCollection = musicCollection;
+            } else {
+                throw new ArgumentNullException(nameof(musicCollection));
+            }
             InitCommands();
             Start();
 
-            Settings.Instance.OnRulesChanged += LoadGrammar;
+            Settings.Instance.OnChange += (s, a) => LoadGrammar();
         }
 
         private void InitCommands() {
             SpeechCommands = new List<SpeechCommand>() {
                 new SpeechCommand("collection", () => {
-                    Player.Play(MusicList.ActiveSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
+                    Player.Play(MusicCollection.ActiveSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
                     ResetModes();
                 }),
                 new SpeechCommand("full collection", () => {
-                    Player.Play(MusicList.AllSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
+                    Player.Play(MusicCollection.AllSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
                     ResetModes();
                 }),
                 new SpeechCommand("switch", () => {
                         Player.Toggle();
                         ResetModes();
                     }),
-                new SpeechCommand("random", () => Player.Play(MusicList.GetRandomSong().FilePath)),
+                new SpeechCommand("random", () => Player.Play(MusicCollection.GetRandomSong().FilePath)),
                 new SpeechCommand("next", Player.Next),
                 new SpeechCommand("previous", Player.Previous),
                 new SpeechCommand("volume up", Player.VolUp),
@@ -81,7 +87,7 @@ namespace SpeechMusicController {
         public void LoadGrammar() {
             var keywords = new Choices();
             keywords.Add(Keywords.ToArray());
-            keywords.Add(MusicList.GetAllSongKeywords());
+            keywords.Add(MusicCollection.GetAllSongKeywords());
 
             var grammerBuilder = new GrammarBuilder();
             grammerBuilder.Append(keywords);
@@ -109,12 +115,12 @@ namespace SpeechMusicController {
                     } else {
                         Song[] songs;
                         if(ModeTimer.MusicModeActive || ignoreActiveMatchMode) {
-                            songs = MusicList.GetMatchingSongs(input);
+                            songs = MusicCollection.GetMatchingSongs(input);
                         } else {
-                            songs = MusicList.GetMatchingSongs(input, ModeTimer.SongModeActive, ModeTimer.ArtistModeActive, ModeTimer.AlbumModeActive);
+                            songs = MusicCollection.GetMatchingSongs(input, ModeTimer.SongModeActive, ModeTimer.ArtistModeActive, ModeTimer.AlbumModeActive);
                         }
                         if(songs.Length > 0) {
-                            Player.Play(songs.Select(s => s.FilePath));
+                            //Player.Play(songs.Select(s => s.FilePath));
 
                             ResetModes();
                         }

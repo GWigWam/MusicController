@@ -58,6 +58,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\SettingsFile.cs" />
+    <Compile Include="AppSettings\SongRules.cs" />
     <Compile Include="CommandModeTimer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
