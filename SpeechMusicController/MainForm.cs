@@ -167,7 +167,7 @@ namespace SpeechMusicController {
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-            CurrentSongRules?.WriteToDisc();
+            CurrentSongRules?.WriteToDisc(false);
         }
     }
 }

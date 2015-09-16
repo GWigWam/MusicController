@@ -53,17 +53,25 @@ namespace SpeechMusicController.AppSettings {
                 read.FullFilePath = filePath;
 
                 return read;
-            } catch(FileNotFoundException fnfe) {
+            } catch(FileNotFoundException) {
                 return null;
             }
         }
 
-        public async void WriteToDisc() {
+        public void WriteToDisc(bool runAsync) {
             if(HasUnsavedChanges) {
-                using(StreamWriter sw = new StreamWriter(new FileStream(FullFilePath, FileMode.Create))) {
-                    string content = JsonConvert.SerializeObject(this, JSonSettings);
-                    await sw.WriteAsync(content);
-                    HasUnsavedChanges = false;
+                var writeTask = new Task(() => {
+                    using(StreamWriter sw = new StreamWriter(new FileStream(FullFilePath, FileMode.Create))) {
+                        string content = JsonConvert.SerializeObject(this, JSonSettings);
+                        sw.Write(content);
+                        HasUnsavedChanges = false;
+                    }
+                });
+
+                if(runAsync) {
+                    writeTask.Start();
+                } else {
+                    writeTask.RunSynchronously();
                 }
             }
         }

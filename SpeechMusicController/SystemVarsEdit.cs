@@ -37,7 +37,7 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Bt_SaveToFile_Click(object sender, EventArgs e) => Settings.Instance.WriteToDisc();
+        private void Bt_SaveToFile_Click(object sender, EventArgs e) => Settings.Instance.WriteToDisc(true);
 
         private void Tb_NewString_TextChanged(object sender, EventArgs e) {
             if(Tb_NewString.Text != Settings.Instance.GetSetting((string)Lb_List.SelectedItem)) {

@@ -25,9 +25,9 @@ namespace SpeechMusicController {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Settings.Instance.WriteToDisc(); //Make sure file exists
+            Settings.Instance.WriteToDisc(false); //Make sure file exists
 
-            Application.ApplicationExit += (sender, e) => Settings.Instance.WriteToDisc();
+            Application.ApplicationExit += (sender, e) => Settings.Instance.WriteToDisc(false);
 #if DEBUG
             Application.Run(new MainForm());
 #else
