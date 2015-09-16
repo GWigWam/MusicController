@@ -25,14 +25,28 @@ namespace SpeechMusicController {
             } else {
                 throw new ArgumentNullException(nameof(rules));
             }
+
+            FillSongLists();
+            Rules.OnChange += (s, a) => {
+                FillSongLists();
+            };
+        }
+
+        private void FillSongLists() {
+            ActiveSongs = RemoveDuplicates(ApplyRules(InternalSongList));
+            AllSongs = RemoveDuplicates(InternalSongList);
         }
 
         public event Action SongListUpdated;
 
         //Songs after rules have been applied to them
-        public IEnumerable<Song> ActiveSongs => RemoveDuplicates(ApplyRules(InternalSongList));
+        public IEnumerable<Song> ActiveSongs {
+            get; private set;
+        }
 
-        public IEnumerable<Song> AllSongs => RemoveDuplicates(InternalSongList);
+        public IEnumerable<Song> AllSongs {
+            get; private set;
+        }
 
         public string[] GetAllSongKeywords() {
             var keywordList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
