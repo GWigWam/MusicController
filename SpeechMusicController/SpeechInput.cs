@@ -120,7 +120,7 @@ namespace SpeechMusicController {
                             songs = MusicCollection.GetMatchingSongs(input, ModeTimer.SongModeActive, ModeTimer.ArtistModeActive, ModeTimer.AlbumModeActive);
                         }
                         if(songs.Length > 0) {
-                            //Player.Play(songs.Select(s => s.FilePath));
+                            Player.Play(songs.Select(s => s.FilePath));
 
                             ResetModes();
                         }
