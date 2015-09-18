@@ -15,9 +15,11 @@ namespace SpeechMusicController {
 
         private Random Random;
         private SongRules Rules;
+        private Settings AppSettings;
 
-        public MusicList(SongRules rules) {
+        public MusicList(Settings settings, SongRules rules) {
             Random = new Random();
+            AppSettings = settings;
             ReadListFromDisc();
 
             if(rules != null) {
@@ -95,7 +97,7 @@ namespace SpeechMusicController {
         public void ReadListFromDisc() {
             InternalSongList = new Song[0];
 
-            var dirLoc = Settings.Instance.GetSetting("MusicFolder");
+            var dirLoc = AppSettings.GetSetting("MusicFolder");
             if(!string.IsNullOrEmpty(dirLoc)) {
                 FileInfo[] allFiles = ScanDir(dirLoc).ToArray();
                 InternalSongList = OrganizeList(allFiles).ToArray();

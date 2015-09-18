@@ -12,18 +12,24 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
 
     public partial class SystemVarsEdit : Form {
+        private Settings AppSettings;
 
-        public SystemVarsEdit() {
+        public SystemVarsEdit(Settings settings) {
+            if(settings != null) {
+                AppSettings = settings;
+            } else {
+                throw new ArgumentNullException(nameof(settings));
+            }
             InitializeComponent();
 
-            Lb_Path.Text = Settings.Instance.FullFilePath;
+            Lb_Path.Text = AppSettings.FullFilePath;
 
-            Lb_List.Items.AddRange(Settings.Instance.GetAllSettingNames());
+            Lb_List.Items.AddRange(AppSettings.GetAllSettingNames());
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e) {
             string key = (string)Lb_List.SelectedItem;
-            string value = Settings.Instance.GetSetting(key);
+            string value = AppSettings.GetSetting(key);
 
             Tb_NewString.Text = value;
         }
@@ -31,16 +37,16 @@ namespace SpeechMusicController {
         private void Bt_Ok_Click(object sender, EventArgs e) {
             if(Lb_List.SelectedItem as string != null && !string.IsNullOrEmpty(Tb_NewString.Text)) {
                 string key = (string)Lb_List.SelectedItem;
-                Settings.Instance.SetSetting(key, Tb_NewString.Text.Trim());
+                AppSettings.SetSetting(key, Tb_NewString.Text.Trim());
 
                 Bt_Ok.Enabled = false;
             }
         }
 
-        private void Bt_SaveToFile_Click(object sender, EventArgs e) => Settings.Instance.WriteToDisc(true);
+        private void Bt_SaveToFile_Click(object sender, EventArgs e) => AppSettings.WriteToDisc(true);
 
         private void Tb_NewString_TextChanged(object sender, EventArgs e) {
-            if(Tb_NewString.Text != Settings.Instance.GetSetting((string)Lb_List.SelectedItem)) {
+            if(Tb_NewString.Text != AppSettings.GetSetting((string)Lb_List.SelectedItem)) {
                 Bt_Ok.Enabled = true;
             } else {
                 Bt_Ok.Enabled = false;

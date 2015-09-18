@@ -8,11 +8,13 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
 
     public partial class MainForm : Form {
+        private Settings AppSettings;
         private SongRules CurrentSongRules;
         private MusicList MusicCollection;
         private SpeechInput SpeechControll;
 
-        public MainForm() {
+        public MainForm(Settings settings) {
+            AppSettings = settings;
             InitializeComponent();
 
             WindowState = FormWindowState.Minimized;
@@ -24,7 +26,7 @@ namespace SpeechMusicController {
         private void Form1_Load(object sender, EventArgs e) => Init();
 
         private void Init() {
-            string rulesPath = Settings.Instance.GetSetting("SongRulesPath");
+            string rulesPath = AppSettings.GetSetting("SongRulesPath");
             if(!string.IsNullOrEmpty(rulesPath)) {
                 CurrentSongRules = SettingsFile.ReadSettingFile<SongRules>(rulesPath);
 
@@ -37,11 +39,11 @@ namespace SpeechMusicController {
                 return;
             }
 
-            MusicCollection = new MusicList(CurrentSongRules);
+            MusicCollection = new MusicList(AppSettings, CurrentSongRules);
 
-            string playerPath = Settings.Instance.GetSetting("PlayerPath");
+            string playerPath = AppSettings.GetSetting("PlayerPath");
             if(!string.IsNullOrEmpty(playerPath)) {
-                SpeechControll = new SpeechInput(MusicCollection, playerPath);
+                SpeechControll = new SpeechInput(AppSettings, MusicCollection, playerPath);
             } else {
                 MessageBox.Show("Error: PlayerPath setting is empty");
                 return;
@@ -162,7 +164,7 @@ namespace SpeechMusicController {
         #endregion Refresh
 
         private void Bt_Settings_Click(object sender, EventArgs e) {
-            var sysVar = new SystemVarsEdit();
+            var sysVar = new SystemVarsEdit(AppSettings);
             sysVar.Show();
         }
 

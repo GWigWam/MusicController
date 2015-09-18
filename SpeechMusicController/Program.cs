@@ -1,6 +1,8 @@
-﻿using SpeechMusicController.AppSettings;
+﻿using Newtonsoft.Json;
+using SpeechMusicController.AppSettings;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -25,16 +27,33 @@ namespace SpeechMusicController {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Settings.Instance.WriteToDisc(false); //Make sure file exists
-
-            Application.ApplicationExit += (sender, e) => Settings.Instance.WriteToDisc(false);
-#if DEBUG
-            Application.Run(new MainForm());
-#else
+            Settings settings = null;
+            string path = Settings.FilePath;
             try {
-                Application.Run(new MainForm());
-            } catch (Exception e) {
-                System.Windows.Forms.MessageBox.Show("An error occured! " + e.ToString());
+                settings = SettingsFile.ReadSettingFile<Settings>(path);
+
+                if(settings == null) {
+                    File.Delete(path);
+                    settings = new Settings();
+                }
+            } catch(JsonReaderException jre) {
+                MessageBox.Show($"Invalid Json in settings file!\n{jre}");
+                Environment.Exit(-1);
+            } catch(Exception e) {
+                MessageBox.Show($"Something went wrong while reading settings file {path}!\n{e}");
+                File.Delete(path);
+                settings = new Settings();
+            }
+
+#if !DEBUG
+            try {
+#endif
+            settings.WriteToDisc(false); //Make sure file exists
+            Application.ApplicationExit += (sender, e) => settings.WriteToDisc(false);
+            Application.Run(new MainForm(settings));
+#if !DEBUG
+            } catch(Exception e) {
+                MessageBox.Show($"An error occured!\n{e}");
             }
 #endif
         }

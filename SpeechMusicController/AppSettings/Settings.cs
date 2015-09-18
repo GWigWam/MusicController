@@ -11,46 +11,17 @@ namespace SpeechMusicController.AppSettings {
 
     [JsonObject(Description = "SpeechMusicController's settings")]
     public class Settings : SettingsFile {
-        private static readonly string FilePath = Path.GetFullPath("settings.json");
-
-        private static Settings instance;
+        public static readonly string FilePath = Path.GetFullPath("settings.json");
 
         [JsonProperty]
         private Dictionary<string, string> StringValues;
 
-        private Settings() : base(FilePath) {
+        public Settings() : base(FilePath) {
             StringValues = new Dictionary<string, string>() {
                 ["MusicFolder"] = string.Empty,
                 ["PlayerPath"] = string.Empty,
                 ["SongRulesPath"] = Path.GetFullPath("SongRules.json")
             };
-        }
-
-        [JsonIgnore]
-        public static Settings Instance {
-            get {
-                if(instance == null) {
-                    if(File.Exists(FilePath)) {
-                        try {
-                            instance = ReadSettingFile<Settings>(FilePath);
-
-                            if(instance == null) {
-                                File.Delete(FilePath);
-                                instance = new Settings();
-                            }
-                        } catch(JsonReaderException jre) {
-                            System.Windows.Forms.MessageBox.Show("Invalid Json in settings file!\n" + jre.ToString());
-                            Environment.Exit(-1);
-                        } catch {
-                            File.Delete(FilePath);
-                            instance = new Settings();
-                        }
-                    } else {
-                        instance = new Settings();
-                    }
-                }
-                return instance;
-            }
         }
 
         public string[] GetAllSettingNames() => StringValues.Keys.ToArray();

@@ -16,6 +16,7 @@ namespace SpeechMusicController {
         private SpeechRecognitionEngine SRecognize;
         private Random RNG;
         private IPlayer Player;
+        private Settings AppSettings;
         private MusicList MusicCollection;
 
         public IEnumerable<string> Keywords {
@@ -33,9 +34,10 @@ namespace SpeechMusicController {
             }
         }
 
-        public SpeechInput(MusicList musicCollection, string playerPath) {
+        public SpeechInput(Settings settings, MusicList musicCollection, string playerPath) {
             ModeTimer = new CommandModeTimer();
             RNG = new Random();
+            AppSettings = settings;
             SRecognize = new SpeechRecognitionEngine();
             Player = new Aimp3Player(playerPath);
             if(musicCollection != null) {
@@ -46,7 +48,7 @@ namespace SpeechMusicController {
             InitCommands();
             Start();
 
-            Settings.Instance.OnChange += (s, a) => LoadGrammar();
+            AppSettings.OnChange += (s, a) => LoadGrammar();
         }
 
         private void InitCommands() {
