@@ -26,8 +26,8 @@ namespace SpeechMusicController {
         private void Form1_Load(object sender, EventArgs e) => Init();
 
         private void Init() {
-            string rulesPath = AppSettings.GetSetting("SongRulesPath");
-            if(!string.IsNullOrEmpty(rulesPath)) {
+            string rulesPath;
+            if(AppSettings.TryGetSetting("SongRulesPath", out rulesPath) && !string.IsNullOrEmpty(rulesPath)) {
                 CurrentSongRules = SettingsFile.ReadSettingFile<SongRules>(rulesPath);
 
                 if(CurrentSongRules == null) {
@@ -41,8 +41,8 @@ namespace SpeechMusicController {
 
             MusicCollection = new MusicList(AppSettings, CurrentSongRules);
 
-            string playerPath = AppSettings.GetSetting("PlayerPath");
-            if(!string.IsNullOrEmpty(playerPath)) {
+            string playerPath;
+            if(AppSettings.TryGetSetting("PlayerPath", out playerPath) && !string.IsNullOrEmpty(playerPath)) {
                 SpeechControll = new SpeechInput(AppSettings, MusicCollection, playerPath);
             } else {
                 MessageBox.Show("Error: PlayerPath setting is empty");

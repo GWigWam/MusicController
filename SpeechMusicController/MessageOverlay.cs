@@ -11,12 +11,11 @@ using System.Windows.Forms;
 namespace SpeechMusicController {
 
     public partial class MessageOverlay : Form {
-        public const int DefaultShowMessageTimeMs = 500;
 
         //Prevent multiple overlays at the same time
         private static MessageOverlay CurrentOverlay;
 
-        public MessageOverlay(string Message, int ShowMessageTimeMs = DefaultShowMessageTimeMs) {
+        public MessageOverlay(string Message, int ShowMessageTimeMs) {
             InitializeComponent();
 
             if(CurrentOverlay != null) {

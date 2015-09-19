@@ -97,8 +97,8 @@ namespace SpeechMusicController {
         public void ReadListFromDisc() {
             InternalSongList = new Song[0];
 
-            var dirLoc = AppSettings.GetSetting("MusicFolder");
-            if(!string.IsNullOrEmpty(dirLoc)) {
+            string dirLoc;
+            if(AppSettings.TryGetSetting("MusicFolder", out dirLoc) && !string.IsNullOrEmpty(dirLoc)) {
                 FileInfo[] allFiles = ScanDir(dirLoc).ToArray();
                 InternalSongList = OrganizeList(allFiles).ToArray();
 

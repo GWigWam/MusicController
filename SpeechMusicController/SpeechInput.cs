@@ -106,7 +106,10 @@ namespace SpeechMusicController {
         public void ExecuteCommand(string input, bool ignoreActiveMatchMode = false) {
             try {
                 if(CommandModeTimer.ModeNames.Contains(input, StringComparer.InvariantCultureIgnoreCase)) {
-                    new MessageOverlay(input).Show();
+                    long showTime;
+                    if(AppSettings.TryGetSetting("MessageOverlayVisibleTimeMs", out showTime)) {
+                        new MessageOverlay(input, (int)showTime).Show();
+                    }
                     ModeTimer.ActivateMode(input);
                 } else {
                     SpeechCommand matchingCommand = SpeechCommands.FirstOrDefault(sc => sc.Keyword.Equals(input, StringComparison.InvariantCultureIgnoreCase));
