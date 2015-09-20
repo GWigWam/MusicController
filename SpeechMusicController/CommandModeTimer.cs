@@ -3,8 +3,6 @@
 namespace SpeechMusicController {
 
     internal class CommandModeTimer {
-        private const long DefaultActiveTime = 6000;
-
         private CommandMode CurrentMode = CommandMode.None;
         private long ActiveUntil = 0;
 
@@ -27,12 +25,12 @@ namespace SpeechMusicController {
             }
         }
 
-        public void ActivateMode(CommandMode mode, long ActiveTimeMs = DefaultActiveTime) {
+        public void ActivateMode(CommandMode mode, long ActiveTimeMs) {
             CurrentMode = mode;
             ActiveUntil = Environment.TickCount + ActiveTimeMs;
         }
 
-        public void ActivateMode(string modeName, long ActiveTimeMs = DefaultActiveTime) {
+        public void ActivateMode(string modeName, long ActiveTimeMs) {
             ActivateMode(GetModeByName(modeName), ActiveTimeMs);
         }
 

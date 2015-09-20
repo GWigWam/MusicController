@@ -30,6 +30,7 @@ namespace SpeechMusicController.AppSettings {
                 SetSetting("PlayerPath", string.Empty);
                 SetSetting("SongRulesPath", Path.GetFullPath("SongRules.json"));
                 SetSetting("MessageOverlayVisibleTimeMs", 500L);
+                SetSetting("CommandModeActiveTimeMs", 6000L);
             }
         }
 

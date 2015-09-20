@@ -107,10 +107,11 @@ namespace SpeechMusicController {
             try {
                 if(CommandModeTimer.ModeNames.Contains(input, StringComparer.InvariantCultureIgnoreCase)) {
                     long showTime;
-                    if(AppSettings.TryGetSetting("MessageOverlayVisibleTimeMs", out showTime)) {
+                    long modeTime;
+                    if(AppSettings.TryGetSetting("MessageOverlayVisibleTimeMs", out showTime) && AppSettings.TryGetSetting("CommandModeActiveTimeMs", out modeTime)) {
                         new MessageOverlay(input, (int)showTime).Show();
+                        ModeTimer.ActivateMode(input, (int)modeTime);
                     }
-                    ModeTimer.ActivateMode(input);
                 } else {
                     SpeechCommand matchingCommand = SpeechCommands.FirstOrDefault(sc => sc.Keyword.Equals(input, StringComparison.InvariantCultureIgnoreCase));
                     if(matchingCommand != null) {
