@@ -52,6 +52,8 @@ namespace SpeechMusicController.AppSettings {
                 var read = JsonConvert.DeserializeObject<T>(fileContent, JSonSettings);
                 read.FullFilePath = filePath;
 
+                read.AfterRead();
+
                 return read;
             } catch(FileNotFoundException) {
                 return null;
@@ -74,6 +76,13 @@ namespace SpeechMusicController.AppSettings {
                     writeTask.RunSynchronously();
                 }
             }
+        }
+
+        /// <summary>
+        /// Called after method ReadSettingFile has deserialized a file
+        /// </summary>
+        protected virtual void AfterRead() {
+            //Empty
         }
 
         protected void AfterChange() {

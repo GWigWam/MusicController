@@ -34,15 +34,14 @@ namespace SpeechMusicController {
 
                 if(settings == null) {
                     File.Delete(path);
-                    settings = new Settings();
+                    settings = new Settings(true);
                 }
             } catch(JsonReaderException jre) {
                 MessageBox.Show($"Invalid Json in settings file!\n{jre}");
                 Environment.Exit(-1);
             } catch(Exception e) {
                 MessageBox.Show($"Something went wrong while reading settings file {path}!\n{e}");
-                File.Delete(path);
-                settings = new Settings();
+                Environment.Exit(-1);
             }
 
 #if !DEBUG

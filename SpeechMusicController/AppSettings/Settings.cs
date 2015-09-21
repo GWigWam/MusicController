@@ -14,24 +14,36 @@ namespace SpeechMusicController.AppSettings {
     public class Settings : SettingsFile {
         public static readonly string FilePath = Path.GetFullPath("settings.json");
 
+        private readonly Dictionary<string, object> DefaultSettings = new Dictionary<string, object>() {
+            ["MusicFolder"] = string.Empty,
+            ["PlayerPath"] = string.Empty,
+            ["SongRulesPath"] = Path.GetFullPath("SongRules.json"),
+            ["MessageOverlayVisibleTimeMs"] = 500L,
+            ["CommandModeActiveTimeMs"] = 6000L
+        };
+
         [JsonProperty]
         private Dictionary<string, object> NamedValueCollection;
 
         [JsonConstructor]
-        private Settings() {
+        public Settings(bool initDefaults = false) {
             NamedValueCollection = new Dictionary<string, object>();
+
+            if(initDefaults) {
+                AddMissingDefaultSettings();
+            }
         }
 
-        public Settings(bool initValues = true) : base(FilePath) {
-            NamedValueCollection = new Dictionary<string, object>();
-
-            if(initValues) {
-                SetSetting("MusicFolder", string.Empty);
-                SetSetting("PlayerPath", string.Empty);
-                SetSetting("SongRulesPath", Path.GetFullPath("SongRules.json"));
-                SetSetting("MessageOverlayVisibleTimeMs", 500L);
-                SetSetting("CommandModeActiveTimeMs", 6000L);
+        private void AddMissingDefaultSettings() {
+            foreach(var kvp in DefaultSettings) {
+                if(!NamedValueCollection.ContainsKey(kvp.Key)) {
+                    NamedValueCollection[kvp.Key] = kvp.Value;
+                }
             }
+        }
+
+        protected override void AfterRead() {
+            AddMissingDefaultSettings();
         }
 
         public string[] GetAllSettingNames() => NamedValueCollection.Keys.ToArray();
