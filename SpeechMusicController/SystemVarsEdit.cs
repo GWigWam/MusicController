@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,6 +62,14 @@ namespace SpeechMusicController {
             } else {
                 Bt_Ok.Enabled = false;
             }
+        }
+
+        private void Lb_Path_Click(object sender, EventArgs e) {
+            if(!File.Exists(AppSettings.FullFilePath)) {
+                return;
+            }
+
+            Process.Start("explorer.exe", $@"/select, {AppSettings.FullFilePath}");
         }
     }
 }

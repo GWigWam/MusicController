@@ -72,6 +72,9 @@
             // Lb_Path
             // 
             this.Lb_Path.AutoSize = true;
+            this.Lb_Path.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Lb_Path.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Lb_Path.ForeColor = System.Drawing.SystemColors.Highlight;
             this.Lb_Path.Location = new System.Drawing.Point(12, 150);
             this.Lb_Path.MaximumSize = new System.Drawing.Size(250, 26);
             this.Lb_Path.Name = "Lb_Path";
@@ -79,6 +82,7 @@
             this.Lb_Path.TabIndex = 4;
             this.Lb_Path.Text = "XXX";
             this.Lb_Path.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Lb_Path.Click += new System.EventHandler(this.Lb_Path_Click);
             // 
             // SystemVarsEdit
             // 
