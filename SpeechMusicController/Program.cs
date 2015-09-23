@@ -16,6 +16,7 @@ namespace SpeechMusicController {
         /// </summary>
         [STAThread]
         private static void Main(string[] args) {
+            //Delayed start
             try {
                 for(int i = 0; i < args.Length; i++) {
                     if(args[i] == "-delayed" || args[i] == "/delayed") {
@@ -24,9 +25,11 @@ namespace SpeechMusicController {
                 }
             } catch { }
 
+            //Housekeeping
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            //Init settings (file)
             Settings settings = null;
             string path = Settings.FilePath;
             try {
@@ -44,6 +47,27 @@ namespace SpeechMusicController {
                 Environment.Exit(-1);
             }
 
+            //Set missing player/musicfolder paths
+            if(string.IsNullOrEmpty(settings.GetSetting("PlayerPath") as string)) {
+                MessageBox.Show("Pick player exe");
+                var ofd = new OpenFileDialog() {
+                    Title = "Pick player exe",
+                    Filter = "Excecutable (*.exe)|*.exe"
+                };
+                if(ofd.ShowDialog() == DialogResult.OK) {
+                    settings.SetSetting("PlayerPath", ofd.FileName);
+                }
+            }
+
+            if(string.IsNullOrEmpty(settings.GetSetting("MusicFolder") as string)) {
+                MessageBox.Show("Pick music folder");
+                var fbd = new FolderBrowserDialog();
+                if(fbd.ShowDialog() == DialogResult.OK) {
+                    settings.SetSetting("MusicFolder", fbd.SelectedPath);
+                }
+            }
+
+            //Run app
 #if !DEBUG
             try {
 #endif
