@@ -18,17 +18,16 @@ namespace SpeechMusicController {
         private Settings AppSettings;
 
         public MusicList(Settings settings, SongRules rules) {
-            Random = new Random();
-            AppSettings = settings;
-            ReadListFromDisc();
-
             if(rules != null) {
                 Rules = rules;
             } else {
                 throw new ArgumentNullException(nameof(rules));
             }
+            AppSettings = settings;
+            Random = new Random();
 
-            FillSongLists();
+            ReadListFromDisc();
+
             Rules.OnChange += (s, a) => {
                 FillSongLists();
             };
@@ -102,6 +101,7 @@ namespace SpeechMusicController {
                 FileInfo[] allFiles = ScanDir(dirLoc).ToArray();
                 InternalSongList = OrganizeList(allFiles).ToArray();
 
+                FillSongLists();
                 SongListUpdated?.Invoke();
             } else {
                 System.Windows.Forms.MessageBox.Show("Error: MusicFolder setting is empty");
