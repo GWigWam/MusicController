@@ -8,16 +8,44 @@ using System.Speech.Recognition;
 namespace SpeechMusicController {
 
     internal class SpeechInput {
+        private Settings AppSettings;
+        private CommandModeTimer ModeTimer;
+        private MusicList MusicCollection;
+        private IPlayer Player;
+        private Random RNG;
         private IReadOnlyList<SpeechCommand> SpeechCommands;
+
+        private SpeechRecognitionEngine SRecognize;
+
+        public SpeechInput(Settings settings, MusicList musicCollection, string playerPath) {
+            ModeTimer = new CommandModeTimer();
+            RNG = new Random();
+            AppSettings = settings;
+            SRecognize = new SpeechRecognitionEngine();
+            Player = new Aimp3Player(playerPath);
+            if(musicCollection != null) {
+                MusicCollection = musicCollection;
+            } else {
+                throw new ArgumentNullException(nameof(musicCollection));
+            }
+            InitCommands();
+
+            try {
+                LoadGrammar();
+
+                SRecognize.SetInputToDefaultAudioDevice();
+                StartListening();
+            } catch(Exception e) {
+                System.Windows.Forms.MessageBox.Show("Error while starting SpeechInput\n" + e.ToString());
+            }
+            SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
+
+            AppSettings.OnChange += (s, a) => LoadGrammar();
+        }
 
         public event Action<string> MessageSend;
 
-        private CommandModeTimer ModeTimer;
-        private SpeechRecognitionEngine SRecognize;
-        private Random RNG;
-        private IPlayer Player;
-        private Settings AppSettings;
-        private MusicList MusicCollection;
+        public bool IsListening => SRecognize?.AudioState != AudioState.Stopped;
 
         public IEnumerable<string> Keywords {
             get {
@@ -32,75 +60,6 @@ namespace SpeechMusicController {
                     }
                 }
             }
-        }
-
-        public SpeechInput(Settings settings, MusicList musicCollection, string playerPath) {
-            ModeTimer = new CommandModeTimer();
-            RNG = new Random();
-            AppSettings = settings;
-            SRecognize = new SpeechRecognitionEngine();
-            Player = new Aimp3Player(playerPath);
-            if(musicCollection != null) {
-                MusicCollection = musicCollection;
-            } else {
-                throw new ArgumentNullException(nameof(musicCollection));
-            }
-            InitCommands();
-            Start();
-
-            AppSettings.OnChange += (s, a) => LoadGrammar();
-        }
-
-        private void InitCommands() {
-            SpeechCommands = new List<SpeechCommand>() {
-                new SpeechCommand("collection", () => {
-                    Player.Play(MusicCollection.ActiveSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
-                    ResetModes();
-                }),
-                new SpeechCommand("full collection", () => {
-                    Player.Play(MusicCollection.AllSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
-                    ResetModes();
-                }),
-                new SpeechCommand("switch", () => {
-                        Player.Toggle();
-                        ResetModes();
-                    }),
-                new SpeechCommand("random", () => Player.Play(MusicCollection.GetRandomSong().FilePath)),
-                new SpeechCommand("next", Player.Next),
-                new SpeechCommand("previous", Player.Previous),
-                new SpeechCommand("volume up", Player.VolUp),
-                new SpeechCommand("volume down", Player.VolDown),
-                new SpeechCommand("play", Player.Play)
-            };
-        }
-
-        private void Start() {
-            try {
-                LoadGrammar();
-
-                SRecognize.SetInputToDefaultAudioDevice();
-                SRecognize.RecognizeAsync(RecognizeMode.Multiple);
-            } catch(Exception e) {
-                System.Windows.Forms.MessageBox.Show("Error while starting SpeechInput\n" + e.ToString());
-            }
-            SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
-        }
-
-        public void LoadGrammar() {
-            var keywords = new Choices();
-            keywords.Add(Keywords.ToArray());
-            keywords.Add(MusicCollection.GetAllSongKeywords());
-
-            var grammerBuilder = new GrammarBuilder();
-            grammerBuilder.Append(keywords);
-
-            SRecognize.UnloadAllGrammars();
-            SRecognize.LoadGrammar(new Grammar(grammerBuilder));
-        }
-
-        private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            SendMessage($"{e.Result.Text} ({e.Result.Confidence * 100:#}%)");
-            ExecuteCommand(e.Result.Text);
         }
 
         public void ExecuteCommand(string input, bool ignoreActiveMatchMode = false) {
@@ -137,10 +96,62 @@ namespace SpeechMusicController {
             }
         }
 
+        public void StartListening() {
+            if(SRecognize.AudioState == AudioState.Stopped) {
+                SRecognize?.RecognizeAsync(RecognizeMode.Multiple);
+            }
+        }
+
+        public void StopListening() {
+            if(SRecognize.AudioState != AudioState.Stopped) {
+                SRecognize?.RecognizeAsyncStop();
+            }
+        }
+
+        private void InitCommands() {
+            SpeechCommands = new List<SpeechCommand>() {
+                new SpeechCommand("collection", () => {
+                    Player.Play(MusicCollection.ActiveSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
+                    ResetModes();
+                }),
+                new SpeechCommand("full collection", () => {
+                    Player.Play(MusicCollection.AllSongs.OrderBy(s => RNG.Next()).Select(s => s.FilePath));
+                    ResetModes();
+                }),
+                new SpeechCommand("switch", () => {
+                        Player.Toggle();
+                        ResetModes();
+                    }),
+                new SpeechCommand("random", () => Player.Play(MusicCollection.GetRandomSong().FilePath)),
+                new SpeechCommand("next", Player.Next),
+                new SpeechCommand("previous", Player.Previous),
+                new SpeechCommand("volume up", Player.VolUp),
+                new SpeechCommand("volume down", Player.VolDown),
+                new SpeechCommand("play", Player.Play)
+            };
+        }
+
+        private void LoadGrammar() {
+            var keywords = new Choices();
+            keywords.Add(Keywords.ToArray());
+            keywords.Add(MusicCollection.GetAllSongKeywords());
+
+            var grammerBuilder = new GrammarBuilder();
+            grammerBuilder.Append(keywords);
+
+            SRecognize.UnloadAllGrammars();
+            SRecognize.LoadGrammar(new Grammar(grammerBuilder));
+        }
+
         private void ResetModes() {
             ModeTimer.ActivateMode(CommandMode.None, 0);
         }
 
         private void SendMessage(string mesage) => MessageSend?.Invoke(mesage ?? "");
+
+        private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
+            SendMessage($"{e.Result.Text} ({e.Result.Confidence * 100:#}%)");
+            ExecuteCommand(e.Result.Text);
+        }
     }
 }

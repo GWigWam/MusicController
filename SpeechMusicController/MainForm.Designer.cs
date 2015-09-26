@@ -36,6 +36,7 @@
             this.Bt_Rules = new System.Windows.Forms.Button();
             this.Bt_Refresh = new System.Windows.Forms.Button();
             this.Bt_Settings = new System.Windows.Forms.Button();
+            this.Bt_SpeechSwitch = new System.Windows.Forms.Button();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +49,7 @@
             this.Tb_Output.Name = "Tb_Output";
             this.Tb_Output.ReadOnly = true;
             this.Tb_Output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Tb_Output.Size = new System.Drawing.Size(179, 80);
+            this.Tb_Output.Size = new System.Drawing.Size(179, 84);
             this.Tb_Output.TabIndex = 0;
             // 
             // NotifyIcon
@@ -97,15 +98,15 @@
             // 
             // KeyInput
             // 
-            this.KeyInput.Location = new System.Drawing.Point(13, 12);
+            this.KeyInput.Location = new System.Drawing.Point(12, 12);
             this.KeyInput.Name = "KeyInput";
-            this.KeyInput.Size = new System.Drawing.Size(259, 20);
+            this.KeyInput.Size = new System.Drawing.Size(178, 20);
             this.KeyInput.TabIndex = 2;
             this.KeyInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyInput_KeyUp);
             // 
             // Bt_Rules
             // 
-            this.Bt_Rules.Location = new System.Drawing.Point(197, 67);
+            this.Bt_Rules.Location = new System.Drawing.Point(197, 41);
             this.Bt_Rules.Name = "Bt_Rules";
             this.Bt_Rules.Size = new System.Drawing.Size(75, 23);
             this.Bt_Rules.TabIndex = 3;
@@ -115,7 +116,7 @@
             // 
             // Bt_Refresh
             // 
-            this.Bt_Refresh.Location = new System.Drawing.Point(197, 38);
+            this.Bt_Refresh.Location = new System.Drawing.Point(197, 12);
             this.Bt_Refresh.Name = "Bt_Refresh";
             this.Bt_Refresh.Size = new System.Drawing.Size(75, 23);
             this.Bt_Refresh.TabIndex = 4;
@@ -125,7 +126,7 @@
             // 
             // Bt_Settings
             // 
-            this.Bt_Settings.Location = new System.Drawing.Point(197, 95);
+            this.Bt_Settings.Location = new System.Drawing.Point(197, 70);
             this.Bt_Settings.Name = "Bt_Settings";
             this.Bt_Settings.Size = new System.Drawing.Size(75, 23);
             this.Bt_Settings.TabIndex = 5;
@@ -133,12 +134,23 @@
             this.Bt_Settings.UseVisualStyleBackColor = true;
             this.Bt_Settings.Click += new System.EventHandler(this.Bt_Settings_Click);
             // 
+            // Bt_SpeechSwitch
+            // 
+            this.Bt_SpeechSwitch.Location = new System.Drawing.Point(197, 99);
+            this.Bt_SpeechSwitch.Name = "Bt_SpeechSwitch";
+            this.Bt_SpeechSwitch.Size = new System.Drawing.Size(75, 23);
+            this.Bt_SpeechSwitch.TabIndex = 6;
+            this.Bt_SpeechSwitch.Text = "Speech (On)";
+            this.Bt_SpeechSwitch.UseVisualStyleBackColor = true;
+            this.Bt_SpeechSwitch.Click += new System.EventHandler(this.Bt_SpeechSwitch_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(284, 130);
+            this.Controls.Add(this.Bt_SpeechSwitch);
             this.Controls.Add(this.Bt_Settings);
             this.Controls.Add(this.Bt_Refresh);
             this.Controls.Add(this.Bt_Rules);
@@ -175,6 +187,7 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItemRefresh;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Button Bt_Settings;
+        private System.Windows.Forms.Button Bt_SpeechSwitch;
     }
 }
 

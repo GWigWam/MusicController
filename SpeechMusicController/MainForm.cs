@@ -171,5 +171,15 @@ namespace SpeechMusicController {
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             CurrentSongRules?.WriteToDisc(false);
         }
+
+        private void Bt_SpeechSwitch_Click(object sender, EventArgs e) {
+            if(SpeechControll.IsListening) {
+                SpeechControll.StopListening();
+                Bt_SpeechSwitch.Text = "Speech (Off)";
+            } else {
+                SpeechControll.StartListening();
+                Bt_SpeechSwitch.Text = "Speech (On)";
+            }
+        }
     }
 }
