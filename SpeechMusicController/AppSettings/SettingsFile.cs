@@ -74,11 +74,19 @@ namespace SpeechMusicController.AppSettings {
         public void WriteToDisc(bool runAsync) {
             if(HasUnsavedChanges) {
                 var writeTask = new Task(() => {
-                    using(StreamWriter sw = new StreamWriter(new FileStream(FullFilePath, FileMode.Create))) {
+                    //Write to .writing file
+                    var writingPath = $"{FullFilePath}.writing";
+                    using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
                         string content = JsonConvert.SerializeObject(this, JSonSettings);
                         sw.Write(content);
-                        HasUnsavedChanges = false;
                     }
+
+                    //After writing is finished delete old file and remove .writing from the filename
+                    if(File.Exists(writingPath)) {
+                        File.Delete(FullFilePath);
+                        File.Move(writingPath, FullFilePath);
+                    }
+                    HasUnsavedChanges = false;
                 });
 
                 if(runAsync) {
