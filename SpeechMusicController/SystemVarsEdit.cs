@@ -30,10 +30,12 @@ namespace SpeechMusicController {
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e) {
-            string key = (string)Lb_List.SelectedItem;
-            string value = AppSettings.GetSetting(key)?.ToString() ?? string.Empty;
+            string key = Lb_List?.SelectedItem as string;
+            if(key != null) {
+                string value = AppSettings.GetSetting(key)?.ToString() ?? string.Empty;
 
-            Tb_NewString.Text = value;
+                Tb_NewString.Text = value;
+            }
         }
 
         private void Bt_Ok_Click(object sender, EventArgs e) {
