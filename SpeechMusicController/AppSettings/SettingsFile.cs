@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SpeechMusicController.AppSettings {
 
@@ -50,11 +51,21 @@ namespace SpeechMusicController.AppSettings {
             try {
                 string fileContent = File.ReadAllText(filePath);
                 var read = JsonConvert.DeserializeObject<T>(fileContent, JSonSettings);
-                read.FullFilePath = filePath;
+                if(read != null) {
+                    read.FullFilePath = filePath;
 
-                read.AfterRead();
+                    read.AfterRead();
 
-                return read;
+                    return read;
+                } else {
+                    MessageBox.Show($"Could not read {typeof(T).Name} from\n{filePath}\nFile is probably empty");
+                    Environment.Exit(-1);
+                    return null;
+                }
+            } catch(JsonReaderException jre) {
+                MessageBox.Show($"Invalid json encountered while trying to create {typeof(T).Name} from:\n{filePath}\n{jre}");
+                Environment.Exit(-1);
+                return null;
             } catch(FileNotFoundException) {
                 return null;
             }
