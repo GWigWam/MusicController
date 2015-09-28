@@ -100,7 +100,7 @@
             // 
             this.KeyInput.Location = new System.Drawing.Point(12, 12);
             this.KeyInput.Name = "KeyInput";
-            this.KeyInput.Size = new System.Drawing.Size(178, 20);
+            this.KeyInput.Size = new System.Drawing.Size(179, 20);
             this.KeyInput.TabIndex = 2;
             this.KeyInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyInput_KeyUp);
             // 
@@ -149,7 +149,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.ClientSize = new System.Drawing.Size(284, 130);
+            this.ClientSize = new System.Drawing.Size(284, 134);
             this.Controls.Add(this.Bt_SpeechSwitch);
             this.Controls.Add(this.Bt_Settings);
             this.Controls.Add(this.Bt_Refresh);
