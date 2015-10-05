@@ -39,7 +39,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 9);
+            this.label1.Location = new System.Drawing.Point(12, 28);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 2;
@@ -48,7 +48,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 161);
+            this.label2.Location = new System.Drawing.Point(12, 181);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 13);
             this.label2.TabIndex = 3;
@@ -57,7 +57,7 @@
             // Lb_Rules
             // 
             this.Lb_Rules.FormattingEnabled = true;
-            this.Lb_Rules.Location = new System.Drawing.Point(12, 25);
+            this.Lb_Rules.Location = new System.Drawing.Point(12, 44);
             this.Lb_Rules.Name = "Lb_Rules";
             this.Lb_Rules.Size = new System.Drawing.Size(548, 134);
             this.Lb_Rules.TabIndex = 4;
@@ -116,7 +116,7 @@
             // 
             // Tb_Search
             // 
-            this.Tb_Search.Location = new System.Drawing.Point(55, 171);
+            this.Tb_Search.Location = new System.Drawing.Point(55, 6);
             this.Tb_Search.Name = "Tb_Search";
             this.Tb_Search.Size = new System.Drawing.Size(505, 20);
             this.Tb_Search.TabIndex = 11;
@@ -125,7 +125,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 174);
+            this.label3.Location = new System.Drawing.Point(5, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 13);
             this.label3.TabIndex = 12;

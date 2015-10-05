@@ -40,7 +40,16 @@ namespace SpeechMusicController {
 
         private void FillRuleList() {
             Lb_Rules.Items.Clear();
-            Lb_Rules.Items.AddRange(Rules.GetSongRules(true, true));
+            IEnumerable<SongRule> allRules = Rules.GetSongRules(true, true);
+            var searchWord = Tb_Search.Text;
+
+            if(!string.IsNullOrWhiteSpace(searchWord)) {
+                allRules = allRules.Where(r => r.ToString().ToLower().Contains(searchWord.ToLower()));
+            }
+
+            foreach(var rule in allRules) {
+                Lb_Rules.Items.Add(rule);
+            }
         }
 
         private void FillSongList() {
@@ -132,6 +141,6 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Tb_Search_TextChanged(object sender, EventArgs e) => FillSongList();
+        private void Tb_Search_TextChanged(object sender, EventArgs e) => SetupLists();
     }
 }
