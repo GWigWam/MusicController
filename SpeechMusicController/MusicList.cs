@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TagLib;
 
 namespace SpeechMusicController {
 
@@ -16,6 +17,9 @@ namespace SpeechMusicController {
         private Random Random;
         private SongRules Rules;
         private Settings AppSettings;
+
+        private readonly Regex SongNameInfo = new Regex(@"^\s*(?<artist>.+?) - (?<title>.+?)(?<extension>\.[a-z]\S*)$");
+        private readonly Regex Parenthesis = new Regex(@"\(|\)");
 
         public MusicList(Settings settings, SongRules rules) {
             if(rules != null) {
@@ -126,30 +130,25 @@ namespace SpeechMusicController {
             return retList;
         }
 
-        private IEnumerable<Song> OrganizeList(FileInfo[] allFiles) {
-            List<Song> OrganizedList = new List<Song>();
-            foreach(FileInfo fi in allFiles) {
-                var fileProps = TagLib.File.Create(fi.FullName);
+        private IEnumerable<Song> OrganizeList(FileInfo[] files) {
+            foreach(FileInfo curFile in files) {
+                Tag tag = TagLib.File.Create(curFile.FullName).Tag;
+                Match matchName = null;
 
-                var propTitle = string.IsNullOrWhiteSpace(fileProps.Tag.Title) ? null : fileProps.Tag.Title;
-                var propArtist = string.IsNullOrWhiteSpace(fileProps.Tag.FirstPerformer) ? null : fileProps.Tag.FirstPerformer;
-                var propAlbum = string.IsNullOrWhiteSpace(fileProps.Tag.Album) ? null : fileProps.Tag.Album;
+                string title = tag.Title ?? (matchName ?? (matchName = SongNameInfo.Match(curFile.Name))).Groups?["title"]?.Value;
+                string artist = tag.FirstPerformer ?? (matchName ?? (matchName = SongNameInfo.Match(curFile.Name))).Groups?["artist"]?.Value;
+                string album = tag.Album;
 
-                //Strip .mp3
-                var fileTitle = fi.Name.Substring(0, fi.Name.Length - 4);
+                if(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(artist)) {
+                    //Remove parenthesis '(' & ')'
+                    title = Parenthesis.Replace(title, "").Trim();
+                    artist = Parenthesis.Replace(artist, "").Trim();
+                    album = album?.Trim();
+                    album = string.IsNullOrWhiteSpace(album) ? null : album;
 
-                string fileArtist = null;
-                if(fileTitle.Contains(" - ")) {
-                    fileArtist = fileTitle.Substring(0, fileTitle.IndexOf(" - ")).Trim();
-                    fileTitle = fileTitle.Substring(fileTitle.IndexOf(" - ") + 3).Trim();
+                    var song = new Song(title, artist, album, curFile.FullName);
+                    yield return song;
                 }
-
-                Song song = new Song(
-                    propTitle == null ? Regex.Replace(fileTitle, @"(\(|\))", "").Trim() : Regex.Replace(propTitle, @"(\(|\))", "").Trim(),
-                    propArtist ?? fileArtist,
-                    propAlbum,
-                    fi.FullName);
-                yield return song;
             }
         }
 
