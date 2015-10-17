@@ -27,7 +27,7 @@ namespace SpeechMusicController.AppSettings {
             ExcludeRules = new List<ExcludeRule>();
         }
 
-        public void AddSongRule(SongRule rule) {
+        public void AddSongRule(SongRule rule, bool triggerOnChange = true) {
             if(rule is NameChangeRule) {
                 NameChangeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
                 NameChangeRules.Add(rule as NameChangeRule);
@@ -35,16 +35,22 @@ namespace SpeechMusicController.AppSettings {
                 ExcludeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
                 ExcludeRules.Add(rule as ExcludeRule);
             }
-            AfterChange();
+
+            if(triggerOnChange) {
+                TriggerOnChange();
+            }
         }
 
-        public void RemoveSongRule(SongRule rule) {
+        public void RemoveSongRule(SongRule rule, bool triggerOnChange = true) {
             if(rule is NameChangeRule) {
                 NameChangeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
             } else if(rule is ExcludeRule) {
                 ExcludeRules.RemoveAll(sr => sr.Attributes == rule.Attributes && sr.Type == rule.Type);
             }
-            AfterChange();
+
+            if(triggerOnChange) {
+                TriggerOnChange();
+            }
         }
 
         public SongRule[] GetSongRules(bool getNameChangeRules, bool getExcludeRules) {
@@ -57,6 +63,10 @@ namespace SpeechMusicController.AppSettings {
                     return false;
                 }
             }).ToArray();
+        }
+
+        public void TriggerOnChange() {
+            AfterChange();
         }
     }
 }

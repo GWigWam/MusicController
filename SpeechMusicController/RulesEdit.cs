@@ -73,7 +73,7 @@ namespace SpeechMusicController {
             SongRule selected = (Lb_Rules.SelectedItem as SongRule);
 
             if(selected != null) {
-                Rules.RemoveSongRule(selected);
+                Rules.RemoveSongRule(selected, false);
 
                 int index = Lb_Rules.SelectedIndex;
                 SetupLists();
@@ -88,7 +88,7 @@ namespace SpeechMusicController {
         private void Bt_ExcludeSong_Click(object sender, EventArgs e) {
             if(Lb_Songs.SelectedItem is Song) {
                 Song selected = (Song)Lb_Songs.SelectedItem;
-                Rules.AddSongRule(new ExcludeRule(selected.Attributes));
+                Rules.AddSongRule(new ExcludeRule(selected.Attributes), false);
 
                 int index = Lb_Songs.SelectedIndex;
                 SetupLists();
@@ -104,7 +104,7 @@ namespace SpeechMusicController {
                 if(Lb_Songs.SelectedItem is Song) {
                     Song selected = (Song)Lb_Songs.SelectedItem;
 
-                    Rules.AddSongRule(new NameChangeRule(selected.Attributes, Tb_Rename.Text.Trim()));
+                    Rules.AddSongRule(new NameChangeRule(selected.Attributes, Tb_Rename.Text.Trim()), false);
 
                     int index = Lb_Songs.SelectedIndex;
                     SetupLists();
@@ -142,5 +142,9 @@ namespace SpeechMusicController {
         }
 
         private void Tb_Search_TextChanged(object sender, EventArgs e) => SetupLists();
+
+        private void RulesEdit_FormClosing(object sender, FormClosingEventArgs e) {
+            Rules.TriggerOnChange();
+        }
     }
 }

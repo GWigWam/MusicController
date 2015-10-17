@@ -149,6 +149,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RulesEdit";
             this.Text = "RulesEdit";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RulesEdit_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
