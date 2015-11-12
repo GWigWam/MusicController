@@ -34,7 +34,7 @@ namespace SpeechMusicController {
                 LoadGrammar();
 
                 SRecognize.SetInputToDefaultAudioDevice();
-                StartListening();
+                SRecognize.RecognizeAsync(RecognizeMode.Multiple);
             } catch(Exception e) {
                 System.Windows.Forms.MessageBox.Show("Error while starting SpeechInput\n" + e.ToString());
             }
@@ -45,7 +45,9 @@ namespace SpeechMusicController {
 
         public event Action<string> MessageSend;
 
-        public bool IsListening => SRecognize?.AudioState != AudioState.Stopped;
+        public bool Listening {
+            get; set;
+        } = true;
 
         public IEnumerable<string> Keywords {
             get {
@@ -96,18 +98,6 @@ namespace SpeechMusicController {
             }
         }
 
-        public void StartListening() {
-            if(SRecognize.AudioState == AudioState.Stopped) {
-                SRecognize?.RecognizeAsync(RecognizeMode.Multiple);
-            }
-        }
-
-        public void StopListening() {
-            if(SRecognize.AudioState != AudioState.Stopped) {
-                SRecognize?.RecognizeAsyncStop();
-            }
-        }
-
         private void InitCommands() {
             SpeechCommands = new List<SpeechCommand>() {
                 new SpeechCommand("collection", () => {
@@ -150,8 +140,11 @@ namespace SpeechMusicController {
         private void SendMessage(string mesage) => MessageSend?.Invoke(mesage ?? "");
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            SendMessage($"{e.Result.Text} ({e.Result.Confidence * 100:#}%)");
-            ExecuteCommand(e.Result.Text);
+            string status = Listening ? $"{e.Result.Confidence * 100:#}%" : "DISABLED";
+            SendMessage($"{e.Result.Text} ({status})");
+            if(Listening) {
+                ExecuteCommand(e.Result.Text);
+            }
         }
     }
 }

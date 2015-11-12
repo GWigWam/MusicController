@@ -173,11 +173,11 @@ namespace SpeechMusicController {
         }
 
         private void Bt_SpeechSwitch_Click(object sender, EventArgs e) {
-            if(SpeechControll.IsListening) {
-                SpeechControll.StopListening();
+            if(SpeechControll.Listening) {
+                SpeechControll.Listening = false;
                 Bt_SpeechSwitch.Text = "Speech (Off)";
             } else {
-                SpeechControll.StartListening();
+                SpeechControll.Listening = true;
                 Bt_SpeechSwitch.Text = "Speech (On)";
             }
         }
