@@ -132,12 +132,15 @@ namespace SpeechMusicController {
 
         private IEnumerable<Song> OrganizeList(FileInfo[] files) {
             foreach(FileInfo curFile in files) {
-                Tag tag = TagLib.File.Create(curFile.FullName).Tag;
+                Tag tag = null;
+                try {
+                    tag = TagLib.File.Create(curFile.FullName).Tag;
+                } catch { }
                 Match matchName = null;
 
-                string title = tag.Title ?? (matchName ?? (matchName = SongNameInfo.Match(curFile.Name))).Groups?["title"]?.Value;
-                string artist = tag.FirstPerformer ?? (matchName ?? (matchName = SongNameInfo.Match(curFile.Name))).Groups?["artist"]?.Value;
-                string album = tag.Album;
+                string title = tag?.Title ?? (matchName ?? (matchName = SongNameInfo.Match(curFile.Name))).Groups?["title"]?.Value;
+                string artist = tag?.FirstPerformer ?? (matchName ?? (matchName = SongNameInfo.Match(curFile.Name))).Groups?["artist"]?.Value;
+                string album = tag?.Album;
 
                 if(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(artist)) {
                     //Remove parenthesis '(' & ')'
