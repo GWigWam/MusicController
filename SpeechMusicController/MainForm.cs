@@ -40,6 +40,7 @@ namespace SpeechMusicController {
             }
 
             MusicCollection = new MusicList(AppSettings, CurrentSongRules);
+            WriteLine($"Loaded {MusicCollection.ActiveSongs.Count()} songs");
 
             string playerPath;
             if(AppSettings.TryGetSetting("PlayerPath", out playerPath) && !string.IsNullOrEmpty(playerPath)) {
@@ -64,7 +65,7 @@ namespace SpeechMusicController {
                 Action update = UpdateSuggestions;
                 Invoke(update);
             };
-            MusicCollection.SongListUpdated += () => {
+            MusicCollection.SongListUpdated += (s, a) => {
                 Action update = UpdateSuggestions;
                 Invoke(update);
             };

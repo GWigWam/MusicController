@@ -40,7 +40,7 @@ namespace SpeechMusicController {
             }
             SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
 
-            AppSettings.OnChange += (s, a) => LoadGrammar();
+            MusicCollection.SongListUpdated += (s, a) => LoadGrammar();
         }
 
         public event Action<string> MessageSend;

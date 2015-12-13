@@ -42,7 +42,7 @@ namespace SpeechMusicController {
             AllSongs = RemoveDuplicates(InternalSongList);
         }
 
-        public event Action SongListUpdated;
+        public event EventHandler SongListUpdated;
 
         //Songs after rules have been applied to them
         public IEnumerable<Song> ActiveSongs {
@@ -106,7 +106,7 @@ namespace SpeechMusicController {
                 InternalSongList = OrganizeList(allFiles).ToArray();
 
                 FillSongLists();
-                SongListUpdated?.Invoke();
+                SongListUpdated?.Invoke(this, null);
             } else {
                 System.Windows.Forms.MessageBox.Show("Error: MusicFolder setting is empty");
             }
