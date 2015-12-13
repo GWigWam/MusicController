@@ -112,11 +112,23 @@ namespace SpeechMusicController {
                         Player.Toggle();
                         ResetModes();
                     }),
+                new SpeechCommand("volume up", () => {
+                    Player.VolUp();
+                    long modeTime;
+                    if(AppSettings.TryGetSetting("CommandModeActiveTimeMs", out modeTime)) {
+                        ModeTimer.ActivateMode(ModeTimer.ActiveMode, modeTime);
+                    }
+                }),
+                new SpeechCommand("volume down", () => {
+                    Player.VolDown();
+                    long modeTime;
+                    if(AppSettings.TryGetSetting("CommandModeActiveTimeMs", out modeTime)) {
+                        ModeTimer.ActivateMode(ModeTimer.ActiveMode, modeTime);
+                    }
+                }),
                 new SpeechCommand("random", () => Player.Play(MusicCollection.GetRandomSong().FilePath)),
                 new SpeechCommand("next", Player.Next),
                 new SpeechCommand("previous", Player.Previous),
-                new SpeechCommand("volume up", Player.VolUp),
-                new SpeechCommand("volume down", Player.VolDown),
                 new SpeechCommand("play", Player.Play)
             };
         }
