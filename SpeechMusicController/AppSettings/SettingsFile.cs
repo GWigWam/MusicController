@@ -15,7 +15,7 @@ namespace SpeechMusicController.AppSettings {
         [JsonIgnore]
         public bool HasUnsavedChanges {
             get; private set;
-        }
+        } = false;
 
         [JsonIgnore]
         public string FullFilePath {
@@ -28,13 +28,12 @@ namespace SpeechMusicController.AppSettings {
         protected SettingsFile() {
             JSonSettings = new JsonSerializerSettings();
             JSonSettings.Formatting = Formatting.Indented;
-
-            HasUnsavedChanges = true;
         }
 
         public SettingsFile(string filePath) : this() {
             if(IsPathValidRootedLocal(filePath)) {
                 FullFilePath = filePath;
+                HasUnsavedChanges = true;
             } else {
                 throw new ArgumentException("SettingsFile filePath is not valid");
             }
