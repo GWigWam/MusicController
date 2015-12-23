@@ -16,19 +16,19 @@ namespace SpeechMusicController {
             aimp3.StartInfo.FileName = playerLoc;
         }
 
-        public void Play(Uri song) {
+        public void Play(string songPath) {
             //Add " at begin and end so AIMP3 gets it
-            aimp3.StartInfo.Arguments = $"/ADD_PLAY \"{song.LocalPath}\"";
+            aimp3.StartInfo.Arguments = $"/ADD_PLAY \"{songPath}\"";
             aimp3.Start();
         }
 
-        public async void Play(IEnumerable<Uri> playList) {
-            if(playList.Count() >= 1) {
+        public async void Play(IEnumerable<string> songPaths) {
+            if(songPaths.Count() >= 1) {
                 //Play 1st song
-                Play(playList.First());
+                Play(songPaths.First());
 
                 //After a small delay add other songs in playList to AIMP3s playlist
-                if(playList.Count() > 1) {
+                if(songPaths.Count() > 1) {
                     //Delay shouldn't halt thread
                     await Task.Run(() => {
                         //Alway wait 1s before adding new songs
@@ -37,7 +37,7 @@ namespace SpeechMusicController {
                         for(int tries = 0; tries < 20; tries++) {
                             Process[] found = Process.GetProcessesByName("AIMP3");
                             if(found.Length >= 1 && DateTime.Now - found[0].StartTime > TimeSpan.FromSeconds(5)) {
-                                Insert(playList.Skip(1));
+                                Insert(songPaths.Skip(1));
                                 break;
                             } else {
                                 Task.Delay(2500).Wait();
@@ -48,15 +48,15 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Insert(IEnumerable<Uri> inserList) {
+        private void Insert(IEnumerable<string> inserList) {
             string insertString = "/INSERT ";
-            var insertLater = new List<Uri>();
+            var insertLater = new List<string>();
 
-            foreach(Uri curSong in inserList) {
+            foreach(string curSongPath in inserList) {
                 if(insertString.Length < MaxCharInFilename) {
-                    insertString += $"\"{curSong.LocalPath}\" ";
+                    insertString += $"\"{curSongPath}\" ";
                 } else {
-                    insertLater.Add(curSong);
+                    insertLater.Add(curSongPath);
                 }
             }
 

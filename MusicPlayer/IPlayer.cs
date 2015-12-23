@@ -6,9 +6,9 @@ namespace SpeechMusicController {
 
     public interface IPlayer {
 
-        void Play(Uri song);
+        void Play(string songPath);
 
-        void Play(IEnumerable<Uri> playList);
+        void Play(IEnumerable<string> songPaths);
 
         void Play();
 

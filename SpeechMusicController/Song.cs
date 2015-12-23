@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SpeechMusicController {
 
     public class Song {
-        public Uri FilePath;
+        public string FilePath;
 
         public SongAttributes Attributes { get; private set; }
 
@@ -43,11 +43,6 @@ namespace SpeechMusicController {
             if(Uri.IsWellFormedUriString(filePath, UriKind.Absolute)) {
                 throw new ArgumentException("Invallid filepath");
             }
-            FilePath = new Uri(filePath, UriKind.Absolute);
-        }
-
-        public Song(string title, string artist, string album, Uri filePath)
-            : this(title, artist, album) {
             FilePath = filePath;
         }
 
