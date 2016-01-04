@@ -38,7 +38,7 @@ namespace SpeechMusicController {
             }
         }
 
-        private void Bt_Ok_Click(object sender, EventArgs e) {
+        private void ProcessInput() {
             try {
                 if(Lb_List.SelectedItem as string != null && !string.IsNullOrEmpty(Tb_NewString.Text)) {
                     string key = (string)Lb_List.SelectedItem;
@@ -73,5 +73,13 @@ namespace SpeechMusicController {
 
             Process.Start("explorer.exe", $@"/select, {AppSettings.FullFilePath}");
         }
+
+        private void Tb_NewString_KeyUp(object sender, KeyEventArgs e) {
+            if(e.KeyCode == Keys.Enter) {
+                ProcessInput();
+            }
+        }
+
+        private void Bt_Ok_Click(object sender, EventArgs e) => ProcessInput();
     }
 }

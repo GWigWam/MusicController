@@ -47,6 +47,7 @@
             this.Tb_NewString.Size = new System.Drawing.Size(261, 20);
             this.Tb_NewString.TabIndex = 1;
             this.Tb_NewString.TextChanged += new System.EventHandler(this.Tb_NewString_TextChanged);
+            this.Tb_NewString.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Tb_NewString_KeyUp);
             // 
             // Bt_Ok
             // 
@@ -94,6 +95,7 @@
             this.Controls.Add(this.Bt_Ok);
             this.Controls.Add(this.Tb_NewString);
             this.Controls.Add(this.Lb_List);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SystemVarsEdit";
             this.Text = "SystemVarsEdit";
