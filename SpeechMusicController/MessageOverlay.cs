@@ -12,10 +12,16 @@ namespace SpeechMusicController {
 
     public partial class MessageOverlay : Form {
 
+        public bool HideOnHover {
+            get;
+        }
+
         //Prevent multiple overlays at the same time
         private static MessageOverlay CurrentOverlay;
 
-        public MessageOverlay(string Message, int ShowMessageTimeMs) {
+        private bool MouseInBoundsSinceStart;
+
+        public MessageOverlay(string Message, int ShowMessageTimeMs, bool hideOnHover = true) {
             InitializeComponent();
 
             if(CurrentOverlay != null) {
@@ -31,6 +37,13 @@ namespace SpeechMusicController {
             Width = screen.WorkingArea.Width;
 
             Lb_Message.Text = Message;
+
+            HideOnHover = hideOnHover;
+            if(HideOnHover) {
+                MouseInBoundsSinceStart = ClientRectangle.Contains(PointToClient(MousePosition));
+                Lb_Message.MouseEnter += Lb_Message_MouseEnter;
+                Lb_Message.MouseLeave += Lb_Message_MouseLeave;
+            }
         }
 
         private void MessageOverlay_Load(object sender, EventArgs e) {
@@ -38,6 +51,16 @@ namespace SpeechMusicController {
         }
 
         private void T_AutoClose_Tick(object sender, EventArgs e) => CloseMessage();
+
+        private void Lb_Message_MouseEnter(object sender, EventArgs e) {
+            if(!MouseInBoundsSinceStart && HideOnHover) {
+                CloseMessage();
+            }
+        }
+
+        private void Lb_Message_MouseLeave(object sender, EventArgs e) {
+            MouseInBoundsSinceStart = false;
+        }
 
         public void CloseMessage() {
             T_AutoClose.Stop();
