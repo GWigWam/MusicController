@@ -6,7 +6,25 @@
              xmlns:local="clr-namespace:PlayerInterface"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Image Margin="1" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" />
+    <Control.Resources>
+        <Style TargetType="{x:Type Grid}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Opacity="0.0" Color="Black" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <SolidColorBrush Opacity="0.1" Color="Black" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Control.Resources>
+    <Grid x:Name="ContainerGrid">
+        <Image Margin="2" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" />
     </Grid>
 </UserControl>
