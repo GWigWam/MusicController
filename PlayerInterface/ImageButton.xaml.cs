@@ -28,12 +28,17 @@ namespace PlayerInterface {
         public static readonly DependencyProperty ImageProperty = DependencyProperty.Register("Image", typeof(ImageSource), typeof(ImageButton), new UIPropertyMetadata(null));
 
         public ICommand Command {
-            get { return (ICommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
+            get {
+                return (ICommand)GetValue(CommandProperty);
+            }
+
+            set {
+                SetValue(CommandProperty, value);
+            }
         }
 
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(ICommand), typeof(UserControl), new UIPropertyMetadata(null));
+            DependencyProperty.Register("Command", typeof(ICommand), typeof(ImageButton), new UIPropertyMetadata(null));
 
         public object CommandParameter {
             get { return (object)GetValue(CommandParameterProperty); }
@@ -42,7 +47,7 @@ namespace PlayerInterface {
 
         // Using a DependencyProperty as the backing store for CommandParameter.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommandParameterProperty =
-            DependencyProperty.Register("CommandParameter", typeof(object), typeof(UserControl), new UIPropertyMetadata(null));
+            DependencyProperty.Register("CommandParameter", typeof(object), typeof(ImageButton), new UIPropertyMetadata(null));
 
         public IInputElement CommandTarget {
             get { return (IInputElement)GetValue(CommandTargetProperty); }
@@ -51,7 +56,7 @@ namespace PlayerInterface {
 
         // Using a DependencyProperty as the backing store for CommandTarget.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommandTargetProperty =
-            DependencyProperty.Register("CommandTarget", typeof(IInputElement), typeof(UserControl), new UIPropertyMetadata(null));
+            DependencyProperty.Register("CommandTarget", typeof(IInputElement), typeof(ImageButton), new UIPropertyMetadata(null));
 
         public ImageButton() {
             InitializeComponent();

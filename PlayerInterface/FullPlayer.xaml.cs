@@ -13,12 +13,33 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace PlayerInterface {
+
     /// <summary>
     /// Interaction logic for FullPlayer.xaml
     /// </summary>
     public partial class FullPlayer : Window {
+        public event EventHandler MinimizedToTray;
+
         public FullPlayer() {
             InitializeComponent();
+        }
+
+        private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e) {
+            if(e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        private void Btn_Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            Application.Current.Shutdown();
+        }
+
+        private void Btn_Minimize_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            MinimizeToTray();
+        }
+
+        public void MinimizeToTray() {
+            Hide();
+            MinimizedToTray?.Invoke(this, new EventArgs());
         }
     }
 }

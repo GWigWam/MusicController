@@ -25,6 +25,6 @@
         </Style>
     </Control.Resources>
     <Grid x:Name="ContainerGrid">
-        <Image Margin="2" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" />
+        <Image Margin="2" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Cursor="Hand" />
     </Grid>
 </UserControl>

@@ -16,46 +16,48 @@ namespace PlayerInterface {
 
         private void Application_Startup(object sender, StartupEventArgs e) {
             Init();
-            SetupTrayEvents();
-        }
-
-        private void Init() {
-            TrayIcon = (TaskbarIcon)FindResource("Tbi_Icon");
-            CreateSmallPlayer();
-        }
-
-        private void CreateSmallPlayer() {
-            Small = new SmallPlayer();
-            Small.Btn_ShowFull.MouseLeftButtonUp += (s, a) => ShowFullWindow();
-            Small.Show();
-        }
-
-        private void CreateFullPlayer() {
-            Full = new FullPlayer();
-            Full.Closed += (s, a) => Full = null;
-        }
-
-        private void SetupTrayEvents() {
             TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
             TrayIcon.TrayMouseMove += Tbi_TrayMouseMove;
         }
 
+        private void Init() {
+            TrayIcon = (TaskbarIcon)FindResource("Tbi_Icon");
+            CreateSmallPlayer(true);
+            CreateFullPlayer(false);
+        }
+
+        private void CreateSmallPlayer(bool show) {
+            Small = new SmallPlayer();
+            Small.Btn_ShowFull.MouseLeftButtonUp += (s, a) => ShowFullWindow();
+            if(show)
+                Small.Show();
+        }
+
+        private void CreateFullPlayer(bool show) {
+            Full = new FullPlayer();
+            Full.MinimizedToTray += (s, a) => ShowSmallWindow();
+            if(show)
+                Full.Show();
+        }
+
         private void Tbi_TrayMouseMove(object sender, RoutedEventArgs e) {
-            if((!(Full?.IsVisible ?? false))) {
-                Small.WindowState = WindowState.Normal;
-                Small.Activate();
+            if(!(Full?.IsVisible ?? false)) {
+                ShowSmallWindow();
             }
         }
 
+        private void ShowSmallWindow() {
+            Small.Show();
+            Small.Activate();
+        }
+
         private void ShowFullWindow() {
-            if(Full == null) {
-                CreateFullPlayer();
-            }
             if(!Full.IsVisible) {
-                Full.Show();
+                Full.WindowState = WindowState.Normal;
             }
+            Full.Show();
             Full.Activate();
-            Small.WindowState = WindowState.Minimized;
+            Small.Hide();
         }
     }
 }

@@ -5,9 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayerInterface"
         mc:Ignorable="d"
-        Title="FullPlayer" Height="300" Width="300">
+        Title="FullPlayer" Height="300" Width="300" WindowStyle="None" ResizeMode="NoResize">
     <Grid>
-        <Label x:Name="label" Content="Test123&#xD;&#xA;" HorizontalAlignment="Left" Margin="58,116,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
-        </Label>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="StackPanel_MouseDown" Background="#00000000">
+            <local:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" />
+            <local:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" />
+        </StackPanel>
     </Grid>
 </Window>
