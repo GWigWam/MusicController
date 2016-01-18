@@ -1,0 +1,27 @@
+﻿<Window x:Class="PlayerInterface.SmallPlayer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlayerInterface"
+        mc:Ignorable="d"
+        Title="SmallPlayer" Height="40" Width="250" Loaded="Window_Loaded" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize">
+    <Grid Margin="5">
+        <!-- Grid Heigt = 30 & Grid Width = 240 -->
+        <Grid.ColumnDefinitions>
+            <!-- Pause/Play -->
+            <ColumnDefinition Width="1*" />
+            <!-- Prev -->
+            <ColumnDefinition Width="1*" />
+            <!-- Next -->
+            <ColumnDefinition Width="1*" />
+            <!-- Random -->
+            <ColumnDefinition Width="1*" />
+            <!-- Volume -->
+            <ColumnDefinition Width="3*" />
+            <!-- ShowFull -->
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <local:ImageButton x:Name="Btn_ShowFull" Grid.Column="7" Image="/res/img/ShowFull.png" />
+    </Grid>
+</Window>
