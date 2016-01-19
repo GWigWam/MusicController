@@ -12,8 +12,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="StackPanel_MouseDown" Background="#00000000">
-            <local:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" />
-            <local:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" />
+            <local:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
+            <local:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
         </StackPanel>
     </Grid>
 </Window>

@@ -27,14 +27,17 @@ namespace PlayerInterface {
 
         public static readonly DependencyProperty ImageProperty = DependencyProperty.Register("Image", typeof(ImageSource), typeof(ImageButton), new UIPropertyMetadata(null));
 
-        public ICommand Command {
-            get {
-                return (ICommand)GetValue(CommandProperty);
-            }
+        public bool GlowOnHover {
+            get { return (bool)GetValue(GlowOnHoverProperty); }
+            set { SetValue(GlowOnHoverProperty, value); }
+        }
 
-            set {
-                SetValue(CommandProperty, value);
-            }
+        public static readonly DependencyProperty GlowOnHoverProperty =
+            DependencyProperty.Register("GlowOnHover", typeof(bool), typeof(ImageButton), new PropertyMetadata(null));
+
+        public ICommand Command {
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
         }
 
         public static readonly DependencyProperty CommandProperty =
@@ -59,6 +62,7 @@ namespace PlayerInterface {
             DependencyProperty.Register("CommandTarget", typeof(IInputElement), typeof(ImageButton), new UIPropertyMetadata(null));
 
         public ImageButton() {
+            GlowOnHover = true;
             InitializeComponent();
         }
 
