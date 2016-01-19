@@ -131,6 +131,15 @@
     <Resource Include="res\img\CloseWindow.png" />
     <Resource Include="res\img\MinimizeWindow.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img\Mute.png" />
+    <Resource Include="res\img\Next.png" />
+    <Resource Include="res\img\Pause.png" />
+    <Resource Include="res\img\Play.png" />
+    <Resource Include="res\img\Prev.png" />
+    <Resource Include="res\img\Shuffle.png" />
+    <Resource Include="res\img\Volume.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
