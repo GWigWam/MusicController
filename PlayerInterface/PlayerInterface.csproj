@@ -70,6 +70,7 @@
     <Compile Include="SmallPlayer.xaml.cs">
       <DependentUpon>SmallPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FullPlayer.xaml.cs">
