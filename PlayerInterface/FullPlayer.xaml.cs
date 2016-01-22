@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerInterface.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,10 +19,13 @@ namespace PlayerInterface {
     /// Interaction logic for FullPlayer.xaml
     /// </summary>
     public partial class FullPlayer : Window {
+
         public event EventHandler MinimizedToTray;
 
-        public FullPlayer() {
+        public FullPlayer(FullPlayerViewModel fpvm) {
             InitializeComponent();
+
+            DataContext = fpvm;
         }
 
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e) {

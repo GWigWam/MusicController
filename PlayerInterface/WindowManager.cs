@@ -1,4 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using PlayerCore;
+using PlayerInterface.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +20,15 @@ namespace PlayerInterface {
         private FullPlayer Full;
         private SmallPlayer Small;
 
+        private SongPlayer SongPlayer;
+
         public WindowManager(Application app) {
             App = app;
         }
 
-        public void Init() {
+        public void Init(SongPlayer sp) {
+            SongPlayer = sp;
+
             TrayIcon = (TaskbarIcon)App.FindResource("Tbi_Icon");
             CreateSmallPlayer(true);
             CreateFullPlayer(false);
@@ -31,14 +37,16 @@ namespace PlayerInterface {
         }
 
         private void CreateSmallPlayer(bool show) {
-            Small = new SmallPlayer();
+            var spvm = new SmallPlayerViewModel(SongPlayer);
+            Small = new SmallPlayer(spvm);
             Small.Btn_ShowFull.MouseLeftButtonUp += (s, a) => ShowFullWindow();
             if(show)
                 Small.Show();
         }
 
         private void CreateFullPlayer(bool show) {
-            Full = new FullPlayer();
+            var fpvm = new FullPlayerViewModel(SongPlayer);
+            Full = new FullPlayer(fpvm);
             Full.MinimizedToTray += (s, a) => ShowSmallWindow();
             if(show)
                 Full.Show();

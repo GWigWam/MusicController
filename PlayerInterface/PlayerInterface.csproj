@@ -39,6 +39,10 @@
       <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -70,6 +74,8 @@
     <Compile Include="SmallPlayer.xaml.cs">
       <DependentUpon>SmallPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\FullPlayerViewModel.cs" />
+    <Compile Include="ViewModels\SmallPlayerViewModel.cs" />
     <Compile Include="WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +145,17 @@
     <Resource Include="res\img\Prev.png" />
     <Resource Include="res\img\Shuffle.png" />
     <Resource Include="res\img\Volume.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlayerCore\PlayerCore.csproj">
+      <Project>{a44bc6cc-5073-4cb5-a59c-2c6ddf5d4c9b}</Project>
+      <Name>PlayerCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="testsong.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicPlayer", "MusicPlayer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerInterface", "PlayerInterface\PlayerInterface.csproj", "{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerCore", "PlayerCore\PlayerCore.csproj", "{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

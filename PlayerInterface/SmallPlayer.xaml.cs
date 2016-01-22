@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerInterface.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,10 @@ namespace PlayerInterface {
     /// </summary>
     public partial class SmallPlayer : Window {
 
-        public SmallPlayer() {
+        public SmallPlayer(SmallPlayerViewModel spvm) {
             InitializeComponent();
+
+            DataContext = spvm;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) {

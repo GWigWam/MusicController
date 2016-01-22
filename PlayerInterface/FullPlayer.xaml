@@ -15,5 +15,10 @@
             <local:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
             <local:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label x:Name="TestLabel1" Content="{Binding TrackLength}" Background="#FFF5E0E0" />
+            <Label x:Name="TestLabel2" Content="{Binding Elapsed}" Background="#FFF5E0E0" />
+            <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
+        </StackPanel>
     </Grid>
 </Window>

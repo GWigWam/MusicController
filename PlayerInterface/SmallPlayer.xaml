@@ -22,7 +22,7 @@
             <!-- ShowFull -->
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="res/img/Play.png" />
+        <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
         <local:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" />
         <local:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" />
         <local:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
