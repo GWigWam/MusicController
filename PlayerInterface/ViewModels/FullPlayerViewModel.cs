@@ -19,9 +19,20 @@ namespace PlayerInterface.ViewModels {
             set { SongPlayer.CurrentSong = value; }
         }
 
-        public string Elapsed => FormatTimeSpan(SongPlayer.Elapsed);
+        public string ElapsedStr => FormatTimeSpan(SongPlayer.Elapsed);
 
-        public string TrackLength => FormatTimeSpan(SongPlayer.TrackLength);
+        public string TrackLengthStr => FormatTimeSpan(SongPlayer.TrackLength);
+
+        public double ElapsedFraction {
+            get { return SongPlayer.Elapsed.TotalMilliseconds / SongPlayer.TrackLength.TotalMilliseconds; }
+            set {
+                if(value >= 0 && value <= 1) {
+                    var miliseconds = SongPlayer.TrackLength.TotalMilliseconds * value;
+                    var newTime = TimeSpan.FromMilliseconds(miliseconds);
+                    SongPlayer.Elapsed = newTime;
+                }
+            }
+        }
 
         public FullPlayerViewModel(SongPlayer player) : base(player) {
             UpdateTimer = new Timer() {
@@ -33,7 +44,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e) {
-            RaisePropertiesChanged("Elapsed");
+            RaisePropertiesChanged("ElapsedStr", "ElapsedFraction");
         }
     }
 }

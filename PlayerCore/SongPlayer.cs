@@ -27,8 +27,16 @@ namespace PlayerCore {
         }
 
         public TimeSpan Elapsed {
+            set {
+                if(File != null)
+                    File.CurrentTime = value;
+            }
             get {
-                return File?.CurrentTime ?? TimeSpan.Zero;
+                if(File == null || PlayerState != PlaybackState.Playing) {
+                    return TimeSpan.Zero;
+                } else {
+                    return File.CurrentTime;
+                }
             }
         }
 

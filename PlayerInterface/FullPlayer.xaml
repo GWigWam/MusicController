@@ -18,11 +18,12 @@
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <Label x:Name="TestLabel1" Content="{Binding TrackLength}" Background="#FFF5E0E0" />
-                <Label x:Name="TestLabel2" Content="{Binding Elapsed}" Background="#FFF5E0E0" />
+                <Label x:Name="TestLabel1" Content="{Binding TrackLengthStr}" Background="#FFF5E0E0" />
+                <Label x:Name="TestLabel2" Content="{Binding ElapsedStr}" Background="#FFF5E0E0" />
             </StackPanel>
-            <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100" />
-            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+            <cc:ImageButton x:Name="Btn_Switch" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100" />
+            <cc:ScrollSlider x:Name="Slr_Volume" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+            <cc:ScrollSlider x:Name="Slr_Elapsed" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" />
         </StackPanel>
     </Grid>
 </Window>
