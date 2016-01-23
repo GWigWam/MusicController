@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PlayerInterface {
+namespace PlayerInterface.CustomControls {
 
     /// <summary>
     /// Interaction logic for ImageButton.xaml

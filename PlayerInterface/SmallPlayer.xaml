@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayerInterface"
+        xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         mc:Ignorable="d"
         Title="SmallPlayer" Height="40" Width="250" Loaded="Window_Loaded" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid Margin="5">
@@ -22,10 +23,11 @@
             <!-- ShowFull -->
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
-        <local:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" />
-        <local:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" />
-        <local:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
-        <local:ImageButton x:Name="Btn_ShowFull" Grid.Column="5" Image="res/img/ShowFull.png" />
+        <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
+        <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" />
+        <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" />
+        <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
+        <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+        <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="5" Image="res/img/ShowFull.png" />
     </Grid>
 </Window>

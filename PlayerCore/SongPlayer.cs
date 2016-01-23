@@ -61,8 +61,15 @@ namespace PlayerCore {
             }
         }
 
+        private float volume;
+
         public float Volume {
-            get; set;
+            get { return volume; }
+            set {
+                volume = value;
+                if(File != null)
+                    File.Volume = value;
+            }
         }
 
         public event EventHandler<Song> SongEnded;

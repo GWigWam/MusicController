@@ -11,8 +11,8 @@ using System.Windows.Input;
 namespace PlayerInterface.ViewModels {
 
     public class SmallPlayerViewModel : INotifyPropertyChanged {
-        private const string ImgSourcePlay = "res/img/Play.png";
-        private const string ImgSourcePause = "res/img/Pause.png";
+        private const string ImgSourcePlay = "pack://application:,,,/res/img/Play.png";
+        private const string ImgSourcePause = "pack://application:,,,/res/img/Pause.png";
 
         protected SongPlayer songPlayer;
 

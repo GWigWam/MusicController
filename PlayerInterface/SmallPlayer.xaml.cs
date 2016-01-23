@@ -27,9 +27,9 @@ namespace PlayerInterface {
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) {
-            var workArea = System.Windows.SystemParameters.WorkArea;
-            this.Left = workArea.Right - this.Width;
-            this.Top = workArea.Bottom - this.Height;
+            var workArea = SystemParameters.WorkArea;
+            Left = workArea.Right - Width;
+            Top = workArea.Bottom - Height;
         }
     }
 }
