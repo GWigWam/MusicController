@@ -23,7 +23,7 @@
             </StackPanel>
             <cc:ImageButton x:Name="Btn_Switch" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100" />
             <cc:ScrollSlider x:Name="Slr_Volume" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
-            <cc:ScrollSlider x:Name="Slr_Elapsed" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+            <cc:ScrollSlider x:Name="Slr_Elapsed" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" />
         </StackPanel>
     </Grid>
 </Window>

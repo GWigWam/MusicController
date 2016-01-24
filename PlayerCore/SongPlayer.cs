@@ -33,7 +33,7 @@ namespace PlayerCore {
                     File.CurrentTime = value;
             }
             get {
-                if(File == null || PlayerState != PlaybackState.Playing) {
+                if(File == null || PlayerState == PlaybackState.Stopped) {
                     return TimeSpan.Zero;
                 } else {
                     return File.CurrentTime;
