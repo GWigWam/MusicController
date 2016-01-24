@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -22,7 +23,7 @@ namespace PlayerInterface {
 
         private void Application_Startup(object sender, StartupEventArgs e) {
             SongPlayer = new SongPlayer(1/*Todo, get from settings*/);
-            SongPlayer.CurrentSong = new Song("TestTitle", "TestArtist", "TestAlbum", "testsong.mp3");
+            SongPlayer.CurrentSong = new Song(new SongFileReader().ReadFile(new System.IO.FileInfo("testsong.mp3")));
 
             WindowMgr = new WindowManager(this);
             WindowMgr.Init(SongPlayer);

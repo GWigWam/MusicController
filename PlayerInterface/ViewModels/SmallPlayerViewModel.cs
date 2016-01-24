@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using PlayerCore;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
