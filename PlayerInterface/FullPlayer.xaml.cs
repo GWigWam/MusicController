@@ -22,6 +22,8 @@ namespace PlayerInterface {
 
         public event EventHandler MinimizedToTray;
 
+        private bool SlidingElapsed = false;
+
         private FullPlayerViewModel Model => DataContext as FullPlayerViewModel;
 
         public FullPlayer(FullPlayerViewModel fpvm) {
@@ -52,14 +54,16 @@ namespace PlayerInterface {
             if(e.LeftButton == MouseButtonState.Pressed) {
                 if(Model.SongPlayer.PlayerState == NAudio.Wave.PlaybackState.Playing) {
                     Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Paused;
-                    (sender as Slider).PreviewMouseUp += UnpauzeAfterSlideElapsed;
+                    SlidingElapsed = true;
                 }
             }
         }
 
-        private void UnpauzeAfterSlideElapsed(object sender, MouseButtonEventArgs e) {
-            Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
-            (sender as Slider).MouseUp -= UnpauzeAfterSlideElapsed;
+        private void Slr_Elapsed_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
+            if(SlidingElapsed) {
+                Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
+                SlidingElapsed = false;
+            }
         }
     }
 }

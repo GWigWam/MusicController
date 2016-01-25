@@ -15,6 +15,9 @@ namespace PlayerInterface.ViewModels {
     public class FullPlayerViewModel : SmallPlayerViewModel {
         private Timer UpdateTimer;
 
+        //Slider should not all the way to end of end of track, track should end 'naturaly'
+        private int SliderTrackEndBufferMs = 500;
+
         public Song CurrentSong {
             get { return SongPlayer.CurrentSong; }
             set { SongPlayer.CurrentSong = value; }
@@ -25,10 +28,10 @@ namespace PlayerInterface.ViewModels {
         public string TrackLengthStr => FormatTimeSpan(SongPlayer.TrackLength);
 
         public double ElapsedFraction {
-            get { return SongPlayer.Elapsed.TotalMilliseconds / SongPlayer.TrackLength.TotalMilliseconds; }
+            get { return SongPlayer.Elapsed.TotalMilliseconds / (SongPlayer.TrackLength.TotalMilliseconds - SliderTrackEndBufferMs); }
             set {
                 if(value >= 0 && value <= 1) {
-                    var miliseconds = SongPlayer.TrackLength.TotalMilliseconds * value;
+                    var miliseconds = (SongPlayer.TrackLength.TotalMilliseconds - SliderTrackEndBufferMs) * value;
                     var newTime = TimeSpan.FromMilliseconds(miliseconds);
                     SongPlayer.Elapsed = newTime;
                 }
