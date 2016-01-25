@@ -24,7 +24,7 @@ namespace PlayerCore.Songs {
 
         public string Artist {
             get {
-                return artist ?? File.Title;
+                return artist ?? File.Artist;
             }
             set {
                 artist = value;
@@ -35,7 +35,7 @@ namespace PlayerCore.Songs {
 
         public string Album {
             get {
-                return album ?? File.Title;
+                return album ?? File.Album;
             }
             set {
                 album = value;

@@ -9,11 +9,27 @@ using TagLib;
 
 namespace PlayerCore.Songs {
 
-    public class SongFileReader {
-        private readonly Regex SongNameInfo = new Regex(@"^\s*(?<artist>.+?) - (?<title>.+?)(?<extension>\.[a-z]\S*)$");
-        private readonly Regex Parenthesis = new Regex(@"\(|\)");
+    public static class SongFileReader {
+        private static readonly Regex SongNameInfo = new Regex(@"^\s*(?<artist>.+?) - (?<title>.+?)(?<extension>\.[a-z]\S*)$");
+        private static readonly Regex Parenthesis = new Regex(@"\(|\)");
 
-        public SongFile ReadFile(FileInfo file) {
+        public static SongFile[] ReadFolderFiles(string path, string filter) {
+            return YieldReadFolderFiles(path, filter).ToArray();
+        }
+
+        private static IEnumerable<SongFile> YieldReadFolderFiles(string path, string filter) {
+            var dir = new DirectoryInfo(path);
+            if(dir.Exists) {
+                foreach(FileInfo f in dir.GetFiles(filter, SearchOption.AllDirectories)) {
+                    var read = ReadFile(f);
+                    if(read != null) {
+                        yield return read;
+                    }
+                }
+            }
+        }
+
+        public static SongFile ReadFile(FileInfo file) {
             TagLib.File fileInfo = null;
             try {
                 fileInfo = TagLib.File.Create(file.FullName);

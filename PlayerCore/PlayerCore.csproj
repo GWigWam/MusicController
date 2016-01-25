@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PlaybackStateChangedEventArgs.cs" />
+    <Compile Include="Playlist.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SongPlayer.cs" />
     <Compile Include="Songs\Song.cs" />
