@@ -10,7 +10,7 @@ namespace PlayerCore {
     public class TransitionManager {
 
         //TODO: Get from settings
-        private const uint SongDelayMs = 1000;
+        private const uint SongDelayMs = 2000;
 
         private const bool Loop = true;
 

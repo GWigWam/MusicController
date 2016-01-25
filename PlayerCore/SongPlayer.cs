@@ -36,6 +36,7 @@ namespace PlayerCore {
                 if(PlayedToEnd || Player?.PlaybackState == PlaybackState.Playing) {
                     StartPlaying();
                 }
+                SongChanged?.Invoke(this, new EventArgs());
             }
         }
 
@@ -94,6 +95,8 @@ namespace PlayerCore {
         }
 
         public event EventHandler<Song> SongEnded;
+
+        public event EventHandler SongChanged;
 
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
 

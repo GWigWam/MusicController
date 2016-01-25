@@ -41,11 +41,16 @@ namespace PlayerInterface.ViewModels {
                 Enabled = true,
                 Interval = 1000
             };
+            SongPlayer.SongChanged += SongPlayer_SongChanged;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
         }
 
+        private void SongPlayer_SongChanged(object sender, EventArgs e) {
+            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr));
+        }
+
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e) {
-            RaisePropertiesChanged("ElapsedStr", "ElapsedFraction");
+            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
         }
     }
 }
