@@ -1,19 +1,21 @@
 ﻿using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PlayerCore {
 
+    [DebuggerDisplay("{Length} Songs, current #{CurrentSongIndex})")]
     public class Playlist {
         private int currentSongIndex = -1;
 
         public int CurrentSongIndex {
             get { return currentSongIndex; }
             set {
-                if(value >= 0 && value < Lenght) {
+                if(value >= 0 && value < Length) {
                     if(currentSongIndex != value) {
                         currentSongIndex = value;
                         RaiseCurrentSongChanged();
@@ -26,7 +28,7 @@ namespace PlayerCore {
 
         public Song CurrentSong {
             get {
-                if(CurrentSongIndex >= 0 && CurrentSongIndex < Lenght) {
+                if(CurrentSongIndex >= 0 && CurrentSongIndex < Length) {
                     return Songs.ElementAt(CurrentSongIndex);
                 } else {
                     return null;
@@ -34,7 +36,7 @@ namespace PlayerCore {
             }
         }
 
-        public int Lenght => Songs?.Count ?? 0;
+        public int Length => Songs?.Count ?? 0;
 
         private Random random;
         private List<Song> Songs { get; set; }
@@ -75,7 +77,7 @@ namespace PlayerCore {
         }
 
         public void Order<TKey>(Func<Song, TKey> by, bool reverse = false) {
-            if(Lenght > 0) {
+            if(Length > 0) {
                 if(reverse) {
                     Songs = Songs.OrderBy(by).Reverse().ToList();
                 } else {

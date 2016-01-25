@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PlayerCore.Songs {
 
+    [DebuggerDisplay("{Title}: {Path})")]
     public class SongFile {
         public string Album { get; set; }
         public string Artist { get; set; }
