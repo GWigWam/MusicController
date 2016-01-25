@@ -14,14 +14,26 @@ namespace PlayerCore {
 
         private AudioFileReader File;
 
-        private IWavePlayer Player;
+        private IWavePlayer player;
+
+        private IWavePlayer Player {
+            get { return player; }
+            set {
+                if(player != null) {
+                    player.Dispose();
+                }
+                player = value;
+            }
+        }
+
+        private bool PlayedToEnd;
 
         public Song CurrentSong {
             get { return currentSong; }
             set {
                 currentSong = value;
-                LoadFile();
-                if(Player?.PlaybackState == PlaybackState.Playing) {
+                File = new AudioFileReader(CurrentSong.FilePath) { Volume = Volume };
+                if(PlayedToEnd || Player?.PlaybackState == PlaybackState.Playing) {
                     StartPlaying();
                 }
             }
@@ -86,27 +98,27 @@ namespace PlayerCore {
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
 
         public SongPlayer(float volume = 1) {
+            PlayedToEnd = false;
             Volume = volume;
         }
 
         public void StartPlaying() {
             if(CurrentSong != null) {
-                if(File == null) {
-                    LoadFile();
-                }
-                if(Player == null) {
-                    Player = new WaveOut();
-                    try {
-                        Player.Init(File);
-                        Player.PlaybackStopped += (s, a) => SongEnded?.Invoke(this, CurrentSong);
-                    } catch(Exception) {
-                        Stop();
+                PlayedToEnd = false;
+                Player = new WaveOut();
+                try {
+                    Player.Init(File);
+                    Player.PlaybackStopped += (s, a) => {
+                        PlayedToEnd = true;
                         SongEnded?.Invoke(this, CurrentSong);
-                        //TODO: Throw userfriendly exception
-                    }
+                    };
+                } catch(Exception) {
+                    Stop();
+                    SongEnded?.Invoke(this, CurrentSong);
+                    //TODO: Throw userfriendly exception
                 }
-                Player.Play();
             }
+            Player.Play();
         }
 
         public void Stop() {
@@ -115,10 +127,6 @@ namespace PlayerCore {
                 Player.Dispose();
                 Player = null;
             }
-        }
-
-        private void LoadFile() {
-            File = new AudioFileReader(CurrentSong.FilePath) { Volume = Volume };
         }
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="Songs\Song.cs" />
     <Compile Include="Songs\SongFile.cs" />
     <Compile Include="Songs\SongFileReader.cs" />
+    <Compile Include="TransitionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
