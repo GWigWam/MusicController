@@ -6,31 +6,6 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid x:Name="ContainerGrid">
-        <Image Margin="2" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Cursor="Hand" />
-        <Grid.Style>
-            <Style TargetType="{x:Type Grid}">
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <SolidColorBrush Opacity="0.0" Color="Black" />
-                    </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                    <MultiDataTrigger>
-                        <MultiDataTrigger.Conditions>
-                            <Condition Binding="{Binding IsMouseOver, ElementName=ImageButtonControl, Mode=OneWay}" Value="True" />
-                            <Condition Binding="{Binding GlowOnHover, ElementName=ImageButtonControl, Mode=OneWay}" Value="True" />
-                        </MultiDataTrigger.Conditions>
-                        <Setter Property="Background">
-                            <Setter.Value>
-                                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" MappingMode="RelativeToBoundingBox" RadiusY="0.5" RadiusX="0.5" SpreadMethod="Pad">
-                                    <GradientStop Color="#FF3498DB" Offset="0" />
-                                    <GradientStop Color="#003498db" Offset="1" />
-                                </RadialGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                    </MultiDataTrigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Style>
+        <Image x:Name="ButtonImage" Margin="2" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Cursor="Hand" />
     </Grid>
 </UserControl>

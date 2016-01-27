@@ -61,9 +61,46 @@ namespace PlayerInterface.CustomControls {
         public static readonly DependencyProperty CommandTargetProperty =
             DependencyProperty.Register("CommandTarget", typeof(IInputElement), typeof(ImageButton), new UIPropertyMetadata(null));
 
+        private Brush DefaultBack;
+        private Brush HoverEnabledBack;
+        private Brush HoverDisabledBack;
+
         public ImageButton() {
             GlowOnHover = true;
             InitializeComponent();
+
+            DefaultBack = new SolidColorBrush(Colors.Transparent);
+            HoverEnabledBack = new RadialGradientBrush(Color.FromArgb(0xFF, 0x34, 0x98, 0xDB), Color.FromArgb(0x00, 0x34, 0x98, 0xDB)) {
+                Center = new Point(0.5, 0.5),
+                GradientOrigin = new Point(0.5, 0.5),
+                RadiusX = 0.5,
+                RadiusY = 0.5,
+                MappingMode = BrushMappingMode.RelativeToBoundingBox,
+                SpreadMethod = GradientSpreadMethod.Pad
+            };
+
+            HoverDisabledBack = new RadialGradientBrush(Color.FromArgb(0xFF, 0xC0, 0x39, 0x2b), Color.FromArgb(0x00, 0xC0, 0x39, 0x2b)) {
+                Center = new Point(0.5, 0.5),
+                GradientOrigin = new Point(0.5, 0.5),
+                RadiusX = 0.5,
+                RadiusY = 0.5,
+                MappingMode = BrushMappingMode.RelativeToBoundingBox,
+                SpreadMethod = GradientSpreadMethod.Pad
+            };
+
+            ButtonImage.IsMouseDirectlyOverChanged += (s, a) => UpdateBackground();
+        }
+
+        private void UpdateBackground() {
+            if(ButtonImage.IsMouseDirectlyOver) {
+                if(Command?.CanExecute(null) ?? false) {
+                    ContainerGrid.Background = HoverEnabledBack;
+                } else {
+                    ContainerGrid.Background = HoverDisabledBack;
+                }
+            } else {
+                ContainerGrid.Background = DefaultBack;
+            }
         }
 
         private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
