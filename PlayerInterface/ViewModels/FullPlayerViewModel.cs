@@ -38,7 +38,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public FullPlayerViewModel(SongPlayer player) : base(player) {
+        public FullPlayerViewModel(SongPlayer player, Playlist playlist) : base(player, playlist) {
             UpdateTimer = new Timer() {
                 AutoReset = true,
                 Enabled = true,

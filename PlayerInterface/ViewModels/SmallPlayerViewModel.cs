@@ -15,19 +15,23 @@ namespace PlayerInterface.ViewModels {
         private const string ImgSourcePlay = "pack://application:,,,/res/img/Play.png";
         private const string ImgSourcePause = "pack://application:,,,/res/img/Pause.png";
 
-        protected SongPlayer songPlayer;
-
         public SongPlayer SongPlayer {
-            get {
-                return songPlayer;
-            }
-            set {
-                songPlayer = value;
-                songPlayer.SongEnded += SongPlayer_SongEnded;
-            }
+            get; private set;
+        }
+
+        public Playlist Playlist {
+            get; private set;
         }
 
         public ICommand SwitchCommand {
+            get; private set;
+        }
+
+        public ICommand NextCommand {
+            get; private set;
+        }
+
+        public ICommand PreviousCommand {
             get; private set;
         }
 
@@ -40,18 +44,34 @@ namespace PlayerInterface.ViewModels {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SmallPlayerViewModel(SongPlayer player) {
+        public SmallPlayerViewModel(SongPlayer player, Playlist playlist) {
             SongPlayer = player;
+            Playlist = playlist;
 
+            SetupCommands();
+
+            SongPlayer.SongEnded += SongPlayer_SongEnded;
+            SongPlayer.PlaybackStateChanged += PlaybackStateChanged;
+        }
+
+        private void SetupCommands() {
             SwitchCommand = new RelayCommand((o) => {
-                if(player.PlayerState == PlaybackState.Playing) {
-                    player.PlayerState = PlaybackState.Paused;
+                if(SongPlayer.PlayerState == PlaybackState.Playing) {
+                    SongPlayer.PlayerState = PlaybackState.Paused;
                 } else {
-                    player.PlayerState = PlaybackState.Playing;
+                    SongPlayer.PlayerState = PlaybackState.Playing;
                 }
+            }, (o) => {
+                return SongPlayer.CurrentSong != null;
             });
 
-            SongPlayer.PlaybackStateChanged += PlaybackStateChanged;
+            NextCommand = new RelayCommand((o) => {
+                Playlist.CurrentSongIndex++;
+            }, (o) => Playlist.HasNext);
+
+            PreviousCommand = new RelayCommand((o) => {
+                Playlist.CurrentSongIndex--;
+            }, (o) => Playlist.HasPrevious);
         }
 
         public void StartPlaying() {

@@ -38,6 +38,9 @@ namespace PlayerCore {
 
         public int Length => Songs?.Count ?? 0;
 
+        public bool HasNext => CurrentSongIndex < (Length - 1);
+        public bool HasPrevious => CurrentSongIndex > 0;
+
         private Random random;
         private List<Song> Songs { get; set; }
 
