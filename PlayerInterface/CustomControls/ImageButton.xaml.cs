@@ -92,8 +92,8 @@ namespace PlayerInterface.CustomControls {
         }
 
         private void UpdateBackground() {
-            if(ButtonImage.IsMouseDirectlyOver) {
-                if(Command?.CanExecute(null) ?? false) {
+            if(ButtonImage.IsMouseDirectlyOver && Command != null) {
+                if(Command.CanExecute(null)) {
                     ContainerGrid.Background = HoverEnabledBack;
                 } else {
                     ContainerGrid.Background = HoverDisabledBack;

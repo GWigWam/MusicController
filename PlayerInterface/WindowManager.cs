@@ -41,7 +41,8 @@ namespace PlayerInterface {
         private void CreateSmallPlayer(bool show) {
             var spvm = new SmallPlayerViewModel(SongPlayer, Playlist);
             Small = new SmallPlayer(spvm);
-            Small.Btn_ShowFull.MouseLeftButtonUp += (s, a) => ShowFullWindow();
+            Small.Btn_ShowFull.Command = new RelayCommand((o) => ShowFullWindow());
+
             if(show)
                 Small.Show();
         }
