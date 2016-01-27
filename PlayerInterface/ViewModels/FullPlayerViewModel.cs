@@ -27,6 +27,8 @@ namespace PlayerInterface.ViewModels {
 
         public string TrackLengthStr => FormatTimeSpan(SongPlayer.TrackLength);
 
+        public string StatusText => $"{SongPlayer.CurrentSong.Title} - {SongPlayer.CurrentSong.Artist}";
+
         public double ElapsedFraction {
             get { return SongPlayer.Elapsed.TotalMilliseconds / (SongPlayer.TrackLength.TotalMilliseconds - SliderTrackEndBufferMs); }
             set {
@@ -49,7 +51,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void SongPlayer_SongChanged(object sender, EventArgs e) {
-            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr));
+            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr), nameof(StatusText));
         }
 
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e) {

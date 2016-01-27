@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         mc:Ignorable="d"
-        Title="SmallPlayer" Height="40" Width="250" Loaded="Window_Loaded" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize">
+        Title="SmallPlayer" Height="40" Width="250" Loaded="Window_Loaded" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize" Background="#FFEEEEF0">
     <Grid Margin="5">
         <!-- Grid Heigt = 30 & Grid Width = 240 -->
         <Grid.ColumnDefinitions>

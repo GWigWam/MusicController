@@ -6,24 +6,58 @@
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         mc:Ignorable="d"
-        Title="FullPlayer" Height="300" Width="300" WindowStyle="None" ResizeMode="NoResize">
+        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" Background="#FFEEEEF0">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="StackPanel_MouseDown" Background="#00000000">
             <cc:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
             <cc:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
         </StackPanel>
-        <StackPanel Orientation="Vertical" Grid.Row="1">
-            <StackPanel Orientation="Horizontal">
-                <Label x:Name="TestLabel1" Content="{Binding TrackLengthStr}" Background="#FFF5E0E0" />
-                <Label x:Name="TestLabel2" Content="{Binding ElapsedStr}" Background="#FFF5E0E0" />
-            </StackPanel>
-            <cc:ImageButton x:Name="Btn_Switch" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100" />
-            <cc:ScrollSlider x:Name="Slr_Volume" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
-            <cc:ScrollSlider x:Name="Slr_Elapsed" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" />
-        </StackPanel>
+        <Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
+            <Viewbox>
+                <Label Margin="2" Content="{Binding StatusText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0" />
+            </Viewbox>
+        </Border>
+        <Grid Grid.Row="2" Margin="0,0,3,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
+            <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
+            <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
+            <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
+            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+        </Grid>
+        <Border Grid.Row="3" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="Lb_Elapsed" Grid.Column="0" Content="{Binding ElapsedStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <cc:ScrollSlider x:Name="Slr_Elapsed" Grid.Column="1" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" />
+                <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            </Grid>
+        </Border>
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <cc:ImageButton x:Name="Btn_Open" Grid.Column="0" Image="res/img/Open.png" />
+            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="1" />
+        </Grid>
     </Grid>
 </Window>
