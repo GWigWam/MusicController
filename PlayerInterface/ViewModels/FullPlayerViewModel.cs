@@ -36,7 +36,9 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public ICommand PlaySongCommand;
+        public ICommand PlaySongCommand {
+            get; private set;
+        }
 
         public SongViewModel CurrentFocusItem {
             get; set;

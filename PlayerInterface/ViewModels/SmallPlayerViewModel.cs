@@ -35,6 +35,10 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ICommand ShuffleCommand {
+            get; private set;
+        }
+
         public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlaybackState.Playing ? ImgSourcePause : ImgSourcePlay;
 
         public float Volume {
@@ -72,6 +76,8 @@ namespace PlayerInterface.ViewModels {
             PreviousCommand = new RelayCommand((o) => {
                 Playlist.CurrentSongIndex--;
             }, (o) => Playlist.HasPrevious);
+
+            ShuffleCommand = new RelayCommand((o) => Playlist.Shuffle(), (o) => Playlist != null);
         }
 
         public void StartPlaying() {
