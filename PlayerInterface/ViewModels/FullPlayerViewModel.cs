@@ -49,7 +49,7 @@ namespace PlayerInterface.ViewModels {
         public FullPlayerViewModel(SongPlayer player, Playlist playlist) : base(player, playlist) {
             PlaySongCommand = new RelayCommand((s) => {
                 if(s as Song != null) {
-                    SongPlayer.CurrentSong = (Song)s;
+                    Playlist.PlayFirstMatch((Song)s);
                 }
             }, (s) => {
                 return SongPlayer != null && s as Song != null;

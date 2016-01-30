@@ -91,6 +91,10 @@ namespace PlayerCore {
             }
         }
 
+        public void PlayFirstMatch(Song song) {
+            PlayFirstMatch((comp) => comp == song);
+        }
+
         public void PlayFirstMatch(Predicate<Song> filter) {
             var index = Songs.FindIndex(filter);
             if(index >= 0) {
