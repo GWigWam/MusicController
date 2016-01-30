@@ -32,7 +32,7 @@ namespace PlayerInterface {
         private void Application_Startup(object sender, StartupEventArgs e) {
             SongPlayer = new SongPlayer(1/*Todo, get from settings*/);
 
-            var songs = SongFileReader.ReadFolderFiles(@"F:\Zooi\OneDrive\Muziek\Green Day\", "*.mp3");
+            var songs = SongFileReader.ReadFolderFiles(@"F:\Zooi\OneDrive\Muziek\", "*.mp3");
             SongList = new Playlist();
             SongList.AddSongs(songs.Select(sf => new Song(sf)));
 

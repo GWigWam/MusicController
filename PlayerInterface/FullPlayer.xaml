@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
+        xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
         mc:Ignorable="d"
-        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" Background="#FFEEEEF0">
+        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -51,6 +52,29 @@
                 <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             </Grid>
         </Border>
+        <ListBox Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:SongViewModel}">
+                    <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                        <Grid ToolTip="{Binding Path}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="{Binding Title}" FontWeight="Bold" />
+                                <Label Grid.Column="1" Content="{Binding Info}" HorizontalContentAlignment="Right" FontSize="9.333" />
+                            </Grid>
+                            <Label Grid.Row="1" Content="{Binding SubTitle}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />

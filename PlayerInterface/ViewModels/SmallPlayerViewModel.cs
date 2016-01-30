@@ -86,11 +86,6 @@ namespace PlayerInterface.ViewModels {
             RaisePropertiesChanged("SwitchButtonImgSource");
         }
 
-        protected string FormatTimeSpan(TimeSpan ts) {
-            var format = Math.Floor(ts.TotalHours) > 0 ? @"h\:m\:ss" : @"m\:ss";
-            return ts.ToString(format);
-        }
-
         protected void RaisePropertiesChanged(params string[] propertyNames) {
             foreach(var propName in propertyNames) {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

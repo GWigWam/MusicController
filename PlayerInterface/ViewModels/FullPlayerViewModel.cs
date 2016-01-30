@@ -3,6 +3,7 @@ using PlayerCore;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -23,9 +24,9 @@ namespace PlayerInterface.ViewModels {
             set { SongPlayer.CurrentSong = value; }
         }
 
-        public string ElapsedStr => FormatTimeSpan(SongPlayer.Elapsed);
+        public string ElapsedStr => FormatHelper.FormatTimeSpan(SongPlayer.Elapsed);
 
-        public string TrackLengthStr => FormatTimeSpan(SongPlayer.TrackLength);
+        public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
 
         public string StatusText => $"{SongPlayer.CurrentSong.Title} - {SongPlayer.CurrentSong.Artist}";
 
@@ -40,12 +41,19 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public ObservableCollection<SongViewModel> PlaylistItems {
+            get; private set;
+        }
+
         public FullPlayerViewModel(SongPlayer player, Playlist playlist) : base(player, playlist) {
             UpdateTimer = new Timer() {
                 AutoReset = true,
                 Enabled = true,
                 Interval = 1000
             };
+
+            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.CurrentList.Select(s => new SongViewModel(s)));
+
             SongPlayer.SongChanged += SongPlayer_SongChanged;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
         }
