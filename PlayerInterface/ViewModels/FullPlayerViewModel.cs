@@ -41,6 +41,10 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public SongViewModel CurrentFocusItem {
+            get; set;
+        }
+
         public ObservableCollection<SongViewModel> PlaylistItems {
             get; private set;
         }
@@ -55,10 +59,29 @@ namespace PlayerInterface.ViewModels {
             PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.CurrentList.Select(s => new SongViewModel(s)));
 
             SongPlayer.SongChanged += SongPlayer_SongChanged;
+            Playlist.ListChanged += Playlist_ListChanged;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
         }
 
+        private void Playlist_ListChanged(object sender, EventArgs e) {
+            PlaylistItems.Clear();
+            foreach(var add in Playlist.CurrentList.Select(s => new SongViewModel(s))) {
+                PlaylistItems.Add(add);
+            }
+        }
+
         private void SongPlayer_SongChanged(object sender, EventArgs e) {
+            var curPlaying = PlaylistItems.FirstOrDefault(svm => svm.Playing);
+            if(curPlaying != null)
+                curPlaying.Playing = false;
+
+            var newPlaying = PlaylistItems.FirstOrDefault(svm => svm.Song == SongPlayer.CurrentSong);
+            if(newPlaying != null) {
+                newPlaying.Playing = true;
+                CurrentFocusItem = newPlaying;
+                RaisePropertiesChanged(nameof(CurrentFocusItem));
+            }
+
             RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr), nameof(StatusText));
         }
 

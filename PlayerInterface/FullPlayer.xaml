@@ -52,10 +52,10 @@
                 <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             </Grid>
         </Border>
-        <ListBox Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}">
+        <ListBox x:Name="Lb_Playlist" Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:SongViewModel}">
-                    <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                    <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
                         <Grid ToolTip="{Binding Path}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -71,6 +71,16 @@
                             </Grid>
                             <Label Grid.Row="1" Content="{Binding SubTitle}" />
                         </Grid>
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Playing}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>

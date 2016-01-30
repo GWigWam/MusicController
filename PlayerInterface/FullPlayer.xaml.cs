@@ -30,6 +30,14 @@ namespace PlayerInterface {
             InitializeComponent();
 
             DataContext = fpvm;
+            fpvm.PropertyChanged += (s, p) => {
+                if(p.PropertyName == nameof(FullPlayerViewModel.CurrentFocusItem)) {
+                    var item = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
+                    if(item != null) {
+                        Lb_Playlist.ScrollIntoView(item);
+                    }
+                }
+            };
         }
 
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e) {
