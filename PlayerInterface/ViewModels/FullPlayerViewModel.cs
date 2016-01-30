@@ -19,11 +19,6 @@ namespace PlayerInterface.ViewModels {
         //Slider should not all the way to end of end of track, track should end 'naturaly'
         private int SliderTrackEndBufferMs = 500;
 
-        public Song CurrentSong {
-            get { return SongPlayer.CurrentSong; }
-            set { SongPlayer.CurrentSong = value; }
-        }
-
         public string ElapsedStr => FormatHelper.FormatTimeSpan(SongPlayer.Elapsed);
 
         public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
@@ -41,6 +36,8 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public ICommand PlaySongCommand;
+
         public SongViewModel CurrentFocusItem {
             get; set;
         }
@@ -50,6 +47,14 @@ namespace PlayerInterface.ViewModels {
         }
 
         public FullPlayerViewModel(SongPlayer player, Playlist playlist) : base(player, playlist) {
+            PlaySongCommand = new RelayCommand((s) => {
+                if(s as Song != null) {
+                    SongPlayer.CurrentSong = (Song)s;
+                }
+            }, (s) => {
+                return SongPlayer != null && s as Song != null;
+            });
+
             UpdateTimer = new Timer() {
                 AutoReset = true,
                 Enabled = true,

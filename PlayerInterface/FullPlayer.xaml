@@ -52,7 +52,7 @@
                 <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             </Grid>
         </Border>
-        <ListBox x:Name="Lb_Playlist" Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}">
+        <ListBox x:Name="Lb_Playlist" Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:SongViewModel}">
                     <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">

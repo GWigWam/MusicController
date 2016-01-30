@@ -60,17 +60,30 @@ namespace PlayerInterface {
 
         private void Slr_Elapsed_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
             if(e.LeftButton == MouseButtonState.Pressed) {
-                if(Model.SongPlayer.PlayerState == NAudio.Wave.PlaybackState.Playing) {
-                    Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Paused;
-                    SlidingElapsed = true;
+                if(Model != null) {
+                    if(Model.SongPlayer.PlayerState == NAudio.Wave.PlaybackState.Playing) {
+                        Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Paused;
+                        SlidingElapsed = true;
+                    }
                 }
             }
         }
 
         private void Slr_Elapsed_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
             if(SlidingElapsed) {
-                Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
-                SlidingElapsed = false;
+                if(Model != null) {
+                    Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
+                    SlidingElapsed = false;
+                }
+            }
+        }
+
+        private void Lb_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+            var selected = Lb_Playlist.SelectedItem as SongViewModel;
+            if(Model?.PlaySongCommand != null && selected != null) {
+                if(Model.PlaySongCommand.CanExecute(selected.Song)) {
+                    Model.PlaySongCommand.Execute(selected.Song);
+                }
             }
         }
     }
