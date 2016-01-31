@@ -91,6 +91,11 @@ namespace PlayerCore {
             }
         }
 
+        public void Reverse() {
+            Songs.Reverse();
+            RaiseListChanged();
+        }
+
         public void PlayFirstMatch(Song song) {
             PlayFirstMatch((comp) => comp == song);
         }

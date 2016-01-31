@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -40,6 +41,14 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ICommand ReverseSortCommand {
+            get; private set;
+        }
+
+        public ICommand SortByCommand {
+            get; private set;
+        }
+
         public SongViewModel CurrentFocusItem {
             get; set;
         }
@@ -49,13 +58,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         public FullPlayerViewModel(SongPlayer player, Playlist playlist) : base(player, playlist) {
-            PlaySongCommand = new RelayCommand((s) => {
-                if(s as Song != null) {
-                    Playlist.PlayFirstMatch((Song)s);
-                }
-            }, (s) => {
-                return SongPlayer != null && s as Song != null;
-            });
+            SetupCommands();
 
             UpdateTimer = new Timer() {
                 AutoReset = true,
@@ -68,6 +71,30 @@ namespace PlayerInterface.ViewModels {
             SongPlayer.SongChanged += SongPlayer_SongChanged;
             Playlist.ListChanged += Playlist_ListChanged;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+        }
+
+        private void SetupCommands() {
+            PlaySongCommand = new RelayCommand((s) => {
+                if(s as Song != null) {
+                    Playlist.PlayFirstMatch((Song)s);
+                }
+            }, (s) => {
+                return SongPlayer != null && s as Song != null;
+            });
+
+            ReverseSortCommand = new RelayCommand((o) => Playlist.Reverse(), (o) => Playlist != null);
+
+            SortByCommand = new RelayCommand(
+                (o) => {
+                    var pi = o as PropertyInfo;
+                    if(pi.DeclaringType == typeof(Song)) {
+                        Playlist.Order((s) => pi.GetValue(s));
+                    } else if(pi.DeclaringType == typeof(SongFile)) {
+                        Playlist.Order((s) => pi.GetValue(s.File));
+                    }
+                },
+                (o) => o as PropertyInfo != null && (((PropertyInfo)o).DeclaringType == typeof(Song) || ((PropertyInfo)o).DeclaringType == typeof(SongFile))
+            );
         }
 
         private void Playlist_ListChanged(object sender, EventArgs e) {

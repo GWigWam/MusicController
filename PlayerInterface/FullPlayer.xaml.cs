@@ -1,4 +1,5 @@
-﻿using PlayerInterface.ViewModels;
+﻿using PlayerInterface.CustomControls;
+using PlayerInterface.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +84,29 @@ namespace PlayerInterface {
             if(Model?.PlaySongCommand != null && selected != null) {
                 if(Model.PlaySongCommand.CanExecute(selected.Song)) {
                     Model.PlaySongCommand.Execute(selected.Song);
+                }
+            }
+        }
+
+        private void Btn_Sort_MouseUp(object sender, MouseButtonEventArgs e) {
+            var btn = sender as ImageButton;
+            if(e.ChangedButton == MouseButton.Left && btn != null) {
+                var cm = btn.ContextMenu;
+                cm.PlacementTarget = btn;
+                cm.IsOpen = true;
+            }
+        }
+
+        private void Btn_Sort_Loaded(object sender, RoutedEventArgs e) {
+            var cm = (sender as ImageButton)?.ContextMenu;
+            if(cm != null) {
+                foreach(var prop in SongViewModel.SortProperties) {
+                    var mi = new MenuItem() {
+                        Header = prop.Key,
+                        Command = Model.SortByCommand,
+                        CommandParameter = prop.Value
+                    };
+                    cm.Items.Add(mi);
                 }
             }
         }

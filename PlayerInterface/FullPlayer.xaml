@@ -88,10 +88,18 @@
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <cc:ImageButton x:Name="Btn_Open" Grid.Column="0" Image="res/img/Open.png" />
-            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="1" />
+            <cc:ImageButton x:Name="Btn_Sort" Grid.Column="1" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded">
+                <cc:ImageButton.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Reverse" Command="{Binding ReverseSortCommand}" />
+                    </ContextMenu>
+                </cc:ImageButton.ContextMenu>
+            </cc:ImageButton>
+            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" />
         </Grid>
     </Grid>
 </Window>

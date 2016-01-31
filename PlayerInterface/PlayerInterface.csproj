@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\img\Open.png" />
+    <Resource Include="res\img\Sort.png" />
     <Content Include="testsong.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
