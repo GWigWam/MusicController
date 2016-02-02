@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
@@ -50,6 +51,10 @@ namespace PlayerInterface.ViewModels {
         }
 
         public ICommand RemoveSongCommand {
+            get; private set;
+        }
+
+        public ICommand SearchCommand {
             get; private set;
         }
 
@@ -106,12 +111,32 @@ namespace PlayerInterface.ViewModels {
                 var songs = o as IEnumerable<SongViewModel>;
                 return songs != null && songs.Count() > 0;
             });
+
+            SearchCommand = new RelayCommand((o) => FillPlaylist(o as string));
         }
 
         private void Playlist_ListChanged(object sender, EventArgs e) {
+            FillPlaylist();
+        }
+
+        private void FillPlaylist(string filter = null) {
             PlaylistItems.Clear();
+
+            Regex query;
+            try {
+                query = string.IsNullOrEmpty(filter) ? null : new Regex(filter, RegexOptions.IgnoreCase);
+            } catch(ArgumentException) {
+                query = null;
+            }
+
             foreach(var add in Playlist.CurrentList.Select(s => new SongViewModel(s))) {
-                PlaylistItems.Add(add);
+                if(query == null) {
+                    PlaylistItems.Add(add);
+                } else {
+                    if(query.IsMatch(add.Title) || query.IsMatch(add.SubTitle)) {
+                        PlaylistItems.Add(add);
+                    }
+                }
             }
         }
 

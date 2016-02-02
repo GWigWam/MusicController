@@ -129,5 +129,22 @@ namespace PlayerInterface {
                 }
             }
         }
+
+        private void Tb_Search_TextChanged(object sender, TextChangedEventArgs e) {
+            var input = (sender as TextBox)?.Text;
+            if(input != null && Model?.SearchCommand != null && Model.SearchCommand.CanExecute(input)) {
+                Model.SearchCommand.Execute(input);
+            }
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
+            if(!Tb_Search.IsFocused) {
+                Tb_Search.Focus();
+            }
+        }
+
+        private void Tb_Search_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+            ((TextBox)sender).SelectAll();
+        }
     }
 }

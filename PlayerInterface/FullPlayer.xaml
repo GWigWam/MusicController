@@ -7,7 +7,7 @@
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
         mc:Ignorable="d"
-        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -99,7 +99,7 @@
                     </ContextMenu>
                 </cc:ImageButton.ContextMenu>
             </cc:ImageButton>
-            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" />
+            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
         </Grid>
     </Grid>
 </Window>
