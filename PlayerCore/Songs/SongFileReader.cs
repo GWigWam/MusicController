@@ -29,6 +29,10 @@ namespace PlayerCore.Songs {
             }
         }
 
+        public static SongFile ReadFile(string filePath) {
+            return ReadFile(new FileInfo(filePath));
+        }
+
         public static SongFile ReadFile(FileInfo file) {
             TagLib.File fileInfo = null;
             try {

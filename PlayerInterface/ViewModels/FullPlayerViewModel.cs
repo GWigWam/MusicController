@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
@@ -38,6 +40,8 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public Visibility ShowDropHint => (Playlist?.Length ?? 0) > 0 ? Visibility.Collapsed : Visibility.Visible;
+
         public ICommand PlaySongCommand {
             get; private set;
         }
@@ -55,6 +59,10 @@ namespace PlayerInterface.ViewModels {
         }
 
         public ICommand SearchCommand {
+            get; private set;
+        }
+
+        public ICommand AddFilesCommand {
             get; private set;
         }
 
@@ -113,9 +121,25 @@ namespace PlayerInterface.ViewModels {
             });
 
             SearchCommand = new RelayCommand((o) => FillPlaylist(o as string));
+
+            AddFilesCommand = new RelayCommand((o) => {
+                var files = o as string[];
+                if(files != null) {
+                    foreach(var add in files) {
+                        if(Directory.Exists(add)) {
+                            var songs = SongFileReader.ReadFolderFiles(add, "*.mp3" /*TODO get from settings*/);
+                            Playlist.AddSongs(songs.Select(sf => new Song(sf)));
+                        } else if(File.Exists(add)) {
+                            var song = SongFileReader.ReadFile(add);
+                            Playlist.AddSong(new Song(song));
+                        }
+                    }
+                }
+            });
         }
 
         private void Playlist_ListChanged(object sender, EventArgs e) {
+            RaisePropertiesChanged("ShowDropHint");
             FillPlaylist();
         }
 
@@ -129,12 +153,15 @@ namespace PlayerInterface.ViewModels {
                 query = null;
             }
 
-            foreach(var add in Playlist.CurrentList.Select(s => new SongViewModel(s))) {
+            foreach(var add in Playlist.CurrentList) {
+                var svm = new SongViewModel(add) {
+                    Playing = add == SongPlayer.CurrentSong
+                };
                 if(query == null) {
-                    PlaylistItems.Add(add);
+                    PlaylistItems.Add(svm);
                 } else {
-                    if(query.IsMatch(add.Title) || query.IsMatch(add.SubTitle)) {
-                        PlaylistItems.Add(add);
+                    if(query.IsMatch(svm.Title) || query.IsMatch(svm.SubTitle)) {
+                        PlaylistItems.Add(svm);
                     }
                 }
             }

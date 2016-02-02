@@ -32,9 +32,11 @@ namespace PlayerCore {
             get { return currentSong; }
             set {
                 currentSong = value;
-                File = new AudioFileReader(CurrentSong.FilePath) { Volume = Volume };
-                if(PlayedToEnd || Player?.PlaybackState == PlaybackState.Playing) {
-                    StartPlaying();
+                if(currentSong != null) {
+                    File = new AudioFileReader(currentSong.FilePath) { Volume = Volume };
+                    if(PlayedToEnd || Player?.PlaybackState == PlaybackState.Playing) {
+                        StartPlaying();
+                    }
                 }
                 SongChanged?.Invoke(this, new EventArgs());
             }
@@ -125,6 +127,7 @@ namespace PlayerCore {
         }
 
         public void Stop() {
+            CurrentSong = null;
             if(Player != null) {
                 Player.Stop();
                 Player.Dispose();

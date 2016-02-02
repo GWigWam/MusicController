@@ -52,7 +52,7 @@
                 <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             </Grid>
         </Border>
-        <ListBox x:Name="Lb_Playlist" Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" SelectionMode="Extended" KeyUp="Lb_Playlist_KeyUp">
+        <ListBox x:Name="Lb_Playlist" Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" SelectionMode="Extended" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:SongViewModel}">
                     <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
@@ -85,6 +85,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Label x:Name="Lb_DropHint" Grid.Row="4"  Content="Drag &amp; Drop files here!" Visibility="{Binding ShowDropHint}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333" Background="{x:Null}" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" AllowDrop="True" Drop="Lb_Playlist_Drop" />
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />

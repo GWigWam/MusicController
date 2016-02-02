@@ -146,5 +146,14 @@ namespace PlayerInterface {
         private void Tb_Search_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
             ((TextBox)sender).SelectAll();
         }
+
+        private void Lb_Playlist_Drop(object sender, DragEventArgs e) {
+            if(Model?.AddFilesCommand != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if(Model.AddFilesCommand.CanExecute(paths)) {
+                    Model.AddFilesCommand.Execute(paths);
+                }
+            }
+        }
     }
 }

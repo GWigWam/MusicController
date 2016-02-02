@@ -50,4 +50,16 @@ namespace PlayerCore.Songs {
             File = file;
         }
     }
+
+    public class CompareSongByPath : IEqualityComparer<Song> {
+        public static CompareSongByPath Instance = new CompareSongByPath();
+
+        public bool Equals(Song x, Song y) {
+            return x.FilePath.Equals(y.FilePath, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public int GetHashCode(Song obj) {
+            return obj.FilePath.GetHashCode();
+        }
+    }
 }

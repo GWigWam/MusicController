@@ -47,6 +47,8 @@ namespace PlayerCore {
             var newCur = TrackList.CurrentSong;
             if(newCur != null) {
                 Player.CurrentSong = newCur;
+            } else {
+                Player.Stop();
             }
         }
     }

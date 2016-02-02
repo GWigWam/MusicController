@@ -15,7 +15,7 @@ namespace PlayerCore {
         public int CurrentSongIndex {
             get { return currentSongIndex; }
             set {
-                if(value >= 0 && value < Length) {
+                if(value >= -1 && value < Length) {
                     if(currentSongIndex != value) {
                         currentSongIndex = value;
                         RaiseCurrentSongChanged();
@@ -54,14 +54,27 @@ namespace PlayerCore {
             Songs = new List<Song>();
         }
 
-        public void AddSongs(IEnumerable<Song> songs) {
-            if(songs.Count() > 0) {
-                Songs.AddRange(songs);
-                RaiseListChanged();
+        public void AddSong(Song song, bool handleInternally = true) {
+            if(!Songs.Contains(song, CompareSongByPath.Instance)) {
+                Songs.Add(song);
+
+                if(handleInternally) {
+                    RaiseListChanged();
+                }
 
                 if(CurrentSongIndex < 0) {
                     CurrentSongIndex = 0;
                 }
+            }
+        }
+
+        public void AddSongs(IEnumerable<Song> songs) {
+            if(songs.Count() > 0) {
+                foreach(var song in songs) {
+                    AddSong(song, false);
+                }
+                Songs.AddRange(songs);
+                RaiseListChanged();
             }
         }
 
@@ -108,18 +121,34 @@ namespace PlayerCore {
         }
 
         public void Remove(IEnumerable<Song> songs) {
+            var currentSongBeforeRemove = CurrentSong;
             foreach(var song in songs) {
                 Remove(song, false);
             }
 
+            HandleIndexOnRemove(currentSongBeforeRemove);
             RaiseListChanged();
         }
 
-        public void Remove(Song song, bool raiseListChanged = true) {
+        public void Remove(Song song, bool handleInternally = true) {
+            var currentSongBeforeRemove = CurrentSong;
             Songs.Remove(song);
 
-            if(raiseListChanged) {
+            if(handleInternally) {
+                HandleIndexOnRemove(currentSongBeforeRemove);
                 RaiseListChanged();
+            }
+        }
+
+        private void HandleIndexOnRemove(Song prefCurrentSong) {
+            var foundIndex = Songs.FindIndex((s) => s == prefCurrentSong);
+            if(foundIndex >= 0) { //Songs stays the same
+                currentSongIndex = foundIndex;
+            } else if(Length > 0) { //Set song to first in list
+                currentSongIndex = 0;
+                RaiseCurrentSongChanged();
+            } else { //No songs to play
+                CurrentSongIndex = -1;
             }
         }
 
