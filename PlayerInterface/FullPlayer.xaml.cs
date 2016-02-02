@@ -138,7 +138,7 @@ namespace PlayerInterface {
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
-            if(!Tb_Search.IsFocused) {
+            if(!Tb_Search.IsFocused && e.Key > Key.A && e.Key < Key.Z) {
                 Tb_Search.Focus();
             }
         }
