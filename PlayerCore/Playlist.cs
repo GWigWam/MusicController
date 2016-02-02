@@ -107,6 +107,22 @@ namespace PlayerCore {
             }
         }
 
+        public void Remove(IEnumerable<Song> songs) {
+            foreach(var song in songs) {
+                Remove(song, false);
+            }
+
+            RaiseListChanged();
+        }
+
+        public void Remove(Song song, bool raiseListChanged = true) {
+            Songs.Remove(song);
+
+            if(raiseListChanged) {
+                RaiseListChanged();
+            }
+        }
+
         public void RaiseListChanged() {
             ListChanged?.Invoke(this, new EventArgs());
         }

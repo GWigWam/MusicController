@@ -49,6 +49,10 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ICommand RemoveSongCommand {
+            get; private set;
+        }
+
         public SongViewModel CurrentFocusItem {
             get; set;
         }
@@ -95,6 +99,13 @@ namespace PlayerInterface.ViewModels {
                 },
                 (o) => o as PropertyInfo != null && (((PropertyInfo)o).DeclaringType == typeof(Song) || ((PropertyInfo)o).DeclaringType == typeof(SongFile))
             );
+
+            RemoveSongCommand = new RelayCommand((o) => {
+                Playlist.Remove(((IEnumerable<SongViewModel>)o).Select(svm => svm.Song));
+            }, (o) => {
+                var songs = o as IEnumerable<SongViewModel>;
+                return songs != null && songs.Count() > 0;
+            });
         }
 
         private void Playlist_ListChanged(object sender, EventArgs e) {

@@ -110,5 +110,24 @@ namespace PlayerInterface {
                 }
             }
         }
+
+        private void Lb_Playlist_KeyUp(object sender, KeyEventArgs e) {
+            var singleSelected = Lb_Playlist.SelectedItem as SongViewModel;
+            var allSelected = Lb_Playlist.SelectedItems.Cast<SongViewModel>();
+
+            if(e.Key == Key.Delete) {
+                if(Model?.RemoveSongCommand != null && allSelected.Count() > 0) {
+                    if(Model.RemoveSongCommand.CanExecute(allSelected)) {
+                        Model.RemoveSongCommand.Execute(allSelected);
+                    }
+                }
+            } else if(e.Key == Key.Enter) {
+                if(Model?.PlaySongCommand != null && singleSelected != null) {
+                    if(Model.PlaySongCommand.CanExecute(singleSelected.Song)) {
+                        Model.PlaySongCommand.Execute(singleSelected.Song);
+                    }
+                }
+            }
+        }
     }
 }
