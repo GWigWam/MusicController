@@ -1,10 +1,12 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
+using PlayerCore.Settings;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +14,11 @@ using System.Windows;
 namespace PlayerInterface {
 
     public partial class App : Application {
+        private const string AppSettingsPath = "AppSettings.json";
+
+        internal AppSettings ApplicationSettings {
+            get; private set;
+        }
 
         internal SongPlayer SongPlayer {
             get; private set;
@@ -30,7 +37,10 @@ namespace PlayerInterface {
         }
 
         private void Application_Startup(object sender, StartupEventArgs e) {
-            SongPlayer = new SongPlayer(1/*Todo, get from settings*/);
+            InitSettings();
+
+            SongPlayer = new SongPlayer(ApplicationSettings.Volume);
+            ApplicationSettings.Changed += ApplicationSettings_Changed;
 
             //var songs = SongFileReader.ReadFolderFiles(@"F:\Zooi\OneDrive\Muziek\Green Day\", "*.mp3");
             SongList = new Playlist();
@@ -40,7 +50,25 @@ namespace PlayerInterface {
             //SongPlayer.CurrentSong = SongList.CurrentSong;
 
             WindowMgr = new WindowManager(this);
-            WindowMgr.Init(SongPlayer, SongList);
+            WindowMgr.Init();
+        }
+
+        private void InitSettings() {
+            if(!File.Exists(AppSettingsPath)) {
+                var set = new AppSettings(AppSettingsPath);
+                set.WriteToDisc(false);
+            }
+
+            ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);
+            Exit += (s, a) => {
+                ApplicationSettings.WriteToDisc(false);
+            };
+        }
+
+        private void ApplicationSettings_Changed(object sender, SettingChangedEventArgs e) {
+            if(e.ChangedPropertyName == nameof(AppSettings.Volume)) {
+                SongPlayer.Volume = ((AppSettings)sender).Volume;
+            }
         }
     }
 }

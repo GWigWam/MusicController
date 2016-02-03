@@ -1,4 +1,5 @@
-﻿using PlayerCore.Songs;
+﻿using PlayerCore.Settings;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using PlayerCore;
+using PlayerCore.Settings;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public FullPlayerViewModel(SongPlayer player, Playlist playlist) : base(player, playlist) {
+        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) : base(settings, player, playlist) {
             SetupCommands();
 
             UpdateTimer = new Timer() {

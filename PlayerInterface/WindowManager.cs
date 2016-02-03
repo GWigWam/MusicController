@@ -12,35 +12,33 @@ namespace PlayerInterface {
 
     internal class WindowManager {
 
-        private Application App {
+        private App App {
             get;
         }
+
+        private FullPlayerViewModel ViewModel;
 
         private TaskbarIcon TrayIcon;
         private FullPlayer Full;
         private SmallPlayer Small;
 
-        private SongPlayer SongPlayer;
-        private Playlist Playlist;
-
-        public WindowManager(Application app) {
+        public WindowManager(App app) {
             App = app;
         }
 
-        public void Init(SongPlayer sp, Playlist pl) {
-            SongPlayer = sp;
-            Playlist = pl;
-
+        public void Init() {
             TrayIcon = (TaskbarIcon)App.FindResource("Tbi_Icon");
-            CreateSmallPlayer(true);
-            CreateFullPlayer(false);
+
+            ViewModel = new FullPlayerViewModel(App.ApplicationSettings, App.SongPlayer, App.SongList);
+
+            CreateFullPlayer(!App.ApplicationSettings.StartMinimized);
+            CreateSmallPlayer(App.ApplicationSettings.StartMinimized);
             TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
             TrayIcon.TrayMouseMove += Tbi_TrayMouseMove;
         }
 
         private void CreateSmallPlayer(bool show) {
-            var spvm = new SmallPlayerViewModel(SongPlayer, Playlist);
-            Small = new SmallPlayer(spvm);
+            Small = new SmallPlayer(ViewModel);
             Small.Btn_ShowFull.Command = new RelayCommand((o) => ShowFullWindow());
 
             if(show)
@@ -48,8 +46,7 @@ namespace PlayerInterface {
         }
 
         private void CreateFullPlayer(bool show) {
-            var fpvm = new FullPlayerViewModel(SongPlayer, Playlist);
-            Full = new FullPlayer(fpvm);
+            Full = new FullPlayer(ViewModel);
             Full.MinimizedToTray += (s, a) => ShowSmallWindow();
             if(show)
                 Full.Show();

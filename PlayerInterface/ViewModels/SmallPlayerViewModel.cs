@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using PlayerCore;
+using PlayerCore.Settings;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,16 @@ namespace PlayerInterface.ViewModels {
         private const string ImgSourcePlay = "pack://application:,,,/res/img/Play.png";
         private const string ImgSourcePause = "pack://application:,,,/res/img/Pause.png";
 
+        protected AppSettings Settings {
+            get;
+        }
+
         public SongPlayer SongPlayer {
-            get; private set;
+            get;
         }
 
         public Playlist Playlist {
-            get; private set;
+            get;
         }
 
         public ICommand SwitchCommand {
@@ -42,13 +47,19 @@ namespace PlayerInterface.ViewModels {
         public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlaybackState.Playing ? ImgSourcePause : ImgSourcePlay;
 
         public float Volume {
-            get { return SongPlayer.Volume; }
-            set { if(value >= 0 && value <= 1) SongPlayer.Volume = value; }
+            get { return Settings.Volume; }
+            set {
+                if(value >= 0 && value <= 1) {
+                    Settings.Volume = value;
+                    RaisePropertiesChanged("Volume");
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SmallPlayerViewModel(SongPlayer player, Playlist playlist) {
+        public SmallPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) {
+            Settings = settings;
             SongPlayer = player;
             Playlist = playlist;
 
