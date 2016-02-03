@@ -89,18 +89,16 @@
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <cc:ImageButton x:Name="Btn_Open" Grid.Column="0" Image="res/img/Open.png" />
-            <cc:ImageButton x:Name="Btn_Sort" Grid.Column="1" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded">
+            <cc:ImageButton x:Name="Btn_Sort" Grid.Column="0" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded">
                 <cc:ImageButton.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Reverse" Command="{Binding ReverseSortCommand}" />
                     </ContextMenu>
                 </cc:ImageButton.ContextMenu>
             </cc:ImageButton>
-            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
+            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="1" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
         </Grid>
     </Grid>
 </Window>
