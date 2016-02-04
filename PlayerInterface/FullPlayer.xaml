@@ -3,102 +3,149 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
         mc:Ignorable="d"
-        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown">
+    <Window.Resources>
+        <sys:String x:Key="ActiveTag">Active</sys:String>
+        <Style x:Key="TabBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+            <Setter Property="BorderThickness" Value="0,0,0,2" />
+            <Style.Triggers>
+                <Trigger Property="Tag" Value="{StaticResource ActiveTag}">
+                    <Setter Property="BorderThickness" Value="2,2,2,0" />
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="34" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="StackPanel_MouseDown" Background="#00000000">
-            <cc:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
-            <cc:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
-        </StackPanel>
-        <Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
-            <Viewbox>
-                <Label Margin="2" Content="{Binding StatusText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0" />
-            </Viewbox>
-        </Border>
-        <Grid Grid.Row="2" Margin="0,0,3,0">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
-            <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
-            <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
-            <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding ShuffleCommand}" />
-            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+            <StackPanel x:Name="Sp_Tabs" Grid.Column="0" Orientation="Horizontal">
+                <Border Tag="Active" x:Name="Btn_Tab_Main" Style="{StaticResource TabBorderStyle}">
+                    <Image Source="res/img/MusicNote.png" MouseUp="Tab_MouseUp" />
+                </Border>
+                <Border Tag="InActive" x:Name="Btn_Tab_Settings" Style="{StaticResource TabBorderStyle}">
+                    <Image Source="res/img/SettingsGear.png" MouseUp="Tab_MouseUp" />
+                </Border>
+                <Border Tag="InActive" x:Name="Btn_Tab_About" Style="{StaticResource TabBorderStyle}">
+                    <Image Source="res/img/Info.png" MouseUp="Tab_MouseUp" />
+                </Border>
+            </StackPanel>
+            <Border Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="StackPanel_MouseDown" Background="Transparent">
+                    <cc:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
+                    <cc:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
+                </StackPanel>
+            </Border>
         </Grid>
-        <Border Grid.Row="3" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="5*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Label x:Name="Lb_Elapsed" Grid.Column="0" Content="{Binding ElapsedStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                <cc:ScrollSlider x:Name="Slr_Elapsed" Grid.Column="1" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" />
-                <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+            <Grid Visibility="Visible" x:Name="Grid_Tab_Main">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,0,0,2">
+                    <Viewbox>
+                        <Label Padding="2" Content="{Binding StatusText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    </Viewbox>
+                </Border>
+                <Grid Grid.Row="1" Margin="0,0,3,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
+                    <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
+                    <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
+                    <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding ShuffleCommand}" />
+                    <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+                </Grid>
+                <Border Grid.Row="2" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="Lb_Elapsed" Grid.Column="0" Content="{Binding ElapsedStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                        <cc:ScrollSlider x:Name="Slr_Elapsed" Grid.Column="1" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" />
+                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    </Grid>
+                </Border>
+                <ListBox x:Name="Lb_Playlist" Grid.Row="3" Margin="2,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" SelectionMode="Extended" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:SongViewModel}">
+                            <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
+                                <Grid ToolTip="{Binding Path}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Padding="2" Grid.Column="0" Content="{Binding Title}" FontWeight="Bold" />
+                                        <Label Padding="2" Grid.Column="1" Content="{Binding Info}" HorizontalContentAlignment="Right" FontSize="9.333" />
+                                    </Grid>
+                                    <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
+                                </Grid>
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Playing}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Label x:Name="Lb_DropHint" Grid.Row="3"  Content="Drag &amp; Drop files here!" Visibility="{Binding ShowDropHint}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333" Background="{x:Null}" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" AllowDrop="True" Drop="Lb_Playlist_Drop" />
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <cc:ImageButton x:Name="Btn_Sort" Grid.Column="0" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded">
+                        <cc:ImageButton.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Reverse" Command="{Binding ReverseSortCommand}" />
+                            </ContextMenu>
+                        </cc:ImageButton.ContextMenu>
+                    </cc:ImageButton>
+                    <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="1" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
+                </Grid>
             </Grid>
-        </Border>
-        <ListBox x:Name="Lb_Playlist" Grid.Row="4" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" SelectionMode="Extended" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:SongViewModel}">
-                    <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
-                        <Grid ToolTip="{Binding Path}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Content="{Binding Title}" FontWeight="Bold" />
-                                <Label Grid.Column="1" Content="{Binding Info}" HorizontalContentAlignment="Right" FontSize="9.333" />
-                            </Grid>
-                            <Label Grid.Row="1" Content="{Binding SubTitle}" />
-                        </Grid>
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Playing}" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <Label x:Name="Lb_DropHint" Grid.Row="4"  Content="Drag &amp; Drop files here!" Visibility="{Binding ShowDropHint}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333" Background="{x:Null}" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" AllowDrop="True" Drop="Lb_Playlist_Drop" />
-        <Grid Grid.Row="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <cc:ImageButton x:Name="Btn_Sort" Grid.Column="0" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded">
-                <cc:ImageButton.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Reverse" Command="{Binding ReverseSortCommand}" />
-                    </ContextMenu>
-                </cc:ImageButton.ContextMenu>
-            </cc:ImageButton>
-            <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="1" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
+            <Grid Visibility="Collapsed" x:Name="Grid_Tab_Settings">
+                <Label Content="Settings" />
+            </Grid>
+            <Grid Visibility="Collapsed" x:Name="Grid_Tab_About">
+                <Label Content="About" />
+            </Grid>
         </Grid>
     </Grid>
 </Window>

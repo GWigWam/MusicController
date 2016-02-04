@@ -155,5 +155,27 @@ namespace PlayerInterface {
                 }
             }
         }
+
+        private void Tab_MouseUp(object sender, MouseButtonEventArgs e) {
+            if(e.ChangedButton == MouseButton.Left) {
+                var currentTab = (sender as Image)?.Parent as Border;
+                var currentTabName = currentTab.Name.Replace("Btn_", "");
+                if(currentTab != null) {
+                    foreach(var tab in Sp_Tabs.Children.Cast<Border>()) {
+                        tab.Tag = "InActive";
+                    }
+
+                    foreach(var grid in Grid_Tabs.Children.Cast<Grid>()) {
+                        if(grid.Name.EndsWith(currentTabName)) {
+                            grid.Visibility = Visibility.Visible;
+                        } else {
+                            grid.Visibility = Visibility.Collapsed;
+                        }
+                    }
+
+                    currentTab.Tag = "Active";
+                }
+            }
+        }
     }
 }
