@@ -17,8 +17,8 @@ namespace PlayerCore.Settings {
         }
 
         [JsonIgnore]
-        protected bool HasUnsavedChanges {
-            get; set;
+        public bool HasUnsavedChanges {
+            get; protected set;
         } = false;
 
         public event EventHandler<SettingChangedEventArgs> Changed;
@@ -52,6 +52,7 @@ namespace PlayerCore.Settings {
 
                     read.AfterRead();
 
+                    read.HasUnsavedChanges = false;
                     return read;
                 } else {
                     throw new Exception($"Could not read {typeof(T).Name} from\n{filePath}\nFile is probably empty"); //TODO: Userfriendly exception

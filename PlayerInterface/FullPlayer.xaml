@@ -141,7 +141,17 @@
                 </Grid>
             </Grid>
             <Grid Visibility="Collapsed" x:Name="Grid_Tab_Settings">
-                <Label Content="Settings" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0">
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <Label Content="Settings" FontWeight="Bold" FontSize="16" Padding="0" />
+                        <CheckBox x:Name="Cb_StartMinimized" Content="Start Minimized" IsChecked="{Binding SettingsViewModel.StartMinimized}" />
+                    </StackPanel>
+                </ScrollViewer>
+                <Button Margin="5" Padding="5" Grid.Row="1" Content="Save to Disk" HorizontalAlignment="Right" Command="{Binding SettingsViewModel.SaveToDiskCommand}" />
             </Grid>
             <Grid Visibility="Collapsed" x:Name="Grid_Tab_About">
                 <Label Content="About" />

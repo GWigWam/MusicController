@@ -75,19 +75,25 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public AppSettingsViewModel SettingsViewModel {
+            get;
+        }
+
         public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) : base(settings, player, playlist) {
             SetupCommands();
+
+            SettingsViewModel = new AppSettingsViewModel(Settings);
+
+            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.CurrentList.Select(s => new SongViewModel(s)));
+
+            SongPlayer.SongChanged += SongPlayer_SongChanged;
+            Playlist.ListChanged += Playlist_ListChanged;
 
             UpdateTimer = new Timer() {
                 AutoReset = true,
                 Enabled = true,
                 Interval = 1000
             };
-
-            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.CurrentList.Select(s => new SongViewModel(s)));
-
-            SongPlayer.SongChanged += SongPlayer_SongChanged;
-            Playlist.ListChanged += Playlist_ListChanged;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
         }
 

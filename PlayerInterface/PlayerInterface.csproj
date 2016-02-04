@@ -76,6 +76,7 @@
     <Compile Include="SmallPlayer.xaml.cs">
       <DependentUpon>SmallPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\AppSettingsViewModel.cs" />
     <Compile Include="ViewModels\FullPlayerViewModel.cs" />
     <Compile Include="ViewModels\SmallPlayerViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
