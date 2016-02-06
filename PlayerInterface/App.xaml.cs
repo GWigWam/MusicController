@@ -46,7 +46,7 @@ namespace PlayerInterface {
             SongList = new Playlist();
             //SongList.AddSongs(songs.Select(sf => new Song(sf)));
 
-            TransitionMgr = new TransitionManager(SongPlayer, SongList);
+            TransitionMgr = new TransitionManager(SongPlayer, SongList, ApplicationSettings);
             //SongPlayer.CurrentSong = SongList.CurrentSong;
 
             WindowMgr = new WindowManager(this);

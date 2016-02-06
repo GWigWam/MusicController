@@ -34,6 +34,19 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private uint songTransitionDelayMs = 2000;
+
+        [JsonProperty]
+        public uint SongTransitionDelayMs {
+            get { return songTransitionDelayMs; }
+            set {
+                if(value != songTransitionDelayMs) {
+                    songTransitionDelayMs = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(SongTransitionDelayMs)));
+                }
+            }
+        }
+
         public AppSettings(string filePath) : base(filePath) {
             // ---
         }

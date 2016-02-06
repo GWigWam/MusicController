@@ -20,6 +20,15 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public uint SongTransitionDelay {
+            get {
+                return Settings.SongTransitionDelayMs;
+            }
+            set {
+                Settings.SongTransitionDelayMs = value;
+            }
+        }
+
         public ICommand SaveToDiskCommand {
             get; private set;
         }

@@ -28,7 +28,7 @@ namespace PlayerInterface.ViewModels {
 
         public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
 
-        public string StatusText => $"{SongPlayer.CurrentSong.Title} - {SongPlayer.CurrentSong.Artist}";
+        public string StatusText => $"{SongPlayer?.CurrentSong?.Title} - {SongPlayer?.CurrentSong?.Artist}";
 
         public double ElapsedFraction {
             get { return SongPlayer.Elapsed.TotalMilliseconds / (SongPlayer.TrackLength.TotalMilliseconds - SliderTrackEndBufferMs); }

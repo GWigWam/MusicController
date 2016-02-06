@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 namespace PlayerCore {
 
     public class TransitionManager {
-
-        //TODO: Get from settings
-        private const uint SongDelayMs = 2000;
+        private uint SongDelayMs => Settings.SongTransitionDelayMs;
 
         private const bool Loop = true;
+
+        private AppSettings Settings {
+            get;
+        }
 
         public SongPlayer Player {
             get; private set;
@@ -23,9 +25,10 @@ namespace PlayerCore {
             get; private set;
         }
 
-        public TransitionManager(SongPlayer player, Playlist trackList) {
+        public TransitionManager(SongPlayer player, Playlist trackList, AppSettings settings) {
             Player = player;
             TrackList = trackList;
+            Settings = settings;
             Init();
         }
 
