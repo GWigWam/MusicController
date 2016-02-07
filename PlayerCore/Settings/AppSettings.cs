@@ -47,12 +47,30 @@ namespace PlayerCore.Settings {
             }
         }
 
+        [JsonProperty]
+        private HashSet<string> startupFolders {
+            get; set;
+        } = new HashSet<string>();
+
+        [JsonIgnore]
+        public IEnumerable<string> StartupFolders => startupFolders;
+
         public AppSettings(string filePath) : base(filePath) {
             // ---
         }
 
         [JsonConstructor]
         protected AppSettings() : base() {
+        }
+
+        public void AddStartupFolder(string path) {
+            startupFolders.Add(path);
+            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+        }
+
+        public void RemoveStartupFolder(string path) {
+            startupFolders.Remove(path);
+            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
         }
     }
 }

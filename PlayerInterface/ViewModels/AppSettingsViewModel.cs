@@ -1,6 +1,7 @@
 ﻿using PlayerCore.Settings;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,10 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public ObservableCollection<string> StartupFolders {
+            get; private set;
+        }
+
         public ICommand SaveToDiskCommand {
             get; private set;
         }
@@ -43,7 +48,32 @@ namespace PlayerInterface.ViewModels {
             Settings = settings;
             Settings.Changed += Settings_Changed;
 
+            StartupFolders = new ObservableCollection<string>();
+            UpdateStartupFolders();
+
             SaveToDiskCommand = new RelayCommand((o) => Settings.WriteToDisc(true), (o) => Settings.HasUnsavedChanges);
+        }
+
+        public void AddStartupFolders(IEnumerable<string> paths) {
+            foreach(var path in paths) {
+                Settings.AddStartupFolder(path);
+            }
+            UpdateStartupFolders();
+        }
+
+        public void RemoveStartupFolders(IEnumerable<string> paths) {
+            foreach(var path in paths) {
+                Settings.RemoveStartupFolder(path);
+            }
+            UpdateStartupFolders();
+        }
+
+        private void UpdateStartupFolders() {
+            StartupFolders.Clear();
+
+            foreach(var sf in Settings.StartupFolders) {
+                StartupFolders.Add(sf);
+            }
         }
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {

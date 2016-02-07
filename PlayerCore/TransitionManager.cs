@@ -29,6 +29,11 @@ namespace PlayerCore {
             Player = player;
             TrackList = trackList;
             Settings = settings;
+
+            if(Player != null && Player.CurrentSong == null) {
+                Player.CurrentSong = TrackList?.CurrentSong;
+            }
+
             Init();
         }
 

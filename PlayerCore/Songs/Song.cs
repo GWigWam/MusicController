@@ -47,6 +47,9 @@ namespace PlayerCore.Songs {
         public string FilePath => File.Path;
 
         public Song(SongFile file) {
+            if(file == null) {
+                throw new ArgumentException(nameof(file));
+            }
             File = file;
         }
     }

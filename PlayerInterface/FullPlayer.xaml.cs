@@ -177,5 +177,20 @@ namespace PlayerInterface {
                 }
             }
         }
+
+        private void Lb_Settings_StartupFolders_Drop(object sender, DragEventArgs e) {
+            if(Model?.SettingsViewModel != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
+                Model.SettingsViewModel.AddStartupFolders(paths);
+            }
+        }
+
+        private void Lb_Settings_StartupFolders_KeyUp(object sender, KeyEventArgs e) {
+            var allSelected = Lb_Settings_StartupFolders.SelectedItems.Cast<string>();
+
+            if(e.Key == Key.Delete) {
+                Model?.SettingsViewModel?.RemoveStartupFolders(allSelected);
+            }
+        }
     }
 }
