@@ -33,10 +33,12 @@ namespace PlayerCore {
             set {
                 currentSong = value;
                 if(currentSong != null) {
-                    File = new AudioFileReader(currentSong.FilePath) { Volume = Volume };
-                    if(PlayedToEnd || Player?.PlaybackState == PlaybackState.Playing) {
-                        StartPlaying();
+                    bool wasPlaying = PlayedToEnd || PlayerState == PlaybackState.Playing;
+                    LoadSong(currentSong);
+                    if(wasPlaying) {
+                        Player.Play();
                     }
+                    PlayedToEnd = false;
                 }
                 SongChanged?.Invoke(this, new EventArgs());
             }
@@ -61,21 +63,19 @@ namespace PlayerCore {
                 return Player?.PlaybackState ?? PlaybackState.Stopped;
             }
             set {
-                var oldValue = Player?.PlaybackState;
-                if(value == PlaybackState.Playing) {
-                    if(Player?.PlaybackState == PlaybackState.Paused) {
+                if(Player?.PlaybackState != value) {
+                    var oldValue = Player?.PlaybackState;
+                    if(value == PlaybackState.Playing) {
                         Player.Play();
-                    } else {
-                        StartPlaying();
+                    } else if(value == PlaybackState.Paused) {
+                        Player.Pause();
+                    } else if(value == PlaybackState.Stopped) {
+                        Stop();
                     }
-                } else if(value == PlaybackState.Paused) {
-                    Player.Pause();
-                } else if(value == PlaybackState.Stopped) {
-                    Stop();
-                }
 
-                if(oldValue != value)
-                    PlaybackStateChanged?.Invoke(this, new PlaybackStateChangedEventArgs(oldValue, value));
+                    if(oldValue != value)
+                        PlaybackStateChanged?.Invoke(this, new PlaybackStateChangedEventArgs(oldValue, value));
+                }
             }
         }
 
@@ -103,27 +103,7 @@ namespace PlayerCore {
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
 
         public SongPlayer(float volume = 1) {
-            PlayedToEnd = false;
             Volume = volume;
-        }
-
-        public void StartPlaying() {
-            if(CurrentSong != null) {
-                PlayedToEnd = false;
-                Player = new WaveOut();
-                try {
-                    Player.Init(File);
-                    Player.PlaybackStopped += (s, a) => {
-                        PlayedToEnd = true;
-                        SongEnded?.Invoke(this, CurrentSong);
-                    };
-                } catch(Exception) {
-                    Stop();
-                    SongEnded?.Invoke(this, CurrentSong);
-                    //TODO: Throw userfriendly exception
-                }
-            }
-            Player.Play();
         }
 
         public void Stop() {
@@ -132,6 +112,24 @@ namespace PlayerCore {
                 Player.Stop();
                 Player.Dispose();
                 Player = null;
+            }
+        }
+
+        private void LoadSong(Song song) {
+            if(song != null) {
+                try {
+                    File = new AudioFileReader(song.FilePath) { Volume = Volume };
+                    Player = new WaveOut();
+                    Player.Init(File);
+                    Player.PlaybackStopped += (s, a) => {
+                        PlayedToEnd = true;
+                        SongEnded?.Invoke(this, song);
+                    };
+                } catch(Exception) {
+                    Stop();
+                    SongEnded?.Invoke(this, song);
+                    //TODO: Throw userfriendly exception
+                }
             }
         }
     }

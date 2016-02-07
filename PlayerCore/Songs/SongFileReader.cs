@@ -40,9 +40,9 @@ namespace PlayerCore.Songs {
             } catch { }
             Match matchName = null;
 
-            string title = fileInfo.Tag?.Title ?? (matchName ?? (matchName = SongNameInfo.Match(file.Name))).Groups?["title"]?.Value;
-            string artist = fileInfo.Tag?.FirstPerformer ?? (matchName ?? (matchName = SongNameInfo.Match(file.Name))).Groups?["artist"]?.Value;
-            string album = fileInfo.Tag?.Album;
+            string title = fileInfo?.Tag?.Title ?? (matchName ?? (matchName = SongNameInfo.Match(file.Name))).Groups?["title"]?.Value;
+            string artist = fileInfo?.Tag?.FirstPerformer ?? (matchName ?? (matchName = SongNameInfo.Match(file.Name))).Groups?["artist"]?.Value;
+            string album = fileInfo?.Tag?.Album;
 
             if(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(artist)) {
                 //Remove parenthesis '(' & ')'
@@ -55,13 +55,13 @@ namespace PlayerCore.Songs {
                     Title = title,
                     Artist = artist,
                     Album = album,
-                    Genre = fileInfo.Tag.FirstGenre,
-                    Track = fileInfo.Tag.Track,
-                    TrackCount = fileInfo.Tag.TrackCount,
-                    Year = fileInfo.Tag.Year
+                    Genre = fileInfo?.Tag?.FirstGenre,
+                    Track = fileInfo?.Tag?.Track ?? 0,
+                    TrackCount = fileInfo?.Tag?.TrackCount ?? 0,
+                    Year = fileInfo?.Tag?.Year ?? 0
                 };
 
-                if(fileInfo.Properties != null) {
+                if(fileInfo?.Properties != null) {
                     songFile.BitRate = fileInfo.Properties.AudioBitrate;
                     songFile.TrackLength = fileInfo.Properties.Duration;
                 }

@@ -37,11 +37,15 @@
   <PropertyGroup>
     <ApplicationIcon>res\img\TrayIcon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>PlayerInterface.StartupManager</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
@@ -79,6 +83,7 @@
     <Compile Include="SmallPlayer.xaml.cs">
       <DependentUpon>SmallPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StartupManager.cs" />
     <Compile Include="ViewModels\AppSettingsViewModel.cs" />
     <Compile Include="ViewModels\FullPlayerViewModel.cs" />
     <Compile Include="ViewModels\SmallPlayerViewModel.cs" />

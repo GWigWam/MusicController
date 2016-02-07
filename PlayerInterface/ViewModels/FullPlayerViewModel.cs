@@ -138,7 +138,9 @@ namespace PlayerInterface.ViewModels {
                             Playlist.AddSongs(songs.Select(sf => new Song(sf)));
                         } else if(File.Exists(add)) {
                             var song = SongFileReader.ReadFile(add);
-                            Playlist.AddSong(new Song(song));
+                            if(song != null) {
+                                Playlist.AddSong(new Song(song));
+                            }
                         }
                     }
                 }

@@ -36,18 +36,32 @@ namespace PlayerInterface {
             get; private set;
         }
 
+        public void ArgsPassed(string[] args) {
+            var songfiles = new List<SongFile>();
+            foreach(var arg in args) {
+                if(File.Exists(arg)) {
+                    var read = SongFileReader.ReadFile(arg);
+                    if(read != null) {
+                        songfiles.Add(read);
+                    }
+                }
+            }
+
+            if(songfiles.Count > 0) {
+                var songsToAdd = songfiles.Select(sf => new Song(sf));
+                SongList.AddSongs(songsToAdd);
+                SongList.PlayFirstMatch(songsToAdd.First());
+                SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
+            }
+        }
+
         private void Application_Startup(object sender, StartupEventArgs e) {
             InitSettings();
 
             SongPlayer = new SongPlayer(ApplicationSettings.Volume);
-            ApplicationSettings.Changed += ApplicationSettings_Changed;
-
-            //var songs = SongFileReader.ReadFolderFiles(@"F:\Zooi\OneDrive\Muziek\Green Day\", "*.mp3");
             SongList = new Playlist();
-            //SongList.AddSongs(songs.Select(sf => new Song(sf)));
 
             TransitionMgr = new TransitionManager(SongPlayer, SongList, ApplicationSettings);
-            //SongPlayer.CurrentSong = SongList.CurrentSong;
 
             WindowMgr = new WindowManager(this);
             WindowMgr.Init();
@@ -60,6 +74,8 @@ namespace PlayerInterface {
             }
 
             ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);
+
+            ApplicationSettings.Changed += ApplicationSettings_Changed;
             Exit += (s, a) => {
                 ApplicationSettings.WriteToDisc(false);
             };

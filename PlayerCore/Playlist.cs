@@ -73,7 +73,6 @@ namespace PlayerCore {
                 foreach(var song in songs) {
                     AddSong(song, false);
                 }
-                Songs.AddRange(songs);
                 RaiseListChanged();
             }
         }
@@ -110,7 +109,7 @@ namespace PlayerCore {
         }
 
         public void PlayFirstMatch(Song song) {
-            PlayFirstMatch((comp) => comp == song);
+            PlayFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
         }
 
         public void PlayFirstMatch(Predicate<Song> filter) {

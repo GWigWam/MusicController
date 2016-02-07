@@ -91,10 +91,6 @@ namespace PlayerInterface.ViewModels {
             ShuffleCommand = new RelayCommand((o) => Playlist.Shuffle(), (o) => Playlist != null);
         }
 
-        public void StartPlaying() {
-            SongPlayer.StartPlaying();
-        }
-
         public void Stop() {
             SongPlayer.Stop();
         }
