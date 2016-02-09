@@ -47,6 +47,18 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private bool shuffleOnStartup = true;
+
+        public bool ShuffleOnStartup {
+            get { return shuffleOnStartup; }
+            set {
+                if(value != shuffleOnStartup) {
+                    shuffleOnStartup = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(SongTransitionDelayMs)));
+                }
+            }
+        }
+
         [JsonProperty]
         private HashSet<string> startupFolders {
             get; set;

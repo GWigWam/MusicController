@@ -21,6 +21,15 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public bool ShuffleOnStartup {
+            get {
+                return Settings.ShuffleOnStartup;
+            }
+            set {
+                Settings.ShuffleOnStartup = value;
+            }
+        }
+
         public uint SongTransitionDelay {
             get {
                 return Settings.SongTransitionDelayMs;

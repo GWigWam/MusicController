@@ -61,15 +61,7 @@ namespace PlayerInterface {
             SongPlayer = new SongPlayer(ApplicationSettings.Volume);
             SongList = new Playlist();
 
-            var startupSongFiles = new List<SongFile>();
-            foreach(var path in ApplicationSettings.StartupFolders) {
-                if(File.Exists(path)) {
-                    startupSongFiles.Add(SongFileReader.ReadFile(path));
-                } else if(Directory.Exists(path)) {
-                    startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path, "*.mp3"));
-                }
-            }
-            SongList.AddSongs(startupSongFiles.Where(sf => sf != null).Select(sf => new Song(sf)));
+            LoadStartupFiles();
 
             TransitionMgr = new TransitionManager(SongPlayer, SongList, ApplicationSettings);
 
@@ -94,6 +86,22 @@ namespace PlayerInterface {
         private void ApplicationSettings_Changed(object sender, SettingChangedEventArgs e) {
             if(e.ChangedPropertyName == nameof(AppSettings.Volume)) {
                 SongPlayer.Volume = ((AppSettings)sender).Volume;
+            }
+        }
+
+        private void LoadStartupFiles() {
+            var startupSongFiles = new List<SongFile>();
+            foreach(var path in ApplicationSettings.StartupFolders) {
+                if(File.Exists(path)) {
+                    startupSongFiles.Add(SongFileReader.ReadFile(path));
+                } else if(Directory.Exists(path)) {
+                    startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path, "*.mp3"));
+                }
+            }
+            SongList.AddSongs(startupSongFiles.Where(sf => sf != null).Select(sf => new Song(sf)));
+
+            if(ApplicationSettings.ShuffleOnStartup) {
+                SongList.Shuffle();
             }
         }
     }
