@@ -1,5 +1,6 @@
 ﻿using PlayerCore.Songs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace PlayerCore {
 
     [DebuggerDisplay("{Length} Songs, current #{CurrentSongIndex})")]
-    public class Playlist {
+    public class Playlist : IEnumerable<Song> {
         private int currentSongIndex = -1;
 
         public int CurrentSongIndex {
@@ -23,8 +24,6 @@ namespace PlayerCore {
                 }
             }
         }
-
-        public Song[] CurrentList => Songs.ToArray();
 
         public Song CurrentSong {
             get {
@@ -157,6 +156,14 @@ namespace PlayerCore {
 
         public void RaiseCurrentSongChanged() {
             CurrentSongChanged?.Invoke(this, new EventArgs());
+        }
+
+        public IEnumerator<Song> GetEnumerator() {
+            return Songs.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
         }
     }
 }

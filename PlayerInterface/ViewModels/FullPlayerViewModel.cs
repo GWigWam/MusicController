@@ -75,6 +75,8 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public string PlaylistStats => $"{Playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(Playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
+
         public AppSettingsViewModel SettingsViewModel {
             get;
         }
@@ -84,7 +86,7 @@ namespace PlayerInterface.ViewModels {
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
-            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.CurrentList.Select(s => new SongViewModel(s)));
+            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s)));
 
             SongPlayer.SongChanged += SongPlayer_SongChanged;
             Playlist.ListChanged += Playlist_ListChanged;
@@ -148,7 +150,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void Playlist_ListChanged(object sender, EventArgs e) {
-            RaisePropertiesChanged("ShowDropHint");
+            RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
             FillPlaylist();
         }
 
@@ -162,9 +164,9 @@ namespace PlayerInterface.ViewModels {
                 query = null;
             }
 
-            foreach(var add in Playlist.CurrentList) {
-                var svm = new SongViewModel(add) {
-                    Playing = add == SongPlayer.CurrentSong
+            foreach(var addSong in Playlist) {
+                var svm = new SongViewModel(addSong) {
+                    Playing = addSong == SongPlayer.CurrentSong
                 };
                 if(query == null) {
                     PlaylistItems.Add(svm);

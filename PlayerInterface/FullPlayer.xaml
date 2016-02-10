@@ -130,6 +130,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
                     <cc:ImageButton x:Name="Btn_Sort" Grid.Column="0" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded">
                         <cc:ImageButton.ContextMenu>
@@ -138,7 +139,10 @@
                             </ContextMenu>
                         </cc:ImageButton.ContextMenu>
                     </cc:ImageButton>
-                    <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="1" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
+                    <Viewbox Grid.Column="1" HorizontalAlignment="Left">
+                        <Label Content="{Binding PlaylistStats}" />
+                    </Viewbox>
+                    <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
                 </Grid>
             </Grid>
             <Grid Visibility="Collapsed" x:Name="Grid_Tab_Settings">
