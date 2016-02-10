@@ -66,6 +66,7 @@ namespace PlayerCore.Settings {
 
         public void WriteToDisc(bool runAsync) {
             if(HasUnsavedChanges) {
+                HasUnsavedChanges = false;
                 var writeTask = new Task(() => {
                     //Write to .writing file
                     var writingPath = $"{FullFilePath}.writing";
@@ -79,7 +80,6 @@ namespace PlayerCore.Settings {
                         File.Delete(FullFilePath);
                         File.Move(writingPath, FullFilePath);
                     }
-                    HasUnsavedChanges = false;
                 });
 
                 if(runAsync) {

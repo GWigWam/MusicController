@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
+using PlayerCore.Settings;
 using PlayerInterface.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -26,13 +27,13 @@ namespace PlayerInterface {
             App = app;
         }
 
-        public void Init() {
+        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist) {
             TrayIcon = (TaskbarIcon)App.FindResource("Tbi_Icon");
 
-            ViewModel = new FullPlayerViewModel(App.ApplicationSettings, App.SongPlayer, App.SongList);
+            ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist);
 
-            CreateFullPlayer(!App.ApplicationSettings.StartMinimized);
-            CreateSmallPlayer(App.ApplicationSettings.StartMinimized);
+            CreateFullPlayer(!settings.StartMinimized);
+            CreateSmallPlayer(settings.StartMinimized);
             TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
             TrayIcon.TrayMouseMove += Tbi_TrayMouseMove;
         }

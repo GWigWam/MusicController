@@ -14,95 +14,39 @@ using System.Windows;
 namespace PlayerInterface {
 
     public partial class App : Application {
-        private const string AppSettingsPath = "AppSettings.json";
-
-        internal AppSettings ApplicationSettings {
-            get; private set;
-        }
-
-        internal SongPlayer SongPlayer {
-            get; private set;
-        }
 
         internal WindowManager WindowMgr {
             get; private set;
         }
 
-        internal Playlist SongList {
-            get; private set;
+        private AppSettings Settings {
+            get; set;
         }
 
-        internal TransitionManager TransitionMgr {
-            get; private set;
+        private SongPlayer SongPlayer {
+            get; set;
         }
 
-        public void ArgsPassed(string[] args) {
-            var songfiles = new List<SongFile>();
-            foreach(var arg in args) {
-                if(File.Exists(arg)) {
-                    var read = SongFileReader.ReadFile(arg);
-                    if(read != null) {
-                        songfiles.Add(read);
-                    }
-                }
-            }
+        private Playlist Playlist {
+            get; set;
+        }
 
-            if(songfiles.Count > 0) {
-                var songsToAdd = songfiles.Select(sf => new Song(sf));
-                SongList.AddSongs(songsToAdd);
-                SongList.PlayFirstMatch(songsToAdd.First());
-                SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
-            }
+        /// <summary>
+        /// DO NOT USE
+        /// </summary>
+        private App() {
+            throw new InvalidOperationException("This ctor should not be used");
+        }
+
+        public App(AppSettings settings, SongPlayer songPlayer, Playlist playlist) {
+            Settings = settings;
+            SongPlayer = songPlayer;
+            Playlist = playlist;
         }
 
         private void Application_Startup(object sender, StartupEventArgs e) {
-            InitSettings();
-
-            SongPlayer = new SongPlayer(ApplicationSettings.Volume);
-            SongList = new Playlist();
-
-            LoadStartupFiles();
-
-            TransitionMgr = new TransitionManager(SongPlayer, SongList, ApplicationSettings);
-
             WindowMgr = new WindowManager(this);
-            WindowMgr.Init();
-        }
-
-        private void InitSettings() {
-            if(!File.Exists(AppSettingsPath)) {
-                var set = new AppSettings(AppSettingsPath);
-                set.WriteToDisc(false);
-            }
-
-            ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);
-
-            ApplicationSettings.Changed += ApplicationSettings_Changed;
-            Exit += (s, a) => {
-                ApplicationSettings.WriteToDisc(false);
-            };
-        }
-
-        private void ApplicationSettings_Changed(object sender, SettingChangedEventArgs e) {
-            if(e.ChangedPropertyName == nameof(AppSettings.Volume)) {
-                SongPlayer.Volume = ((AppSettings)sender).Volume;
-            }
-        }
-
-        private void LoadStartupFiles() {
-            var startupSongFiles = new List<SongFile>();
-            foreach(var path in ApplicationSettings.StartupFolders) {
-                if(File.Exists(path)) {
-                    startupSongFiles.Add(SongFileReader.ReadFile(path));
-                } else if(Directory.Exists(path)) {
-                    startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path, "*.mp3"));
-                }
-            }
-            SongList.AddSongs(startupSongFiles.Where(sf => sf != null).Select(sf => new Song(sf)));
-
-            if(ApplicationSettings.ShuffleOnStartup) {
-                SongList.Shuffle();
-            }
+            WindowMgr.Init(Settings, SongPlayer, Playlist);
         }
     }
 }
