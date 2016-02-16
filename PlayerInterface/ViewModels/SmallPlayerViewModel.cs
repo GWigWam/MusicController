@@ -67,6 +67,7 @@ namespace PlayerInterface.ViewModels {
 
             SongPlayer.SongEnded += SongPlayer_SongEnded;
             SongPlayer.PlaybackStateChanged += PlaybackStateChanged;
+            Settings.Changed += Settings_Changed;
         }
 
         private void SetupCommands() {
@@ -97,6 +98,12 @@ namespace PlayerInterface.ViewModels {
 
         private void PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e) {
             RaisePropertiesChanged("SwitchButtonImgSource");
+        }
+
+        private void Settings_Changed(object sender, SettingChangedEventArgs e) {
+            if(e.ChangedPropertyName == nameof(Settings.Volume)) {
+                RaisePropertiesChanged(nameof(Volume));
+            }
         }
 
         protected void RaisePropertiesChanged(params string[] propertyNames) {

@@ -63,9 +63,9 @@ namespace SpeechControl {
                     Description = "Music + [Volume up / Volume down]+ : Change volume",
                     Execute = (sentence) => {
                         if(sentence.ElementAt(1) == "volume up") {
-                            speechController.Player.Volume += 0.1f; //TODO: Get amount from settings
+                            speechController.Settings.Volume += 0.1f; //TODO: Get amount from settings
                         } else if(sentence.ElementAt(1) == "volume down") {
-                            speechController.Player.Volume -= 0.1f; //TODO: Get amount from settings
+                            speechController.Settings.Volume -= 0.1f; //TODO: Get amount from settings
                         }
                         return new string[] { "music" };
                     },
