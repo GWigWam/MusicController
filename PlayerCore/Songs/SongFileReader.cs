@@ -44,13 +44,16 @@ namespace PlayerCore.Songs {
             string artist = fileInfo?.Tag?.FirstPerformer ?? (matchName ?? (matchName = SongNameInfo.Match(file.Name))).Groups?["artist"]?.Value;
             string album = fileInfo?.Tag?.Album;
 
-            if(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(artist)) {
-                //Remove parenthesis '(' & ')'
-                title = Parenthesis.Replace(title, "").Trim();
-                artist = Parenthesis.Replace(artist, "").Trim();
-                album = album?.Trim();
-                album = string.IsNullOrWhiteSpace(album) ? null : album;
+            title = string.IsNullOrEmpty(title) ? file.Name.Replace(file.Extension, "") : title;
+            title = Parenthesis.Replace(title, "").Trim();
 
+            artist = Parenthesis.Replace(artist, "").Trim();
+            artist = string.IsNullOrEmpty(artist) ? null : artist;
+
+            album = album?.Trim();
+            album = string.IsNullOrEmpty(album) ? null : album;
+
+            if(!string.IsNullOrWhiteSpace(title)) {
                 var songFile = new SongFile(file.FullName) {
                     Title = title,
                     Artist = artist,
