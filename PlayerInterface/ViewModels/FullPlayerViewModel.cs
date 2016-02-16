@@ -147,7 +147,7 @@ namespace PlayerInterface.ViewModels {
                         }
                     }
                 }
-            });
+            }, (e) => new ExceptionWindow(e).Show());
         }
 
         private void PlaylistChanged(object sender, EventArgs e) {

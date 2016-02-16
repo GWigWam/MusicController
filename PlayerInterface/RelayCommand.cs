@@ -14,11 +14,11 @@ namespace PlayerInterface {
 
         private event EventHandler CanExecuteChangedInternal;
 
-        public RelayCommand(Action<object> execute)
-            : this(execute, DefaultCanExecute) {
+        public RelayCommand(Action<object> execute, Action<Exception> exeptionHandler = null)
+            : this(execute, DefaultCanExecute, exeptionHandler) {
         }
 
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute) {
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute, Action<Exception> exeptionHandler = null) {
             if(execute == null) {
                 throw new ArgumentNullException("execute");
             }
@@ -29,6 +29,7 @@ namespace PlayerInterface {
 
             this.execute = execute;
             this.canExecute = canExecute;
+            ExceptionHandler = exeptionHandler;
         }
 
         public event EventHandler CanExecuteChanged {
@@ -43,12 +44,18 @@ namespace PlayerInterface {
             }
         }
 
+        public Action<Exception> ExceptionHandler;
+
         public bool CanExecute(object parameter) {
             return this.canExecute != null && this.canExecute(parameter);
         }
 
         public void Execute(object parameter) {
-            this.execute(parameter);
+            try {
+                execute(parameter);
+            } catch(Exception e) {
+                ExceptionHandler?.Invoke(e);
+            }
         }
 
         public void OnCanExecuteChanged() {
