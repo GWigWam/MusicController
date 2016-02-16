@@ -49,12 +49,27 @@ namespace PlayerCore.Settings {
 
         private bool shuffleOnStartup = true;
 
+        [JsonProperty]
         public bool ShuffleOnStartup {
             get { return shuffleOnStartup; }
             set {
                 if(value != shuffleOnStartup) {
                     shuffleOnStartup = value;
                     RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(SongTransitionDelayMs)));
+                }
+            }
+        }
+
+#warning TODO: Add to UI
+        private bool enableSpeech = true;
+
+        [JsonProperty]
+        public bool EnableSpeech {
+            get { return enableSpeech; }
+            set {
+                if(value != enableSpeech) {
+                    enableSpeech = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(EnableSpeech)));
                 }
             }
         }

@@ -43,7 +43,9 @@ namespace PlayerCore {
         private Random random;
         private List<Song> Songs { get; set; }
 
-        public event EventHandler ListChanged;
+        public event EventHandler ListOrderChanged;
+
+        public event EventHandler ListContentChanged;
 
         public event EventHandler CurrentSongChanged;
 
@@ -58,7 +60,7 @@ namespace PlayerCore {
                 Songs.Add(song);
 
                 if(handleInternally) {
-                    RaiseListChanged();
+                    RaiseListContentChanged();
                 }
 
                 if(CurrentSongIndex < 0) {
@@ -72,21 +74,21 @@ namespace PlayerCore {
                 foreach(var song in songs) {
                     AddSong(song, false);
                 }
-                RaiseListChanged();
+                RaiseListContentChanged();
             }
         }
 
         public void Clear() {
             Songs.Clear();
             currentSongIndex = -1;
-            RaiseListChanged();
+            RaiseListContentChanged();
             RaiseCurrentSongChanged();
         }
 
         public void Shuffle() {
             if(Songs.Count > 0) {
                 Songs = Songs.OrderBy(s => random.NextDouble()).ToList();
-                RaiseListChanged();
+                RaiseListOrderChanged();
             }
         }
 
@@ -98,13 +100,13 @@ namespace PlayerCore {
                     Songs = Songs.OrderBy(by).ToList();
                 }
 
-                RaiseListChanged();
+                RaiseListOrderChanged();
             }
         }
 
         public void Reverse() {
             Songs.Reverse();
-            RaiseListChanged();
+            RaiseListOrderChanged();
         }
 
         public void PlayFirstMatch(Song song) {
@@ -118,6 +120,15 @@ namespace PlayerCore {
             }
         }
 
+        public void PlayAllMatches(Predicate<Song> filter) {
+            if(Songs.Any(s => filter(s))) {
+                Songs = Songs.OrderByDescending(s => filter(s)).ToList();
+                currentSongIndex = -1; // In case it was already 0 before the shuffle and won't trigger SongChanged
+                CurrentSongIndex = 0;
+                RaiseListOrderChanged();
+            }
+        }
+
         public void Remove(IEnumerable<Song> songs) {
             var currentSongBeforeRemove = CurrentSong;
             foreach(var song in songs) {
@@ -125,7 +136,7 @@ namespace PlayerCore {
             }
 
             HandleIndexOnRemove(currentSongBeforeRemove);
-            RaiseListChanged();
+            RaiseListContentChanged();
         }
 
         public void Remove(Song song, bool handleInternally = true) {
@@ -134,7 +145,7 @@ namespace PlayerCore {
 
             if(handleInternally) {
                 HandleIndexOnRemove(currentSongBeforeRemove);
-                RaiseListChanged();
+                RaiseListContentChanged();
             }
         }
 
@@ -150,8 +161,12 @@ namespace PlayerCore {
             }
         }
 
-        public void RaiseListChanged() {
-            ListChanged?.Invoke(this, new EventArgs());
+        public void RaiseListContentChanged() {
+            ListContentChanged?.Invoke(this, new EventArgs());
+        }
+
+        public void RaiseListOrderChanged() {
+            ListOrderChanged?.Invoke(this, new EventArgs());
         }
 
         public void RaiseCurrentSongChanged() {

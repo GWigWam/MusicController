@@ -89,7 +89,8 @@ namespace PlayerInterface.ViewModels {
             PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s)));
 
             SongPlayer.SongChanged += SongPlayer_SongChanged;
-            Playlist.ListChanged += Playlist_ListChanged;
+            Playlist.ListContentChanged += PlaylistChanged;
+            Playlist.ListOrderChanged += PlaylistChanged;
 
             UpdateTimer = new Timer() {
                 AutoReset = true,
@@ -149,7 +150,7 @@ namespace PlayerInterface.ViewModels {
             });
         }
 
-        private void Playlist_ListChanged(object sender, EventArgs e) {
+        private void PlaylistChanged(object sender, EventArgs e) {
             RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
             FillPlaylist();
         }

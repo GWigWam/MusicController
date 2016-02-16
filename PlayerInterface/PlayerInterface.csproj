@@ -163,6 +163,10 @@
       <Project>{a44bc6cc-5073-4cb5-a59c-2c6ddf5d4c9b}</Project>
       <Name>PlayerCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SpeechControl\SpeechControl.csproj">
+      <Project>{63715f30-9fa5-4c63-9517-e59a030be13d}</Project>
+      <Name>SpeechControl</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\img\Open.png" />

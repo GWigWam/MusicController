@@ -79,6 +79,16 @@ namespace PlayerCore {
             }
         }
 
+        public void TogglePause(bool startIfStopped) {
+            if(PlayerState == PlaybackState.Paused) {
+                PlayerState = PlaybackState.Playing;
+            } else if(PlayerState == PlaybackState.Playing) {
+                PlayerState = PlaybackState.Paused;
+            } else if(PlayerState == PlaybackState.Stopped && startIfStopped && CurrentSong != null) {
+                PlayerState = PlaybackState.Playing;
+            }
+        }
+
         public TimeSpan TrackLength {
             get {
                 return File?.TotalTime ?? TimeSpan.Zero;
@@ -90,9 +100,11 @@ namespace PlayerCore {
         public float Volume {
             get { return volume; }
             set {
-                volume = value;
-                if(File != null)
-                    File.Volume = value;
+                if(volume != value && value >= 0 && value <= 1) {
+                    volume = value;
+                    if(File != null)
+                        File.Volume = value;
+                }
             }
         }
 

@@ -2,6 +2,7 @@
 using PlayerCore;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
+using SpeechControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,10 @@ namespace PlayerInterface {
         }
 
         internal TransitionManager TransitionMgr {
+            get; private set;
+        }
+
+        internal SpeechController SpeechController {
             get; private set;
         }
 
@@ -56,6 +61,9 @@ namespace PlayerInterface {
             } else {
                 LoadStartupSongFiles();
             }
+
+            SpeechController = new SpeechController(SongPlayer, Playlist, ApplicationSettings);
+            SpeechController.Init();
 
             Application = new App(ApplicationSettings, SongPlayer, Playlist);
             Application.InitializeComponent();
