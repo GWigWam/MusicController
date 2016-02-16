@@ -41,7 +41,12 @@ namespace PlayerInterface {
 
         [STAThread]
         public static void Main(string[] args) {
-            System.IO.Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
+            var workingDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\SpeechMusicController\\";
+            if(!Directory.Exists(workingDir)) {
+                Directory.CreateDirectory(workingDir);
+            }
+            Directory.SetCurrentDirectory(workingDir);
+
             new StartupManager().Run(args);
         }
 
@@ -104,10 +109,6 @@ namespace PlayerInterface {
             ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);
 
             ApplicationSettings.Changed += ApplicationSettings_Changed;
-
-            Shutdown += (s, a) => {
-                ApplicationSettings.WriteToDisc(false);
-            };
         }
 
         private void ApplicationSettings_Changed(object sender, SettingChangedEventArgs e) {

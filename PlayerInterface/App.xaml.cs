@@ -48,5 +48,10 @@ namespace PlayerInterface {
             WindowMgr = new WindowManager(this);
             WindowMgr.Init(Settings, SongPlayer, Playlist);
         }
+
+        protected override void OnExit(ExitEventArgs e) {
+            Settings.WriteToDisc(false);
+            base.OnExit(e);
+        }
     }
 }
