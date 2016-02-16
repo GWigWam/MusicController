@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("PlayerInterface")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("PlayerInterface")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("GWigWam")]
+[assembly: AssemblyProduct("SpeechMusicController")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
