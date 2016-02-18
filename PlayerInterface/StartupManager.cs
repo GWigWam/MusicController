@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlayerInterface {
 
@@ -70,7 +68,7 @@ namespace PlayerInterface {
             SpeechController = new SpeechController(SongPlayer, Playlist, ApplicationSettings);
             SpeechController.Init();
 
-            Application = new App(ApplicationSettings, SongPlayer, Playlist);
+            Application = new App(ApplicationSettings, SongPlayer, Playlist, SpeechController);
             Application.InitializeComponent();
             Application.Run();
             return false;

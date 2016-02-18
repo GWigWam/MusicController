@@ -27,6 +27,8 @@ namespace SpeechControl {
             get; private set;
         }
 
+        public event EventHandler<SentenceChangedEventArgs> SentenceChanged;
+
         private SpeechRecognitionEngine SRecognize {
             get; set;
         }
@@ -79,7 +81,9 @@ namespace SpeechControl {
             }
             LastInputTime = Environment.TickCount;
 
-            Sentence.Add(e.Result.Text);
+            var add = e.Result.Text;
+            Sentence.Add(add);
+            SentenceChanged?.Invoke(this, new SentenceChangedEventArgs(Sentence, add));
 
             for(int skip = Sentence.Count - 1; skip >= 0; skip--) {
                 var match = Commands.FirstOrDefault(sc => sc.IsMatch(Sentence.Skip(skip)));
@@ -90,6 +94,22 @@ namespace SpeechControl {
                     break;
                 }
             }
+        }
+    }
+
+    public class SentenceChangedEventArgs : EventArgs {
+
+        public IEnumerable<string> Sentence {
+            get;
+        }
+
+        public string Change {
+            get;
+        }
+
+        public SentenceChangedEventArgs(IEnumerable<string> sentence, string change) : base() {
+            Sentence = sentence;
+            Change = change;
         }
     }
 }

@@ -2,6 +2,7 @@
 using PlayerCore;
 using PlayerCore.Settings;
 using PlayerInterface.ViewModels;
+using SpeechControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,24 +13,18 @@ using System.Windows;
 namespace PlayerInterface {
 
     internal class WindowManager {
-
-        private App App {
-            get;
-        }
-
         private FullPlayerViewModel ViewModel;
 
         private TaskbarIcon TrayIcon;
         private FullPlayer Full;
         private SmallPlayer Small;
+        private ScreenOverlay Overlay;
 
-        public WindowManager(App app) {
-            App = app;
+        public WindowManager(TaskbarIcon icon) {
+            TrayIcon = icon;
         }
 
-        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist) {
-            TrayIcon = (TaskbarIcon)App.FindResource("Tbi_Icon");
-
+        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl) {
             ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist);
 
             CreateFullPlayer(!settings.StartMinimized);
@@ -43,6 +38,8 @@ namespace PlayerInterface {
                     ShowSmallWindow();
                 }
             };
+
+            SetupScreenOverlay(speechControl);
         }
 
         private void CreateSmallPlayer(bool show) {
@@ -65,6 +62,14 @@ namespace PlayerInterface {
                 SmallPlayer = new RelayCommand((o) => ShowSmallWindow()),
                 FullPlayer = new RelayCommand((o) => ShowFullWindow()),
                 Quit = new RelayCommand((o) => Application.Current.Shutdown())
+            };
+        }
+
+        private void SetupScreenOverlay(SpeechController speech) {
+            Overlay = new ScreenOverlay(1200 /*TODO: get from settings*/);
+
+            speech.SentenceChanged += (s, a) => {
+                Overlay.Text = a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'");
             };
         }
 

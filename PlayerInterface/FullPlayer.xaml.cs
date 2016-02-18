@@ -35,7 +35,7 @@ namespace PlayerInterface {
                 if(p.PropertyName == nameof(FullPlayerViewModel.CurrentFocusItem)) {
                     var item = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
                     if(item != null) {
-                        Lb_Playlist.ScrollIntoView(item);
+                        Application.Current.Dispatcher.BeginInvoke((Action)(() => Lb_Playlist.ScrollIntoView(item)));
                     }
                 }
             };
