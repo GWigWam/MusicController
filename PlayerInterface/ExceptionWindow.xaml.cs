@@ -20,12 +20,12 @@ namespace PlayerInterface {
     public partial class ExceptionWindow : Window {
 
         public ExceptionWindow(Exception e) {
+            InitializeComponent();
             try {
-                InitializeComponent();
-
                 Tb_Content.Text = ExceptionToString(e);
             } catch {
                 //Don't cause any further trouble
+                Close();
             }
         }
 
