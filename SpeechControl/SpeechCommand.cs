@@ -180,7 +180,7 @@ namespace SpeechControl {
     public static class SpeechCommandsExtensions {
 
         public static IEnumerable<string> GetAllKeywords(this IEnumerable<SpeechCommand> commands) {
-            return new HashSet<string>(commands.SelectMany(sc => sc.KeyWords.SelectMany(s => s)));
+            return new HashSet<string>(commands.SelectMany(sc => sc.KeyWords.SelectMany(s => s)).Where(s => !string.IsNullOrEmpty(s)));
         }
     }
 
