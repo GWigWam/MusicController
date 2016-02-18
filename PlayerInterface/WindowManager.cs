@@ -34,8 +34,15 @@ namespace PlayerInterface {
 
             CreateFullPlayer(!settings.StartMinimized);
             CreateSmallPlayer(settings.StartMinimized);
+
+            SetupContextMenu();
+
             TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
-            TrayIcon.TrayMouseMove += Tbi_TrayMouseMove;
+            TrayIcon.TrayLeftMouseUp += (s, a) => {
+                if(!(Full?.IsVisible ?? false)) {
+                    ShowSmallWindow();
+                }
+            };
         }
 
         private void CreateSmallPlayer(bool show) {
@@ -53,15 +60,18 @@ namespace PlayerInterface {
                 Full.Show();
         }
 
-        private void Tbi_TrayMouseMove(object sender, RoutedEventArgs e) {
-            if(!(Full?.IsVisible ?? false)) {
-                ShowSmallWindow();
-            }
+        private void SetupContextMenu() {
+            TrayIcon.ContextMenu.DataContext = new {
+                SmallPlayer = new RelayCommand((o) => ShowSmallWindow()),
+                FullPlayer = new RelayCommand((o) => ShowFullWindow()),
+                Quit = new RelayCommand((o) => Application.Current.Shutdown())
+            };
         }
 
         private void ShowSmallWindow() {
             Small.Show();
             Small.Activate();
+            Full.Hide();
         }
 
         private void ShowFullWindow() {
