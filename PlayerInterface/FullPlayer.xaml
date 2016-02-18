@@ -23,7 +23,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid IsEnabled="{Binding UIEnabled}">
         <Grid.RowDefinitions>
             <RowDefinition Height="34" />
             <RowDefinition Height="*" />

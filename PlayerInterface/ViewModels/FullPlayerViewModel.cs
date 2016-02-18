@@ -71,6 +71,9 @@ namespace PlayerInterface.ViewModels {
             get; set;
         }
 
+        /// <summary>
+        /// Items for the visible playlist WARNING apparantly ObservableCollection isn't thread safe :(
+        /// </summary>
         public ObservableCollection<SongViewModel> PlaylistItems {
             get; private set;
         }
@@ -79,6 +82,18 @@ namespace PlayerInterface.ViewModels {
 
         public AppSettingsViewModel SettingsViewModel {
             get;
+        }
+
+        private bool _UIEnabled;
+
+        public bool UIEnabled {
+            get { return _UIEnabled; }
+            set {
+                if(_UIEnabled != value) {
+                    _UIEnabled = value;
+                    RaisePropertiesChanged(nameof(UIEnabled));
+                }
+            }
         }
 
         public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) : base(settings, player, playlist) {
@@ -98,6 +113,7 @@ namespace PlayerInterface.ViewModels {
                 Interval = 1000
             };
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+            UIEnabled = true;
         }
 
         private void SetupCommands() {
@@ -132,7 +148,8 @@ namespace PlayerInterface.ViewModels {
 
             SearchCommand = new RelayCommand((o) => FillPlaylist(o as string));
 
-            AddFilesCommand = new RelayCommand((o) => {
+            AddFilesCommand = new AsyncCommand((o) => {
+                UIEnabled = false;
                 var files = o as string[];
                 if(files != null) {
                     foreach(var add in files) {
@@ -147,12 +164,16 @@ namespace PlayerInterface.ViewModels {
                         }
                     }
                 }
-            }, (e) => new ExceptionWindow(e).Show());
+            }, (t) => {
+                UIEnabled = true;
+                if(t.IsFaulted)
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() => new ExceptionWindow(t.Exception).Show()));
+            });
         }
 
         private void PlaylistChanged(object sender, EventArgs e) {
             RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
-            FillPlaylist();
+            Application.Current.Dispatcher.BeginInvoke((Action)(() => FillPlaylist()));
         }
 
         private void FillPlaylist(string filter = null) {
