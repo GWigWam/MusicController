@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -12,40 +13,40 @@ namespace PlayerInterface {
     public partial class ScreenOverlay : Window {
         private ScreenOverlayViewModel ViewModel => DataContext as ScreenOverlayViewModel;
 
-        public string Text {
-            get { return ViewModel.Text; }
-            set {
-                ViewModel.Text = value;
-                LastActivity = Environment.TickCount;
-                if(!IsVisible) {
-                    Application.Current.Dispatcher.Invoke((() => Show()));
-                }
-            }
-        }
-
-        public int AutoHideTimeMs {
+        public int DefaultAutoHideTimeMs {
             get; set;
         }
 
-        private long LastActivity;
+        private long HideTimeStamp;
 
-        public ScreenOverlay(int autoHideTimeMs) {
+        public ScreenOverlay(int defaultAutoHideTimeMs) {
             InitializeComponent();
-            AutoHideTimeMs = autoHideTimeMs;
+            DefaultAutoHideTimeMs = defaultAutoHideTimeMs;
 
             Width = SystemParameters.WorkArea.Width;
             DataContext = new ScreenOverlayViewModel();
+        }
 
-            new Timer() {
-                AutoReset = true,
-                Enabled = true,
-                Interval = 99
-            }.Elapsed += (s, a) => {
-                var dif = Environment.TickCount - LastActivity;
-                if(dif > AutoHideTimeMs && IsVisible) {
+        public void DisplayText(string text) {
+            DisplayText(text, DefaultAutoHideTimeMs);
+        }
+
+        public void DisplayText(string text, TimeSpan autoHideTime) {
+            DisplayText(text, (int)autoHideTime.TotalMilliseconds);
+        }
+
+        public void DisplayText(string text, int autoHideTimeMs) {
+            ViewModel.Text = text;
+            if(!IsVisible) {
+                Application.Current.Dispatcher.Invoke((() => Show()));
+            }
+
+            HideTimeStamp = Environment.TickCount + autoHideTimeMs;
+            Task.Delay(autoHideTimeMs + 50).GetAwaiter().OnCompleted(() => {
+                if(Environment.TickCount > HideTimeStamp && IsVisible) {
                     Application.Current.Dispatcher.Invoke((() => Hide()));
                 }
-            };
+            });
         }
 
         private void Window_PreviewMouseMove(object sender, MouseEventArgs e) {

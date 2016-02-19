@@ -69,11 +69,11 @@ namespace PlayerInterface {
             Overlay = new ScreenOverlay(1200 /*TODO: get from settings*/);
 
             speech.SentenceChanged += (s, a) => {
-                Overlay.Text = a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'");
+                Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'"));
             };
 
             player.SongChanged += (s, a) => {
-                Overlay.Text = $"{player.CurrentSong.Title} - {player.CurrentSong.Artist}";
+                Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}");
             };
         }
 

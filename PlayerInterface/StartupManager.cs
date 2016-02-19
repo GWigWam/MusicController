@@ -78,7 +78,7 @@ namespace PlayerInterface {
                 ApplicationSettings.WriteToDisc(false);
             };
 
-            windowMgr.Overlay.Text = "SMC Running...";
+            windowMgr.Overlay.DisplayText("SMC Running...", 2000);
             Application.Run();
             return false;
         }
