@@ -15,10 +15,10 @@ namespace PlayerInterface {
     internal class WindowManager {
         private FullPlayerViewModel ViewModel;
 
-        private TaskbarIcon TrayIcon;
-        private FullPlayer Full;
-        private SmallPlayer Small;
-        private ScreenOverlay Overlay;
+        public TaskbarIcon TrayIcon { get; protected set; }
+        public FullPlayer Full { get; protected set; }
+        public SmallPlayer Small { get; protected set; }
+        public ScreenOverlay Overlay { get; protected set; }
 
         public WindowManager(TaskbarIcon icon) {
             TrayIcon = icon;

@@ -68,8 +68,17 @@ namespace PlayerInterface {
             SpeechController = new SpeechController(SongPlayer, Playlist, ApplicationSettings);
             SpeechController.Init();
 
-            Application = new App(ApplicationSettings, SongPlayer, Playlist, SpeechController);
+            Application = new App();
             Application.InitializeComponent();
+
+            var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource("Tbi_Icon"));
+            windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController);
+
+            Application.Exiting += (s, a) => {
+                ApplicationSettings.WriteToDisc(false);
+            };
+
+            windowMgr.Overlay.Text = "SMC Running...";
             Application.Run();
             return false;
         }
@@ -106,13 +115,11 @@ namespace PlayerInterface {
 
             ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);
 
-            ApplicationSettings.Changed += ApplicationSettings_Changed;
-        }
-
-        private void ApplicationSettings_Changed(object sender, SettingChangedEventArgs e) {
-            if(e.ChangedPropertyName == nameof(AppSettings.Volume)) {
-                SongPlayer.Volume = ((AppSettings)sender).Volume;
-            }
+            ApplicationSettings.Changed += (sender, args) => {
+                if(args.ChangedPropertyName == nameof(AppSettings.Volume)) {
+                    SongPlayer.Volume = ((AppSettings)sender).Volume;
+                }
+            };
         }
 
         private void LoadStartupSongFiles() {
