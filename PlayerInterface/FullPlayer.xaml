@@ -175,7 +175,10 @@
                         </ListBox>
                     </StackPanel>
                 </ScrollViewer>
-                <Button Margin="5" Padding="5" Grid.Row="1" Content="Save to Disk" HorizontalAlignment="Right" Command="{Binding SettingsViewModel.SaveToDiskCommand}" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Margin="5"  Padding="5" Content="View File" Command="{Binding SettingsViewModel.OpenFileLocationCommand}" />
+                    <Button Margin="5" Padding="5" Content="Save to Disk" Command="{Binding SettingsViewModel.SaveToDiskCommand}" />
+                </StackPanel>
             </Grid>
             <Grid Visibility="Collapsed" x:Name="Grid_Tab_About">
                 <Label Content="About" />

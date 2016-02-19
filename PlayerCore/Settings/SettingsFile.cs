@@ -12,7 +12,7 @@ namespace PlayerCore.Settings {
         private static JsonSerializerSettings JSonSettings;
 
         [JsonIgnore]
-        protected string FullFilePath {
+        public string FullFilePath {
             get; private set;
         }
 

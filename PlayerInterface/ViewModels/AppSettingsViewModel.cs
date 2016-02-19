@@ -47,6 +47,10 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ICommand OpenFileLocationCommand {
+            get; private set;
+        }
+
         private AppSettings Settings {
             get;
         }
@@ -61,6 +65,7 @@ namespace PlayerInterface.ViewModels {
             UpdateStartupFolders();
 
             SaveToDiskCommand = new RelayCommand((o) => Settings.WriteToDisc(true), (o) => Settings.HasUnsavedChanges);
+            OpenFileLocationCommand = new RelayCommand((o) => System.Diagnostics.Process.Start("explorer.exe", $"//select, {Settings.FullFilePath}"));
         }
 
         public void AddStartupFolders(IEnumerable<string> paths) {
