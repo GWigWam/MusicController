@@ -60,7 +60,6 @@ namespace PlayerCore.Settings {
             }
         }
 
-#warning TODO: Add to UI
         private bool enableSpeech = true;
 
         [JsonProperty]
@@ -70,6 +69,32 @@ namespace PlayerCore.Settings {
                 if(value != enableSpeech) {
                     enableSpeech = value;
                     RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(EnableSpeech)));
+                }
+            }
+        }
+
+        private uint screenOverlayShowTimeMs = 1200;
+
+        [JsonProperty]
+        public uint ScreenOverlayShowTimeMs {
+            get { return screenOverlayShowTimeMs; }
+            set {
+                if(value != screenOverlayShowTimeMs) {
+                    screenOverlayShowTimeMs = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(ScreenOverlayShowTimeMs)));
+                }
+            }
+        }
+
+        private uint resetSentenceTimeMs = 6000;
+
+        [JsonProperty]
+        public uint ResetSentenceTimeMs {
+            get { return resetSentenceTimeMs; }
+            set {
+                if(value != resetSentenceTimeMs) {
+                    resetSentenceTimeMs = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(ResetSentenceTimeMs)));
                 }
             }
         }

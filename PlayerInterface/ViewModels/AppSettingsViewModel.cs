@@ -28,12 +28,39 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public bool EnableSpeech {
+            get {
+                return Settings.EnableSpeech;
+            }
+            set {
+                Settings.EnableSpeech = value;
+            }
+        }
+
         public uint SongTransitionDelay {
             get {
                 return Settings.SongTransitionDelayMs;
             }
             set {
                 Settings.SongTransitionDelayMs = value;
+            }
+        }
+
+        public uint ScreenOverlayShowTimeMs {
+            get {
+                return Settings.ScreenOverlayShowTimeMs;
+            }
+            set {
+                Settings.ScreenOverlayShowTimeMs = value;
+            }
+        }
+
+        public uint ResetSentenceTimeMs {
+            get {
+                return Settings.ResetSentenceTimeMs;
+            }
+            set {
+                Settings.ResetSentenceTimeMs = value;
             }
         }
 

@@ -36,7 +36,7 @@ namespace PlayerInterface {
                 }
             };
 
-            SetupScreenOverlay(speechControl, songPlayer);
+            SetupScreenOverlay(settings, speechControl, songPlayer);
         }
 
         private void CreateSmallPlayer(bool show) {
@@ -62,11 +62,13 @@ namespace PlayerInterface {
             };
         }
 
-        private void SetupScreenOverlay(SpeechController speech, SongPlayer player) {
-            Overlay = new ScreenOverlay(1200 /*TODO: get from settings*/);
+        private void SetupScreenOverlay(AppSettings settings, SpeechController speech, SongPlayer player) {
+            Overlay = new ScreenOverlay(settings);
 
             speech.SentenceChanged += (s, a) => {
-                Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'"));
+                if(settings.EnableSpeech) {
+                    Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'"));
+                }
             };
 
             player.SongChanged += (s, a) => {

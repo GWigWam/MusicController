@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Settings;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Timers;
@@ -13,22 +14,25 @@ namespace PlayerInterface {
     public partial class ScreenOverlay : Window {
         private ScreenOverlayViewModel ViewModel => DataContext as ScreenOverlayViewModel;
 
-        public int DefaultAutoHideTimeMs {
-            get; set;
+        private AppSettings Settings {
+            get;
         }
 
         private long HideTimeStamp;
 
-        public ScreenOverlay(int defaultAutoHideTimeMs) {
+        public ScreenOverlay(AppSettings settings) {
             InitializeComponent();
-            DefaultAutoHideTimeMs = defaultAutoHideTimeMs;
+            Settings = settings;
 
             Width = SystemParameters.WorkArea.Width;
             DataContext = new ScreenOverlayViewModel();
         }
 
         public void DisplayText(string text) {
-            DisplayText(text, DefaultAutoHideTimeMs);
+            var time = (int)Settings.ScreenOverlayShowTimeMs;
+            if(time > 0) {
+                DisplayText(text, time);
+            }
         }
 
         public void DisplayText(string text, TimeSpan autoHideTime) {

@@ -155,14 +155,34 @@
                         <Label Content="General:" FontWeight="Bold" FontSize="16" Padding="0" />
                         <CheckBox x:Name="Cb_StartMinimized" Content="Start Minimized" IsChecked="{Binding SettingsViewModel.StartMinimized}" />
                         <CheckBox x:Name="Cb_ShuffleOnStart" Content="Shuffle on Startup" IsChecked="{Binding SettingsViewModel.ShuffleOnStartup}" />
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Delay between songs:" />
-                            <TextBox MinWidth="50" Margin="2,0" Text="{Binding SettingsViewModel.SongTransitionDelay}" />
-                            <Label Content="Ms" />
-                        </StackPanel>
+                        <CheckBox x:Name="Cb_EnableSpeech" Content="Enable Speech" IsChecked="{Binding SettingsViewModel.EnableSpeech}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <!-- Delay between songs-->
+                            <Label Grid.Row="0" Grid.Column="0" Content="Delay between songs:" />
+                            <TextBox Grid.Row="0" Grid.Column="1" MinWidth="50" Margin="2" Text="{Binding SettingsViewModel.SongTransitionDelay}" />
+                            <Label Grid.Row="0" Grid.Column="2" Content="Ms" />
+                            <!-- Screenoverlay delay-->
+                            <Label Grid.Row="1" Grid.Column="0" Content="Show screenoverlay for:" />
+                            <TextBox Grid.Row="1" Grid.Column="1" MinWidth="50" Margin="2" Text="{Binding SettingsViewModel.ScreenOverlayShowTimeMs}" />
+                            <Label Grid.Row="1" Grid.Column="2" Content="Ms" />
+                            <!-- Sentence reset delay-->
+                            <Label Grid.Row="2" Grid.Column="0" Content="Reset sentence after:" />
+                            <TextBox Grid.Row="2" Grid.Column="1" MinWidth="50" Margin="2" Text="{Binding SettingsViewModel.ResetSentenceTimeMs}" />
+                            <Label Grid.Row="2" Grid.Column="2" Content="Ms" />
+                        </Grid>
                         <Label Margin="0,3,0,0" Content="Load on startup:" FontWeight="Bold" FontSize="16" Padding="0" />
                         <Label Margin="1" Content="Drag &amp; Drop Files or Folders" FontSize="9" Padding="0" />
-                        <ListBox x:Name="Lb_Settings_StartupFolders" Height="Auto" MinHeight="50" MaxHeight="100" HorizontalContentAlignment="Stretch" SelectionMode="Extended"
+                        <ListBox x:Name="Lb_Settings_StartupFolders" Height="150" HorizontalContentAlignment="Stretch" SelectionMode="Extended"
                                  ItemsSource="{Binding SettingsViewModel.StartupFolders}"
                                  KeyUp="Lb_Settings_StartupFolders_KeyUp"
                                  AllowDrop="True"

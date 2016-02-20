@@ -76,7 +76,7 @@ namespace SpeechControl {
         }
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            if(Environment.TickCount - LastInputTime > 6000 /* TODO: Get from settings */) {
+            if(Environment.TickCount - LastInputTime > Settings.ResetSentenceTimeMs) {
                 Sentence.Clear();
             }
             LastInputTime = Environment.TickCount;
