@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
@@ -64,7 +65,15 @@ namespace PlayerInterface.ViewModels {
             StartupFolders = new ObservableCollection<string>();
             UpdateStartupFolders();
 
-            SaveToDiskCommand = new RelayCommand((o) => Settings.WriteToDisc(true), (o) => Settings.HasUnsavedChanges);
+            SaveToDiskCommand = new AsyncCommand(
+                (o) => Settings.WriteToDisc(),
+                (o) => Settings.HasUnsavedChanges,
+                (t) => {
+                    if(t.IsFaulted)
+                        Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
+                });
+            Settings.Changed += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
+
             OpenFileLocationCommand = new RelayCommand((o) => System.Diagnostics.Process.Start("explorer.exe", $"//select, {Settings.FullFilePath}"));
         }
 

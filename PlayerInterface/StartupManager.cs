@@ -75,7 +75,7 @@ namespace PlayerInterface {
             windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController);
 
             Application.Exiting += (s, a) => {
-                ApplicationSettings.WriteToDisc(false);
+                ApplicationSettings.WriteToDisc();
             };
 
             windowMgr.Overlay.DisplayText("SMC Running...", 2000);
@@ -110,7 +110,7 @@ namespace PlayerInterface {
         private void InitSettings() {
             if(!File.Exists(AppSettingsPath)) {
                 var set = new AppSettings(AppSettingsPath);
-                set.WriteToDisc(false);
+                set.WriteToDisc();
             }
 
             ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);

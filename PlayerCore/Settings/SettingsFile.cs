@@ -64,28 +64,20 @@ namespace PlayerCore.Settings {
             }
         }
 
-        public void WriteToDisc(bool runAsync) {
+        public void WriteToDisc() {
             if(HasUnsavedChanges) {
                 HasUnsavedChanges = false;
-                var writeTask = new Task(() => {
-                    //Write to .writing file
-                    var writingPath = $"{FullFilePath}.writing";
-                    using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
-                        string content = JsonConvert.SerializeObject(this, JSonSettings);
-                        sw.Write(content);
-                    }
+                //Write to .writing file
+                var writingPath = $"{FullFilePath}.writing";
+                using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
+                    string content = JsonConvert.SerializeObject(this, JSonSettings);
+                    sw.Write(content);
+                }
 
-                    //After writing is finished delete old file and remove .writing from the filename
-                    if(File.Exists(writingPath)) {
-                        File.Delete(FullFilePath);
-                        File.Move(writingPath, FullFilePath);
-                    }
-                });
-
-                if(runAsync) {
-                    writeTask.Start();
-                } else {
-                    writeTask.RunSynchronously();
+                //After writing is finished delete old file and remove .writing from the filename
+                if(File.Exists(writingPath)) {
+                    File.Delete(FullFilePath);
+                    File.Move(writingPath, FullFilePath);
                 }
             }
         }

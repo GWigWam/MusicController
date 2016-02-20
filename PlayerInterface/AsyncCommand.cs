@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PlayerInterface {
@@ -19,9 +20,13 @@ namespace PlayerInterface {
         public void Execute(object parameter) {
             var task = new Task(CommandExecute, parameter);
             if(ContinueWith != null) {
-                task.ContinueWith(ContinueWith);
+                task.ContinueWith((t) => {
+                    ContinueWith(t);
+                    RaiseCanExecuteChanged();
+                });
             }
             task.Start();
+            RaiseCanExecuteChanged();
         }
 
         public AsyncCommand(Action<object> execute, Action<Task> continueWith = null)
@@ -40,6 +45,12 @@ namespace PlayerInterface {
             CommandExecute = execute;
             CommandCanExecute = canExecute;
             ContinueWith = continueWith;
+        }
+
+        public void RaiseCanExecuteChanged(EventArgs args = null) {
+            Application.Current.Dispatcher.Invoke(() => {
+                CanExecuteChanged?.Invoke(this, args ?? new EventArgs());
+            });
         }
 
         private static bool DefaultCanExecute(object parameter) {
