@@ -136,6 +136,7 @@ namespace PlayerInterface {
             if(ApplicationSettings.ShuffleOnStartup) {
                 Playlist.Shuffle();
             }
+            Playlist.CurrentSongIndex++;
         }
     }
 }
