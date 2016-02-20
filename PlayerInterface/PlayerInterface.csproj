@@ -74,7 +74,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AsyncCommand.cs" />
+    <Compile Include="Commands\AsyncCommand.cs" />
     <Compile Include="CustomControls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>
@@ -82,7 +82,7 @@
       <DependentUpon>ExceptionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="FormatHelper.cs" />
-    <Compile Include="RelayCommand.cs" />
+    <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="CustomControls\ScrollSlider.cs" />
     <Compile Include="ScreenOverlay.xaml.cs">
       <DependentUpon>ScreenOverlay.xaml</DependentUpon>

@@ -1,13 +1,10 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
 using PlayerCore.Settings;
+using PlayerInterface.Commands;
 using PlayerInterface.ViewModels;
 using SpeechControl;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace PlayerInterface {
