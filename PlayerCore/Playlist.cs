@@ -122,9 +122,11 @@ namespace PlayerCore {
 
         public void PlayAllMatches(Predicate<Song> filter) {
             if(Songs.Any(s => filter(s))) {
-                Songs = Songs.OrderByDescending(s => filter(s)).ToList();
-                currentSongIndex = -1; // In case it was already 0 before the shuffle and won't trigger SongChanged
-                CurrentSongIndex = 0;
+                var before = Songs.Take(CurrentSongIndex + 1).Where(s => !filter(s));
+                var after = Songs.Skip(CurrentSongIndex + 1).Where(s => !filter(s));
+                var match = Songs.Where(s => filter(s));
+                Songs = new List<Song>(before.Concat(match).Concat(after));
+                CurrentSongIndex = before.Count();
                 RaiseListOrderChanged();
             }
         }
