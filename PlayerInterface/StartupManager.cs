@@ -11,7 +11,13 @@ using System.Linq;
 namespace PlayerInterface {
 
     public class StartupManager : WindowsFormsApplicationBase {
-        public const string AppSettingsPath = "AppSettings.json";
+#if DEBUG
+        public static bool IsDebug = true;
+#else
+        public static bool IsDebug = false;
+#endif
+
+        public static string AppSettingsFileName = "AppSettings.json";
 
         internal AppSettings ApplicationSettings {
             get; private set;
@@ -39,7 +45,7 @@ namespace PlayerInterface {
 
         [STAThread]
         public static void Main(string[] args) {
-            var workingDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\SpeechMusicController\\";
+            var workingDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\SpeechMusicController\\{(IsDebug ? "Debug\\" : "Release\\")}";
             if(!Directory.Exists(workingDir)) {
                 Directory.CreateDirectory(workingDir);
             }
@@ -108,12 +114,12 @@ namespace PlayerInterface {
         }
 
         private void InitSettings() {
-            if(!File.Exists(AppSettingsPath)) {
-                var set = new AppSettings(AppSettingsPath);
+            if(!File.Exists(AppSettingsFileName)) {
+                var set = new AppSettings(AppSettingsFileName);
                 set.WriteToDisc();
             }
 
-            ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsPath);
+            ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsFileName);
 
             ApplicationSettings.Changed += (sender, args) => {
                 if(args.ChangedPropertyName == nameof(AppSettings.Volume)) {
