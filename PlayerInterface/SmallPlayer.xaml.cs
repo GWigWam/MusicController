@@ -26,7 +26,13 @@ namespace PlayerInterface {
             DataContext = spvm;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e) {
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            if(IsVisible) {
+                MoveToCorner();
+            }
+        }
+
+        private void MoveToCorner() {
             var workArea = SystemParameters.WorkArea;
             Left = workArea.Right - Width;
             Top = workArea.Bottom - Height;
