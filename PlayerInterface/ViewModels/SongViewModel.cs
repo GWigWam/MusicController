@@ -48,7 +48,8 @@ namespace PlayerInterface.ViewModels {
                 //SongFile:
                 ["Genre"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Genre)),
                 ["Length"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.TrackLength)),
-                ["Year"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Year))
+                ["Year"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Year)),
+                ["Track #"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Track))
             };
         }
 
