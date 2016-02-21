@@ -1,8 +1,12 @@
 ﻿using PlayerCore.Settings;
 using PlayerInterface.Commands;
+using PlayerInterface.ViewModels.FolderExplore;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -64,7 +68,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public ObservableCollection<string> StartupFolders {
+        public ObservableCollection<ExplorerItem> LoadPaths {
             get; private set;
         }
 
@@ -86,8 +90,7 @@ namespace PlayerInterface.ViewModels {
             Settings = settings;
             Settings.Changed += Settings_Changed;
 
-            StartupFolders = new ObservableCollection<string>();
-            UpdateStartupFolders();
+            InitLoadPaths();
 
             SaveToDiskCommand = new AsyncCommand(
                 (o) => Settings.WriteToDisc(),
@@ -101,30 +104,60 @@ namespace PlayerInterface.ViewModels {
             OpenFileLocationCommand = new RelayCommand((o) => System.Diagnostics.Process.Start("explorer.exe", $"//select, {Settings.FullFilePath}"));
         }
 
-        public void AddStartupFolders(IEnumerable<string> paths) {
-            foreach(var path in paths) {
-                Settings.AddStartupFolder(path);
-            }
-            UpdateStartupFolders();
-        }
-
-        public void RemoveStartupFolders(IEnumerable<string> paths) {
-            foreach(var path in paths) {
-                Settings.RemoveStartupFolder(path);
-            }
-            UpdateStartupFolders();
-        }
-
-        private void UpdateStartupFolders() {
-            StartupFolders.Clear();
-
-            foreach(var sf in Settings.StartupFolders) {
-                StartupFolders.Add(sf);
-            }
-        }
-
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(e.ChangedPropertyName));
+        }
+
+        private void InitLoadPaths() {
+            LoadPaths = new ObservableCollection<ExplorerItem>();
+
+            foreach(var drive in DriveInfo.GetDrives().Where(di => di.IsReady)) {
+                var folder = new ExplorerFolder(drive.Name, drive.Name);
+                LoadPaths.Add(folder);
+            }
+
+            foreach(var path in Settings.StartupFolders) {
+                foreach(var drive in LoadPaths) {
+                    if(TryCheckPath(path.Split('\\', '/').Skip(1), drive)) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        private bool TryCheckPath(IEnumerable<string> path, ExplorerItem item) {
+            var curPathLength = path.Count();
+            if(curPathLength == 1 && item is ExplorerFile) {
+                if(path.First() == item.Name) {
+                    item.CheckedState = true;
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if(curPathLength >= 1 && item is ExplorerFolder) {
+                var found = (item as ExplorerFolder).Children.FirstOrDefault(i => i.Name == path.First());
+                if(found != null) {
+                    if(curPathLength == 1) {
+                        found.CheckedState = true;
+                        return true;
+                    } else {
+                        return TryCheckPath(path.Skip(1), found);
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        internal void TreeView_LostFocus(object sender, RoutedEventArgs e) {
+            var newCol = new List<string>();
+            foreach(var item in LoadPaths) {
+                newCol.AddRange(item.GetCheckedPaths());
+            }
+            Settings.ClearStarupFolders();
+            Settings.AddStartupFolders(newCol);
         }
     }
 }

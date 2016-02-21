@@ -120,8 +120,20 @@ namespace PlayerCore.Settings {
             RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
         }
 
+        public void AddStartupFolders(IEnumerable<string> paths) {
+            foreach(var path in paths) {
+                startupFolders.Add(path);
+            }
+            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+        }
+
         public void RemoveStartupFolder(string path) {
             startupFolders.Remove(path);
+            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+        }
+
+        public void ClearStarupFolders() {
+            startupFolders.Clear();
             RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
         }
     }

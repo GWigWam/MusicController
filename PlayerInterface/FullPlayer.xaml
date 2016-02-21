@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
+        xmlns:vme="clr-namespace:PlayerInterface.ViewModels.FolderExplore"
         mc:Ignorable="d"
         Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
@@ -181,18 +182,22 @@
                             <Label Grid.Row="2" Grid.Column="2" Content="Ms" />
                         </Grid>
                         <Label Margin="0,3,0,0" Content="Load on startup:" FontWeight="Bold" FontSize="16" Padding="0" />
-                        <Label Margin="1" Content="Drag &amp; Drop Files or Folders" FontSize="9" Padding="0" />
-                        <ListBox x:Name="Lb_Settings_StartupFolders" Height="150" HorizontalContentAlignment="Stretch" SelectionMode="Extended"
-                                 ItemsSource="{Binding SettingsViewModel.StartupFolders}"
-                                 KeyUp="Lb_Settings_StartupFolders_KeyUp"
-                                 AllowDrop="True"
-                                 Drop="Lb_Settings_StartupFolders_Drop">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Label Margin="1" Padding="1" Grid.Column="0" Content="{Binding}" ToolTip="{Binding}" HorizontalContentAlignment="Stretch" />
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                        <TreeView Height="200" ItemsSource="{Binding SettingsViewModel.LoadPaths}" LostFocus="TreeView_LostFocus">
+                            <TreeView.Resources>
+                                <HierarchicalDataTemplate DataType="{x:Type vme:ExplorerFolder}" ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal" Height="18" Margin="1">
+                                        <Image Height="16" Margin="2" Source="res/img/Open.png" />
+                                        <CheckBox IsTabStop="False" IsThreeState="{Binding IsThreeState}" IsChecked="{Binding CheckedState}" Content="{Binding Name}" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type vme:ExplorerFile}">
+                                    <StackPanel Orientation="Horizontal" Margin="1">
+                                        <Image Height="16" Margin="2" Source="res/img/File.png" />
+                                        <CheckBox IsTabStop="False" IsThreeState="{Binding IsThreeState}" IsChecked="{Binding CheckedState}" Content="{Binding Name}" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.Resources>
+                        </TreeView>
                     </StackPanel>
                 </ScrollViewer>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">

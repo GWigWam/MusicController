@@ -92,6 +92,9 @@
     </Compile>
     <Compile Include="StartupManager.cs" />
     <Compile Include="ViewModels\AppSettingsViewModel.cs" />
+    <Compile Include="ViewModels\FolderExplore\ExplorerFile.cs" />
+    <Compile Include="ViewModels\FolderExplore\ExplorerFolder.cs" />
+    <Compile Include="ViewModels\FolderExplore\ExplorerItem.cs" />
     <Compile Include="ViewModels\FullPlayerViewModel.cs" />
     <Compile Include="ViewModels\SmallPlayerViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
@@ -193,6 +196,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\img\Info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img\File.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
