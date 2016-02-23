@@ -56,23 +56,27 @@ namespace SpeechControl {
 
                 SRecognize.SetInputToDefaultAudioDevice();
                 SRecognize.RecognizeAsync(RecognizeMode.Multiple);
-            } catch(Exception) {
-                //Todo: throw userfriendly exception
-            }
 
-            SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
-            Playlist.ListContentChanged += (s, a) => LoadGrammar();
+                SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
+                Playlist.ListContentChanged += (s, a) => LoadGrammar();
+            } catch(Exception e) {
+                //Todo: throw userfriendly exception
+                SRecognize = null;
+                Settings.EnableSpeech = false;
+            }
         }
 
         private void LoadGrammar() {
-            var keywords = new Choices();
-            keywords.Add(Commands.GetAllKeywords().ToArray());
+            if(SRecognize != null) {
+                var keywords = new Choices();
+                keywords.Add(Commands.GetAllKeywords().ToArray());
 
-            var grammerBuilder = new GrammarBuilder();
-            grammerBuilder.Append(keywords);
+                var grammerBuilder = new GrammarBuilder();
+                grammerBuilder.Append(keywords);
 
-            SRecognize.UnloadAllGrammars();
-            SRecognize.LoadGrammar(new Grammar(grammerBuilder));
+                SRecognize.UnloadAllGrammars();
+                SRecognize.LoadGrammar(new Grammar(grammerBuilder));
+            }
         }
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
