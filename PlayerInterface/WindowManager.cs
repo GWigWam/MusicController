@@ -4,6 +4,7 @@ using PlayerCore.Settings;
 using PlayerInterface.Commands;
 using PlayerInterface.ViewModels;
 using SpeechControl;
+using System;
 using System.Linq;
 using System.Windows;
 
@@ -67,12 +68,16 @@ namespace PlayerInterface {
 
             speech.SentenceChanged += (s, a) => {
                 if(settings.EnableSpeech) {
-                    Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'"));
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                        Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'")))
+                    );
                 }
             };
 
             player.SongChanged += (s, a) => {
-                Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}");
+                Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"))
+                );
             };
         }
 
