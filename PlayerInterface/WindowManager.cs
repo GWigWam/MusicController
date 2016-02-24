@@ -68,14 +68,14 @@ namespace PlayerInterface {
 
             speech.SentenceChanged += (s, a) => {
                 if(settings.EnableSpeech) {
-                    Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    Application.Current.Dispatcher.Invoke((Action)(() =>
                         Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'")))
                     );
                 }
             };
 
             player.SongChanged += (s, a) => {
-                Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                Application.Current.Dispatcher.Invoke((Action)(() =>
                     Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"))
                 );
             };

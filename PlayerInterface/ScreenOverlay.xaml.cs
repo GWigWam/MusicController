@@ -40,12 +40,15 @@ namespace PlayerInterface {
         }
 
         public void DisplayText(string text, int autoHideTimeMs) {
-            ViewModel.Text = text;
-            if(!IsVisible) {
-                Application.Current.Dispatcher.Invoke((() => Show()));
-            }
+            Application.Current.Dispatcher.Invoke(() => {
+                ViewModel.Text = text;
+                if(!IsVisible) {
+                    Show();
+                }
 
-            HideTimeStamp = Environment.TickCount + autoHideTimeMs;
+                HideTimeStamp = Environment.TickCount + autoHideTimeMs;
+            });
+
             Task.Delay(autoHideTimeMs + 50).GetAwaiter().OnCompleted(() => {
                 if(Environment.TickCount > HideTimeStamp && IsVisible) {
                     Application.Current.Dispatcher.Invoke((() => Hide()));
