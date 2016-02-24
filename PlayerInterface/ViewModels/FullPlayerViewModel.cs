@@ -2,6 +2,7 @@
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
+using SpeechControl;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -75,6 +76,10 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ObservableCollection<string> AboutSpeechCommands {
+            get; private set;
+        }
+
         public string PlaylistStats => $"{Playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(Playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
 
         public AppSettingsViewModel SettingsViewModel {
@@ -93,12 +98,15 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) : base(settings, player, playlist) {
+        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController) : base(settings, player, playlist) {
             SetupCommands();
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
             PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s)));
+
+            var commandDesc = speechController.Commands.Select(sc => sc.Description);
+            AboutSpeechCommands = new ObservableCollection<string>(commandDesc);
 
             SongPlayer.SongChanged += SongPlayer_SongChanged;
             Playlist.ListContentChanged += PlaylistChanged;

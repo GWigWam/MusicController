@@ -23,7 +23,7 @@ namespace PlayerInterface {
         }
 
         public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl) {
-            ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist);
+            ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl);
 
             CreateFullPlayer(!settings.StartMinimized);
             CreateSmallPlayer(settings.StartMinimized);
