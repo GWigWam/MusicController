@@ -1,23 +1,15 @@
 # SpeechMusicController
-Controll a music collection with voice commands.
+Controll a music player with voice commands.
 
-##### Setup
-Before the program can operate set the **'MusicFolder'** variable to the path of you music collection and the **'PlayerPath'** variable to the player .exe (currently only AIMP3 supported). These variables can be set under the 'Settings' button.
+#### Music player
+Simple no-nonsense interface for control over music and playlist. Minimizes to tray area where a mini-player provides play/pause, next/previous and volume control.
 
-Song information will be gathered first from mp3 header tags and secondly from the name of the song. If no mp3 header tags are found and the name is not in the format `[artist] - [title].mp3` the song will be ignored.
+#### Speech
+If a microphone is available music and playlist can also be controlled with speech. Play/pause, next/previous, shuffle, play song, play album, play artist, volume control and more can all be controlled by speaking.
 
-##### Use
-Say: `Music + [Search keyword]` for a search by every tag, all found songs with matching title, artist or album will be shuffled and played.
-
-`[Song/Artist/Album] + [Search keyword]` to only match by a certain tag.
-
-Or use general command like `Music + [Command]`, some available commands are:
- - `collection` (shuffle play all songs)
- - `random`
- - `switch` (acts as pause/unpause)
- - `volume [up/down]`
- - `[previous]/[next]`
-
-All commands are listed on startup in the log.
-
-(Starts minimized to system tray)
+#### Tech
++ Windows Presentation Foundation - Visuals
++ System.Speech .Net library - Voice recognition
++ [Hardcodet.Net](http://www.hardcodet.net/wpf-notifyicon) - Taskbar notification icon
++ [NAudio](https://github.com/naudio/NAudio) - playing mp3
++ [Taglib](https://github.com/mono/taglib-sharp) - File tags
