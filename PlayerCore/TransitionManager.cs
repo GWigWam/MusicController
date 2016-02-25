@@ -42,7 +42,7 @@ namespace PlayerCore {
             TrackList.CurrentSongChanged += TrackList_CurrentSongChanged;
         }
 
-        private async void Player_SongEnded(object sender, Song prevSong) {
+        private async void Player_SongEnded(object sender, EventArgs args) {
             await Task.Delay((int)SongDelayMs);
 
             if(TrackList.CurrentSongIndex < TrackList.Length - 1) {

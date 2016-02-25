@@ -3,6 +3,7 @@ using PlayerCore;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
+using System;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -108,7 +109,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        protected void SongPlayer_SongEnded(object sender, Song e) {
+        protected void SongPlayer_SongEnded(object sender, EventArgs args) {
             //todo
         }
     }

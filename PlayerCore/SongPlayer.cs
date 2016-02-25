@@ -11,21 +11,8 @@ namespace PlayerCore {
 
     public class SongPlayer {
         private Song currentSong;
-
         private AudioFileReader File;
-
-        private IWavePlayer player;
-
-        private IWavePlayer Player {
-            get { return player; }
-            set {
-                if(player != null) {
-                    player.Dispose();
-                }
-                player = value;
-            }
-        }
-
+        private IWavePlayer Player;
         private bool PlayedToEnd;
 
         public Song CurrentSong {
@@ -108,7 +95,7 @@ namespace PlayerCore {
             }
         }
 
-        public event EventHandler<Song> SongEnded;
+        public event EventHandler SongEnded;
 
         public event EventHandler SongChanged;
 
@@ -130,19 +117,31 @@ namespace PlayerCore {
         private void LoadSong(Song song) {
             if(song != null) {
                 try {
+                    if(Player != null) {
+                        // Dispose the player BEFORE disposing the file
+                        // Make sure event PlaybackStopped isn't fired
+                        Player.PlaybackStopped -= Player_PlaybackStopped;
+                        Player.Dispose();
+                    }
+                    if(File != null) {
+                        File.Dispose();
+                    }
+
                     File = new AudioFileReader(song.FilePath) { Volume = Volume };
                     Player = new WaveOut();
                     Player.Init(File);
-                    Player.PlaybackStopped += (s, a) => {
-                        PlayedToEnd = true;
-                        SongEnded?.Invoke(this, song);
-                    };
+                    Player.PlaybackStopped += Player_PlaybackStopped;
                 } catch(Exception) {
                     Stop();
-                    SongEnded?.Invoke(this, song);
+                    SongEnded?.Invoke(this, new EventArgs());
                     //TODO: Throw userfriendly exception
                 }
             }
+        }
+
+        private void Player_PlaybackStopped(object sender, StoppedEventArgs e) {
+            PlayedToEnd = true;
+            SongEnded?.Invoke(this, new EventArgs());
         }
     }
 }
