@@ -53,7 +53,7 @@
             </Border>
         </Grid>
         <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-            <Grid Visibility="Collapsed" x:Name="Grid_Tab_Main">
+            <Grid Visibility="Visible" x:Name="Grid_Tab_Main">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
@@ -205,7 +205,7 @@
                     <Button Margin="5" Padding="5" Content="Save to Disk" Command="{Binding SettingsViewModel.SaveToDiskCommand}" />
                 </StackPanel>
             </Grid>
-            <Grid Visibility="Visible" x:Name="Grid_Tab_About">
+            <Grid Visibility="Collapsed" x:Name="Grid_Tab_About">
                 <StackPanel Orientation="Vertical" Margin="10">
                     <Label Content="About" FontWeight="Bold" FontSize="16" Padding="0" />
                     <TextBlock Text="By: GitHub.com/GWigWam" />
