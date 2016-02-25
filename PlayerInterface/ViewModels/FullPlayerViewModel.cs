@@ -124,7 +124,7 @@ namespace PlayerInterface.ViewModels {
         private void SetupCommands() {
             PlaySongCommand = new RelayCommand((s) => {
                 if(s as Song != null) {
-                    Playlist.PlayFirstMatch((Song)s);
+                    Playlist.SelectFirstMatch((Song)s);
                 }
             }, (s) => {
                 return SongPlayer != null && s as Song != null;

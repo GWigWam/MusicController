@@ -131,7 +131,7 @@ namespace SpeechControl {
                     Description = "Play_song + <Song Title> : Play songs by name",
                     Execute = (sentence) => {
                         var songName = sentence.ElementAt(1);
-                        speechController.Playlist.PlayAllMatches(s => s?.Title?.Equals(songName, StringComparison.CurrentCultureIgnoreCase) ?? false);
+                        speechController.Playlist.SelectAllMatches(s => s?.Title?.Equals(songName, StringComparison.CurrentCultureIgnoreCase) ?? false);
                         return new string[0];
                     },
                     CanExecute = () => speechController.Settings.EnableSpeech
@@ -145,7 +145,7 @@ namespace SpeechControl {
                     Description = "Play_album + <Album Name> : Play songs by album",
                     Execute = (sentence) => {
                         var albumName = sentence.ElementAt(1);
-                        speechController.Playlist.PlayAllMatches(s => s?.Album?.Equals(albumName, StringComparison.CurrentCultureIgnoreCase) ?? false);
+                        speechController.Playlist.SelectAllMatches(s => s?.Album?.Equals(albumName, StringComparison.CurrentCultureIgnoreCase) ?? false);
                         return new string[0];
                     },
                     CanExecute = () => speechController.Settings.EnableSpeech
@@ -159,7 +159,7 @@ namespace SpeechControl {
                     Description = "Play_artist + <Arist Name> : Play songs by artist",
                     Execute = (sentence) => {
                         var artistName = sentence.ElementAt(1);
-                        speechController.Playlist.PlayAllMatches(s => s?.Artist?.Equals(artistName, StringComparison.CurrentCultureIgnoreCase) ?? false);
+                        speechController.Playlist.SelectAllMatches(s => s?.Artist?.Equals(artistName, StringComparison.CurrentCultureIgnoreCase) ?? false);
                         return new string[0];
                     },
                     CanExecute = () => speechController.Settings.EnableSpeech

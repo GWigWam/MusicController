@@ -109,18 +109,18 @@ namespace PlayerCore {
             RaiseListOrderChanged();
         }
 
-        public void PlayFirstMatch(Song song) {
-            PlayFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
+        public void SelectFirstMatch(Song song) {
+            SelectFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
         }
 
-        public void PlayFirstMatch(Predicate<Song> filter) {
+        public void SelectFirstMatch(Predicate<Song> filter) {
             var index = Songs.FindIndex(filter);
             if(index >= 0) {
                 CurrentSongIndex = index;
             }
         }
 
-        public void PlayAllMatches(Predicate<Song> filter) {
+        public void SelectAllMatches(Predicate<Song> filter) {
             if(Songs.Any(s => filter(s))) {
                 var before = Songs.Take(CurrentSongIndex + 1).Where(s => !filter(s));
                 var after = Songs.Skip(CurrentSongIndex + 1).Where(s => !filter(s));

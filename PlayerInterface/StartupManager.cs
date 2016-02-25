@@ -108,7 +108,7 @@ namespace PlayerInterface {
             if(songfiles.Count > 0) {
                 var songsToAdd = songfiles.Select(sf => new Song(sf));
                 Playlist.AddSongs(songsToAdd);
-                Playlist.PlayFirstMatch(songsToAdd.First());
+                Playlist.SelectFirstMatch(songsToAdd.First());
                 SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
             }
         }
