@@ -13,6 +13,11 @@ namespace PlayerCore {
     public class Playlist : IEnumerable<Song> {
         private int currentSongIndex = -1;
 
+        /// <summary>
+        /// CurrentSong is the song at CurrentSongIndex in the Playlist.
+        /// If index is set to a DIFFERENT value the CurrentSongChanged event will be raised
+        /// Set to -1 for no song
+        /// </summary>
         public int CurrentSongIndex {
             get { return currentSongIndex; }
             set {
@@ -116,7 +121,7 @@ namespace PlayerCore {
         public void SelectFirstMatch(Predicate<Song> filter) {
             var index = Songs.FindIndex(filter);
             if(index >= 0) {
-                CurrentSongIndex = index;
+                SetIndexForceUpdate(index);
             }
         }
 
@@ -126,7 +131,7 @@ namespace PlayerCore {
                 var after = Songs.Skip(CurrentSongIndex + 1).Where(s => !filter(s));
                 var match = Songs.Where(s => filter(s));
                 Songs = new List<Song>(before.Concat(match).Concat(after));
-                CurrentSongIndex = before.Count();
+                SetIndexForceUpdate(before.Count());
                 RaiseListOrderChanged();
             }
         }
@@ -161,6 +166,16 @@ namespace PlayerCore {
             } else { //No songs to play
                 CurrentSongIndex = -1;
             }
+        }
+
+        /// <summary>
+        /// Changes CurrentSongIndex, always raises CurrentSongChanged event, even if index stays the same.
+        /// This is usefull when the list has changed since the last time the index was set and a new song is at the current index.
+        /// </summary>
+        /// <param name="newIndex">Nr to set CurrentSongIndex to, -1 for no song.</param>
+        private void SetIndexForceUpdate(int newIndex) {
+            currentSongIndex = (currentSongIndex == -1) ? -2 : -1;
+            CurrentSongIndex = newIndex;
         }
 
         public void RaiseListContentChanged() {
