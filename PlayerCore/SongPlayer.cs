@@ -128,7 +128,17 @@ namespace PlayerCore {
                     }
 
                     File = new AudioFileReader(song.FilePath) { Volume = Volume };
-                    Player = new WaveOut();
+
+                    // 'WaveOutEvent' should be less bound to UI than 'WaveOut', they are interchangable (both IWavePlayer)
+                    // High latency makes player unresponsive when changing 'Elapsed' time, and 'Elapsed' property is less accurate
+                    // When playing 1 buffer is sent to audio-card, the others are in memory waiting to be sent, thus many buffers means more RAM usage
+                    // Amount of music in mem = (Latency * NrOfBuffers) because latency == size per buffer
+                    // See: https://github.com/naudio/NAudio/wiki/Understanding-Output-Devices
+                    Player = new WaveOutEvent() {
+                        DesiredLatency = 400, // In ms, Default = 300
+                        NumberOfBuffers = 10 // Default = 2
+                    };
+
                     Player.Init(File);
                     Player.PlaybackStopped += Player_PlaybackStopped;
                 } catch(Exception) {
