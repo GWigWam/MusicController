@@ -1,5 +1,4 @@
-﻿using NAudio.Wave;
-using PlayerCore;
+﻿using PlayerCore;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
@@ -41,7 +40,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlaybackState.Playing ? ImgSourcePause : ImgSourcePlay;
+        public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlayerState.Playing ? ImgSourcePause : ImgSourcePlay;
 
         public float Volume {
             get { return Settings.Volume; }
@@ -69,10 +68,10 @@ namespace PlayerInterface.ViewModels {
 
         private void SetupCommands() {
             SwitchCommand = new RelayCommand((o) => {
-                if(SongPlayer.PlayerState == PlaybackState.Playing) {
-                    SongPlayer.PlayerState = PlaybackState.Paused;
+                if(SongPlayer.PlayerState == PlayerState.Playing) {
+                    SongPlayer.PlayerState = PlayerState.Paused;
                 } else {
-                    SongPlayer.PlayerState = PlaybackState.Playing;
+                    SongPlayer.PlayerState = PlayerState.Playing;
                 }
             }, (o) => {
                 return SongPlayer.CurrentSong != null;

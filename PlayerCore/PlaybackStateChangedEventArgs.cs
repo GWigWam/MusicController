@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace PlayerCore {
 
     public class PlaybackStateChangedEventArgs : EventArgs {
-        public PlaybackState? OldState { get; }
-        public PlaybackState NewState { get; }
+        public PlayerState? OldState { get; }
+        public PlayerState NewState { get; }
 
-        public PlaybackStateChangedEventArgs(PlaybackState? oldState, PlaybackState newState) {
+        public PlaybackStateChangedEventArgs(PlayerState? oldState, PlayerState newState) {
             OldState = oldState;
             NewState = newState;
         }

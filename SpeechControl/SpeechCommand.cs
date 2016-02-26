@@ -1,4 +1,4 @@
-﻿using NAudio.Wave;
+﻿using PlayerCore;
 using PlayerCore.Settings;
 using System;
 using System.Collections.Generic;
@@ -133,7 +133,7 @@ namespace SpeechControl {
                     Execute = (sentence) => {
                         var songName = sentence.ElementAt(1);
                         speechController.Playlist.SelectAllMatches(s => s?.Title?.Equals(songName, StringComparison.CurrentCultureIgnoreCase) ?? false);
-                        speechController.Player.PlayerState = PlaybackState.Playing;
+                        speechController.Player.PlayerState = PlayerState.Playing;
                         return new string[0];
                     },
                     CanExecute = () => speechController.Settings.EnableSpeech
@@ -148,7 +148,7 @@ namespace SpeechControl {
                     Execute = (sentence) => {
                         var albumName = sentence.ElementAt(1);
                         speechController.Playlist.SelectAllMatches(s => s?.Album?.Equals(albumName, StringComparison.CurrentCultureIgnoreCase) ?? false);
-                        speechController.Player.PlayerState = PlaybackState.Playing;
+                        speechController.Player.PlayerState = PlayerState.Playing;
                         return new string[0];
                     },
                     CanExecute = () => speechController.Settings.EnableSpeech
@@ -163,7 +163,7 @@ namespace SpeechControl {
                     Execute = (sentence) => {
                         var artistName = sentence.ElementAt(1);
                         speechController.Playlist.SelectAllMatches(s => s?.Artist?.Equals(artistName, StringComparison.CurrentCultureIgnoreCase) ?? false);
-                        speechController.Player.PlayerState = PlaybackState.Playing;
+                        speechController.Player.PlayerState = PlayerState.Playing;
                         return new string[0];
                     },
                     CanExecute = () => speechController.Settings.EnableSpeech

@@ -1,4 +1,5 @@
-﻿using PlayerInterface.CustomControls;
+﻿using PlayerCore;
+using PlayerInterface.CustomControls;
 using PlayerInterface.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -62,8 +63,8 @@ namespace PlayerInterface {
         private void Slr_Elapsed_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
             if(e.LeftButton == MouseButtonState.Pressed) {
                 if(Model != null) {
-                    if(Model.SongPlayer.PlayerState == NAudio.Wave.PlaybackState.Playing) {
-                        Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Paused;
+                    if(Model.SongPlayer.PlayerState == PlayerState.Playing) {
+                        Model.SongPlayer.PlayerState = PlayerState.Paused;
                         SlidingElapsed = true;
                     }
                 }
@@ -73,7 +74,7 @@ namespace PlayerInterface {
         private void Slr_Elapsed_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
             if(SlidingElapsed) {
                 if(Model != null) {
-                    Model.SongPlayer.PlayerState = NAudio.Wave.PlaybackState.Playing;
+                    Model.SongPlayer.PlayerState = PlayerState.Playing;
                     SlidingElapsed = false;
                 }
             }

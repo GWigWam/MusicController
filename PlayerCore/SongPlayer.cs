@@ -20,7 +20,7 @@ namespace PlayerCore {
             set {
                 currentSong = value;
                 if(currentSong != null) {
-                    bool wasPlaying = PlayedToEnd || PlayerState == PlaybackState.Playing;
+                    bool wasPlaying = PlayedToEnd || PlayerState == PlayerState.Playing;
                     LoadSong(currentSong);
                     if(wasPlaying) {
                         Player.Play();
@@ -37,7 +37,7 @@ namespace PlayerCore {
                     File.CurrentTime = value;
             }
             get {
-                if(File == null || PlayerState == PlaybackState.Stopped) {
+                if(File == null || PlayerState == PlayerState.Stopped) {
                     return TimeSpan.Zero;
                 } else {
                     return File.CurrentTime;
@@ -45,18 +45,18 @@ namespace PlayerCore {
             }
         }
 
-        public PlaybackState PlayerState {
+        public PlayerState PlayerState {
             get {
-                return Player?.PlaybackState ?? PlaybackState.Stopped;
+                return StateConverter.Convert(Player?.PlaybackState ?? PlaybackState.Stopped);
             }
             set {
-                if(Player?.PlaybackState != value) {
-                    var oldValue = Player?.PlaybackState;
-                    if(value == PlaybackState.Playing) {
+                if(StateConverter.Convert(Player?.PlaybackState) != value) {
+                    var oldValue = StateConverter.Convert(Player?.PlaybackState);
+                    if(value == PlayerState.Playing) {
                         Player.Play();
-                    } else if(value == PlaybackState.Paused) {
+                    } else if(value == PlayerState.Paused) {
                         Player.Pause();
-                    } else if(value == PlaybackState.Stopped) {
+                    } else if(value == PlayerState.Stopped) {
                         Stop();
                     }
 
@@ -67,12 +67,12 @@ namespace PlayerCore {
         }
 
         public void TogglePause(bool startIfStopped) {
-            if(PlayerState == PlaybackState.Paused) {
-                PlayerState = PlaybackState.Playing;
-            } else if(PlayerState == PlaybackState.Playing) {
-                PlayerState = PlaybackState.Paused;
-            } else if(PlayerState == PlaybackState.Stopped && startIfStopped && CurrentSong != null) {
-                PlayerState = PlaybackState.Playing;
+            if(PlayerState == PlayerState.Paused) {
+                PlayerState = PlayerState.Playing;
+            } else if(PlayerState == PlayerState.Playing) {
+                PlayerState = PlayerState.Paused;
+            } else if(PlayerState == PlayerState.Stopped && startIfStopped && CurrentSong != null) {
+                PlayerState = PlayerState.Playing;
             }
         }
 
