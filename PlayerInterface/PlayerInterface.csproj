@@ -94,6 +94,7 @@
     <Compile Include="ViewModels\FullPlayerViewModel.cs" />
     <Compile Include="ViewModels\SmallPlayerViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />
+    <Compile Include="ViewModels\TrayIconViewModel.cs" />
     <Compile Include="WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>

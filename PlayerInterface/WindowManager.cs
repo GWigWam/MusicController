@@ -28,7 +28,7 @@ namespace PlayerInterface {
             CreateFullPlayer(!settings.StartMinimized);
             CreateSmallPlayer(settings.StartMinimized);
 
-            SetupContextMenu();
+            SetupContextMenu(songPlayer);
 
             TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
             TrayIcon.TrayLeftMouseUp += (s, a) => {
@@ -55,13 +55,18 @@ namespace PlayerInterface {
                 Full.Show();
         }
 
-        private void SetupContextMenu() {
-#warning TODO: make hover text = curent song
-            TrayIcon.ContextMenu.DataContext = new {
+        private void SetupContextMenu(SongPlayer player) {
+            var tivm = new TrayIconViewModel() {
                 SmallPlayer = new RelayCommand((o) => ShowSmallWindow()),
                 FullPlayer = new RelayCommand((o) => ShowFullWindow()),
                 Quit = new RelayCommand((o) => Application.Current.Shutdown())
             };
+
+            player.SongChanged += (s, a) => {
+                tivm.ToolTipText = player?.CurrentSong?.Title;
+            };
+
+            TrayIcon.DataContext = tivm;
         }
 
         private void SetupScreenOverlay(AppSettings settings, SpeechController speech, SongPlayer player) {
