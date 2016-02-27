@@ -1,5 +1,6 @@
 ﻿using PlayerCore;
 using PlayerCore.Settings;
+using SpeechControl.CommandMatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,10 @@ namespace SpeechControl {
         }
 
         public event EventHandler<SentenceChangedEventArgs> SentenceChanged;
+
+        public event EventHandler<CommandMatchResult> PartialSentenceMatch;
+
+        public event EventHandler<CommandMatchResult> FullSentenceMatch;
 
         private SpeechRecognitionEngine SRecognize {
             get; set;
@@ -80,22 +85,24 @@ namespace SpeechControl {
         }
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            if(Environment.TickCount - LastInputTime > Settings.ResetSentenceTimeMs) {
-                Sentence.Clear();
-            }
-            LastInputTime = Environment.TickCount;
-
-            var add = e.Result.Text;
-            Sentence.Add(add);
-            SentenceChanged?.Invoke(this, new SentenceChangedEventArgs(Sentence, add));
-
-            for(int skip = Sentence.Count - 1; skip >= 0; skip--) {
-                var match = Commands.FirstOrDefault(sc => sc.IsMatch(Sentence.Skip(skip)));
-                if(match != null) {
-                    var retSentence = match.ExecuteCommand(Sentence.Skip(skip));
+            if(Settings.EnableSpeech) {
+                if(Environment.TickCount - LastInputTime > Settings.ResetSentenceTimeMs) {
                     Sentence.Clear();
-                    Sentence.AddRange(retSentence);
-                    break;
+                }
+                LastInputTime = Environment.TickCount;
+
+                var add = e.Result.Text;
+                Sentence.Add(add);
+                SentenceChanged?.Invoke(this, new SentenceChangedEventArgs(Sentence, add));
+
+                var best = Matcher.BestMatch(Sentence, Commands);
+                if(best?.MatchType == MatchType.FullMatch) {
+                    FullSentenceMatch?.Invoke(this, best);
+                    Sentence.Clear();
+                    var newSentence = best.Execute();
+                    Sentence.AddRange(newSentence);
+                } else if(best?.MatchType == MatchType.StartMatch) {
+                    PartialSentenceMatch?.Invoke(this, best);
                 }
             }
         }

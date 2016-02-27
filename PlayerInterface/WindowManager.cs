@@ -56,6 +56,7 @@ namespace PlayerInterface {
         }
 
         private void SetupContextMenu() {
+#warning TODO: make hover text = curent song
             TrayIcon.ContextMenu.DataContext = new {
                 SmallPlayer = new RelayCommand((o) => ShowSmallWindow()),
                 FullPlayer = new RelayCommand((o) => ShowFullWindow()),
@@ -66,18 +67,16 @@ namespace PlayerInterface {
         private void SetupScreenOverlay(AppSettings settings, SpeechController speech, SongPlayer player) {
             Overlay = new ScreenOverlay(settings);
 
-            speech.SentenceChanged += (s, a) => {
-                if(settings.EnableSpeech) {
-                    Application.Current.Dispatcher.Invoke((Action)(() =>
-                        Overlay.DisplayText(a.Sentence.Aggregate("", (acc, cur) => $"{acc} '{cur}'")))
-                    );
-                }
+            speech.PartialSentenceMatch += (s, a) => {
+                Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText(a.Sentence.Aggregate((acc, cur) => $"{acc} '{cur}'")));
+            };
+
+            speech.FullSentenceMatch += (s, a) => {
+                Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"- {a.Sentence.Aggregate((acc, cur) => $"{acc} {cur}")} -"));
             };
 
             player.SongChanged += (s, a) => {
-                Application.Current.Dispatcher.Invoke((Action)(() =>
-                    Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"))
-                );
+                Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
             };
         }
 

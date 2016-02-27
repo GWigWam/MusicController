@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandMatch\CommandMatchResult.cs" />
+    <Compile Include="CommandMatch\Matcher.cs" />
+    <Compile Include="CommandMatch\MatchType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpeechCommand.cs" />
     <Compile Include="SpeechController.cs" />

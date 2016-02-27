@@ -39,7 +39,7 @@ namespace PlayerCore {
             if(!inState.HasValue) {
                 return null;
             } else {
-                return Convert(inState);
+                return Convert(inState.Value);
             }
         }
 
@@ -47,7 +47,7 @@ namespace PlayerCore {
             if(!inState.HasValue) {
                 return null;
             } else {
-                return Convert(inState);
+                return Convert(inState.Value);
             }
         }
     }
