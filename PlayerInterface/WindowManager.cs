@@ -81,7 +81,9 @@ namespace PlayerInterface {
             };
 
             player.SongChanged += (s, a) => {
-                Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
+                if(player?.CurrentSong != null) {
+                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
+                }
             };
         }
 
