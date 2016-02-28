@@ -19,8 +19,8 @@ namespace PlayerInterface.ViewModels {
                     toolTipText = DefaultToolTipText;
                 } else if(value != toolTipText) {
                     toolTipText = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ToolTipText)));
                 }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ToolTipText)));
             }
         }
 
