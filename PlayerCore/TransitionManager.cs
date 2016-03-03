@@ -42,14 +42,14 @@ namespace PlayerCore {
             TrackList.CurrentSongChanged += TrackList_CurrentSongChanged;
         }
 
-        private async void Player_SongEnded(object sender, EventArgs args) {
-            await Task.Delay((int)SongDelayMs);
-
-            if(TrackList.CurrentSongIndex < TrackList.Length - 1) {
-                TrackList.CurrentSongIndex++;
-            } else if(Loop) {
-                TrackList.CurrentSongIndex = 0;
-            }
+        private void Player_SongEnded(object sender, EventArgs args) {
+            Task.Delay((int)SongDelayMs).ContinueWith((t) => {
+                if(TrackList.CurrentSongIndex < TrackList.Length - 1) {
+                    TrackList.CurrentSongIndex++;
+                } else if(Loop) {
+                    TrackList.CurrentSongIndex = 0;
+                }
+            });
         }
 
         private void TrackList_CurrentSongChanged(object sender, EventArgs e) {

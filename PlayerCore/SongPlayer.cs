@@ -147,10 +147,11 @@ namespace PlayerCore {
 
                     Player.Init(File);
                     Player.PlaybackStopped += Player_PlaybackStopped;
-                } catch(Exception) {
+                } catch(Exception e) {
                     Stop();
                     SongEnded?.Invoke(this, new EventArgs());
                     //TODO: Throw userfriendly exception
+                    throw new Exception("Loading song failed", e);
                 }
             }
         }
