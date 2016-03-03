@@ -52,7 +52,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public bool EnableSlideElapsed => SongPlayer?.CurrentSong != null && SongPlayer?.PlayerState != PlayerState.Stopped;
+        public bool EnableChangeElapsed => SongPlayer?.CurrentSong != null && SongPlayer?.PlayerState != PlayerState.Stopped;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -95,7 +95,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e) {
-            RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableSlideElapsed));
+            RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
         }
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
@@ -111,7 +111,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         protected void SongPlayer_SongEnded(object sender, EventArgs args) {
-            RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableSlideElapsed));
+            RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
         }
     }
 }

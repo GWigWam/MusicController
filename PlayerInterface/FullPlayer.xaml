@@ -88,7 +88,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label x:Name="Lb_Elapsed" Grid.Column="0" Content="{Binding ElapsedStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                        <cc:ScrollSlider x:Name="Slr_Elapsed" Grid.Column="1" IsEnabled="{Binding EnableSlideElapsed}" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" ToolTip="Timestamp" />
+                        <cc:ScrollSlider x:Name="Slr_Elapsed" Grid.Column="1" IsEnabled="{Binding EnableChangeElapsed}" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" ToolTip="Timestamp" />
                         <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
                     </Grid>
                 </Border>

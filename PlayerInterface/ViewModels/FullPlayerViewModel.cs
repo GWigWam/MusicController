@@ -217,7 +217,7 @@ namespace PlayerInterface.ViewModels {
                 RaisePropertiesChanged(nameof(CurrentFocusItem));
             }
 
-            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr), nameof(StatusText));
+            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));
         }
 
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e) {
