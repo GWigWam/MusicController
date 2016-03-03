@@ -9,7 +9,7 @@ using System.Timers;
 
 namespace PlayerCore {
 
-    public class SongPlayer {
+    public class SongPlayer : IDisposable {
         private Song currentSong;
         private AudioFileReader File;
         private IWavePlayer Player;
@@ -107,6 +107,10 @@ namespace PlayerCore {
 
         public void Stop() {
             CurrentSong = null;
+            if(File != null) {
+                File.Dispose();
+                File = null;
+            }
             if(Player != null) {
                 Player.Stop();
                 Player.Dispose();
@@ -122,9 +126,11 @@ namespace PlayerCore {
                         // Make sure event PlaybackStopped isn't fired
                         Player.PlaybackStopped -= Player_PlaybackStopped;
                         Player.Dispose();
+                        Player = null;
                     }
                     if(File != null) {
                         File.Dispose();
+                        File = null;
                     }
 
                     File = new AudioFileReader(song.FilePath) { Volume = Volume };
@@ -152,6 +158,10 @@ namespace PlayerCore {
         private void Player_PlaybackStopped(object sender, StoppedEventArgs e) {
             PlayedToEnd = true;
             SongEnded?.Invoke(this, new EventArgs());
+        }
+
+        public void Dispose() {
+            Stop(); //Already handles disposing of 'File' and 'Player' objects
         }
     }
 }
