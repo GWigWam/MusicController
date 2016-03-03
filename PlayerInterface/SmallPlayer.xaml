@@ -27,7 +27,7 @@
         <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
         <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
         <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
-        <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+        <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" IsEnabled="{Binding EnableSlideElapsed}" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
         <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="5" Image="res/img/ShowFull.png" />
     </Grid>
 </Window>

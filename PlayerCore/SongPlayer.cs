@@ -20,10 +20,12 @@ namespace PlayerCore {
             set {
                 currentSong = value;
                 if(currentSong != null) {
-                    bool wasPlaying = PlayedToEnd || PlayerState == PlayerState.Playing;
+                    bool wasPlaying = PlayerState == PlayerState.Playing;
                     LoadSong(currentSong);
                     if(wasPlaying) {
                         Player.Play();
+                    } else if(PlayedToEnd) {
+                        PlayerState = PlayerState.Playing;
                     }
                     PlayedToEnd = false;
                 }
@@ -116,6 +118,10 @@ namespace PlayerCore {
                 Player.Dispose();
                 Player = null;
             }
+            if(PlayerState != PlayerState.Stopped) {
+                PlayerState = PlayerState.Stopped;
+            }
+            PlayedToEnd = false;
         }
 
         private void LoadSong(Song song) {
