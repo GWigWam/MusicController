@@ -53,11 +53,19 @@ namespace PlayerCore {
         }
 
         private void TrackList_CurrentSongChanged(object sender, EventArgs e) {
-            var newCur = TrackList.CurrentSong;
-            if(newCur != null) {
-                Player.CurrentSong = newCur;
-            } else {
-                Player.Stop();
+            try {
+                var newCur = TrackList.CurrentSong;
+                if(newCur != null) {
+                    Player.CurrentSong = newCur;
+                } else {
+                    Player.Stop();
+                }
+            } catch(SongLoadFailedException slfe) {
+                if(slfe.Song != null && TrackList.Contains(slfe.Song)) {
+                    TrackList.Remove(slfe.Song);
+                }
+            } catch(Exception) {
+                // ---
             }
         }
     }

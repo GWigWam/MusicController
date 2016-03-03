@@ -151,7 +151,7 @@ namespace PlayerCore {
                     Stop();
                     SongEnded?.Invoke(this, new EventArgs());
                     //TODO: Throw userfriendly exception
-                    throw new Exception("Loading song failed", e);
+                    throw new SongLoadFailedException(song, e);
                 }
             }
         }
@@ -163,6 +163,20 @@ namespace PlayerCore {
 
         public void Dispose() {
             Stop(); //Already handles disposing of 'File' and 'Player' objects
+        }
+    }
+
+    public class SongLoadFailedException : Exception {
+        private const string LoadFailMessage = "Loading song failed";
+
+        public Song Song { get; private set; }
+
+        public SongLoadFailedException(Song song, Exception innerException) : base(LoadFailMessage, innerException) {
+            Song = song;
+        }
+
+        public SongLoadFailedException(Song song) : base(LoadFailMessage) {
+            Song = song;
         }
     }
 }
