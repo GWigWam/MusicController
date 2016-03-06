@@ -116,7 +116,7 @@ namespace SpeechControl {
                         new string[] { "music" },
                         new string[] { "stop listening", "start listening" }
                     },
-                    Description = "Music + [Stop_listening / Start_listening] : Enable or disable speech input",
+                    Description = "Music + [Stop listening / Start listening] : Enable or disable speech input",
                     Execute = (sentence) => {
                         speechController.Settings.EnableSpeech = sentence.ElementAt(1) == "start listening";
                         return new string[0];
@@ -129,7 +129,7 @@ namespace SpeechControl {
                         new string[] { "play song" },
                         speechController.Playlist.Select(s => s.Title)
                     },
-                    Description = "Play_song + <Song Title> : Play songs by name",
+                    Description = "Play song + <Song Title> : Play songs by name",
                     Execute = (sentence) => {
                         var songName = sentence.ElementAt(1);
                         speechController.Playlist.SelectAllMatches(s => s?.Title?.Equals(songName, StringComparison.CurrentCultureIgnoreCase) ?? false);
@@ -144,7 +144,7 @@ namespace SpeechControl {
                         new string[] { "play album" },
                         speechController.Playlist.Select(s => s.Album)
                     },
-                    Description = "Play_album + <Album Name> : Play songs by album",
+                    Description = "Play album + <Album Name> : Play songs by album",
                     Execute = (sentence) => {
                         var albumName = sentence.ElementAt(1);
                         speechController.Playlist.SelectAllMatches(s => s?.Album?.Equals(albumName, StringComparison.CurrentCultureIgnoreCase) ?? false);
@@ -159,7 +159,7 @@ namespace SpeechControl {
                         new string[] { "play artist" },
                         speechController.Playlist.Select(s => s.Artist)
                     },
-                    Description = "Play_artist + <Arist Name> : Play songs by artist",
+                    Description = "Play artist + <Arist Name> : Play songs by artist",
                     Execute = (sentence) => {
                         var artistName = sentence.ElementAt(1);
                         speechController.Playlist.SelectAllMatches(s => s?.Artist?.Equals(artistName, StringComparison.CurrentCultureIgnoreCase) ?? false);
