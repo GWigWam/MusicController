@@ -34,10 +34,7 @@ namespace PlayerInterface {
             DataContext = fpvm;
             fpvm.PropertyChanged += (s, p) => {
                 if(p.PropertyName == nameof(FullPlayerViewModel.CurrentFocusItem)) {
-                    var item = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
-                    if(item != null) {
-                        Application.Current.Dispatcher.BeginInvoke((Action)(() => Lb_Playlist.ScrollIntoView(item)));
-                    }
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() => ScrollCurrentSongIntoView()));
                 }
             };
         }
@@ -185,6 +182,19 @@ namespace PlayerInterface {
             var tv = sender as TreeView;
             if(!tv.IsFocused && !tv.IsKeyboardFocusWithin) {
                 Model.SettingsViewModel.TreeView_LostFocus(sender, e);
+            }
+        }
+
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            if((bool)e.NewValue == true) {
+                ScrollCurrentSongIntoView();
+            }
+        }
+
+        private void ScrollCurrentSongIntoView() {
+            var item = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
+            if(item != null) {
+                Lb_Playlist.ScrollIntoView(item);
             }
         }
     }

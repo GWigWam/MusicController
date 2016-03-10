@@ -9,7 +9,7 @@
         xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
         xmlns:vme="clr-namespace:PlayerInterface.ViewModels.FolderExplore"
         mc:Ignorable="d"
-        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="FullPlayer" Height="390" Width="300" WindowStyle="None" ResizeMode="NoResize" PreviewKeyDown="Window_PreviewKeyDown" IsVisibleChanged="Window_IsVisibleChanged">
     <Window.Resources>
         <sys:String x:Key="ActiveTag">Active</sys:String>
         <Style x:Key="TabBorderStyle" TargetType="{x:Type Border}">
