@@ -11,6 +11,7 @@ namespace PlayerInterface.ViewModels {
     public class SmallPlayerViewModel : INotifyPropertyChanged {
         private const string ImgSourcePlay = "pack://application:,,,/res/img/Play.png";
         private const string ImgSourcePause = "pack://application:,,,/res/img/Pause.png";
+        private const int PreviousRestartMinTimeMs = 5000;
 
         protected AppSettings Settings {
             get;
@@ -84,8 +85,12 @@ namespace PlayerInterface.ViewModels {
             }, (o) => Playlist.HasNext);
 
             PreviousCommand = new RelayCommand((o) => {
-                Playlist.CurrentSongIndex--;
-            }, (o) => Playlist.HasPrevious);
+                if(SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs) {
+                    SongPlayer.Elapsed = TimeSpan.FromMilliseconds(0);
+                } else {
+                    Playlist.CurrentSongIndex--;
+                }
+            }, (o) => Playlist.HasPrevious || SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs);
 
             ShuffleCommand = new RelayCommand((o) => Playlist.Shuffle(), (o) => Playlist != null);
         }
