@@ -5,4 +5,3 @@
 + Don't crash when headphones are pulled from pc
 + Click & Drag songs in playlist to change order
 + Fix: When selecting multiple files on startup only start playing first/last
-+ Hit space to pause in fullplayer

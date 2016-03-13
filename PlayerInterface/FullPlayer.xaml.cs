@@ -140,6 +140,10 @@ namespace PlayerInterface {
                 Tb_Search.Focus();
             } else if((!Tb_Search.IsFocused && e.Key == Key.Back) || e.Key == Key.Escape) {
                 Tb_Search.Text = string.Empty;
+            } else if(!Tb_Search.IsFocused && e.Key == Key.Space) {
+                if(Model?.SwitchCommand?.CanExecute(null) == true) {
+                    Model.SwitchCommand.Execute(null);
+                }
             }
         }
 
