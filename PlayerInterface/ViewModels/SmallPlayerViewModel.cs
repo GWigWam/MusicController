@@ -64,7 +64,7 @@ namespace PlayerInterface.ViewModels {
 
             SetupCommands();
 
-            SongPlayer.SongEnded += SongPlayer_SongEnded;
+            SongPlayer.PlayingStopped += Player_PlayingStopped;
             SongPlayer.PlaybackStateChanged += PlaybackStateChanged;
             Settings.Changed += Settings_Changed;
         }
@@ -115,7 +115,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        protected void SongPlayer_SongEnded(object sender, EventArgs args) {
+        protected void Player_PlayingStopped(object sender, PlayingStoppedEventArgs args) {
             RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
         }
     }

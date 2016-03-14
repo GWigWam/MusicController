@@ -2,6 +2,7 @@
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,7 +98,7 @@ namespace PlayerCore {
             }
         }
 
-        public event EventHandler SongEnded;
+        public event EventHandler<PlayingStoppedEventArgs> PlayingStopped;
 
         public event EventHandler SongChanged;
 
@@ -155,16 +156,26 @@ namespace PlayerCore {
                     Player.PlaybackStopped += Player_PlaybackStopped;
                 } catch(Exception e) {
                     Stop();
-                    SongEnded?.Invoke(this, new EventArgs());
+                    PlayingStopped?.Invoke(this, new PlayingStoppedEventArgs(false, e));
                     //TODO: Throw userfriendly exception
-                    throw new SongLoadFailedException(song, e);
+                    if(e is FileNotFoundException) {
+                        throw new SongLoadFailedException(song, e);
+                    } else {
+                        throw e;
+                    }
                 }
             }
         }
 
         private void Player_PlaybackStopped(object sender, StoppedEventArgs e) {
-            PlayedToEnd = true;
-            SongEnded?.Invoke(this, new EventArgs());
+            PlayingStoppedEventArgs stoppedEventArgs = null;
+            if(e.Exception == null) {
+                PlayedToEnd = true;
+                stoppedEventArgs = new PlayingStoppedEventArgs(true);
+            } else {
+                stoppedEventArgs = new PlayingStoppedEventArgs(false, e.Exception);
+            }
+            PlayingStopped?.Invoke(this, stoppedEventArgs);
         }
 
         public void Dispose() {

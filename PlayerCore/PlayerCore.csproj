@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlayingStoppedEventArgs.cs" />
     <Compile Include="PlaybackStateChangedEventArgs.cs" />
     <Compile Include="PlayerState.cs" />
     <Compile Include="Playlist.cs" />
