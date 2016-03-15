@@ -24,6 +24,13 @@ namespace PlayerInterface {
             InitializeComponent();
 
             DataContext = spvm;
+            spvm.SongPlayer.PlayingStopped += (s, a) => {
+                if(a.Exception != null) {
+                    Dispatcher.Invoke(() => {
+                        new ExceptionWindow(a.Exception).Show();
+                    });
+                }
+            };
         }
 
         private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
