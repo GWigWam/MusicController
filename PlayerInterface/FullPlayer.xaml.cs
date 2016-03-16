@@ -79,7 +79,7 @@ namespace PlayerInterface {
 
         private void Lb_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             var selected = Lb_Playlist.SelectedItem as SongViewModel;
-            if(Model?.PlaySongCommand != null && selected != null) {
+            if(Model?.PlaySongCommand != null && selected != null && e.ChangedButton == MouseButton.Left) {
                 if(Model.PlaySongCommand.CanExecute(selected.Song)) {
                     Model.PlaySongCommand.Execute(selected.Song);
                 }
@@ -199,6 +199,13 @@ namespace PlayerInterface {
             var item = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
             if(item != null) {
                 Lb_Playlist.ScrollIntoView(item);
+            }
+        }
+
+        private void Grid_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {
+            var svm = ((sender as Grid).DataContext as SongViewModel);
+            if(svm != null) {
+                svm.MenuActive = !svm.MenuActive;
             }
         }
     }

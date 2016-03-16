@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PlayerInterface.ViewModels {
 
@@ -33,6 +34,23 @@ namespace PlayerInterface.ViewModels {
         public string SubTitle => $"{Song?.Artist} ({Song?.Album})";
         public string Title => $"{Song?.Title}";
 
+        private bool menuActive;
+
+        public bool MenuActive {
+            get { return menuActive; }
+            set {
+                if(value != menuActive) {
+                    menuActive = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MenuActive)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrontVisibility)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MenuVisibility)));
+                }
+            }
+        }
+
+        public Visibility FrontVisibility => MenuActive ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility MenuVisibility => MenuActive ? Visibility.Visible : Visibility.Collapsed;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static Dictionary<string, PropertyInfo> SortProperties;
@@ -54,6 +72,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         public SongViewModel() {
+            menuActive = false;
         }
 
         public SongViewModel(Song song) {
