@@ -1,1 +1,0 @@
-Moved RaisePropertyChanged to abstract class
