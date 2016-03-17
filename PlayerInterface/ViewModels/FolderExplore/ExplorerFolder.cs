@@ -23,11 +23,11 @@ namespace PlayerInterface.ViewModels.FolderExplore {
             get { return checkedState; }
             set {
                 checkedState = value;
-                RaisePropertyChanged(nameof(CheckedState));
+                RaisePropertiesChanged(nameof(CheckedState));
 
                 if(value != null) {
                     ChildrenCache = null;
-                    RaisePropertyChanged(nameof(Children));
+                    RaisePropertiesChanged(nameof(Children));
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace PlayerInterface.ViewModels.FolderExplore {
             if(e.PropertyName == nameof(ExplorerItem.CheckedState)) {
                 UpdateCheckedState();
             }
-            RaisePropertyChanged(nameof(Children));
+            RaisePropertiesChanged(nameof(Children));
         }
 
         private void UpdateCheckedState() {

@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace PlayerInterface.ViewModels.FolderExplore {
 
-    public abstract class ExplorerItem : INotifyPropertyChanged {
-
-        public event PropertyChangedEventHandler PropertyChanged;
+    public abstract class ExplorerItem : NotifyPropertyChanged {
 
         public abstract bool? CheckedState {
             get; set;
@@ -34,9 +32,5 @@ namespace PlayerInterface.ViewModels.FolderExplore {
         }
 
         public abstract IEnumerable<string> GetCheckedPaths();
-
-        public void RaisePropertyChanged(string name) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
     }
 }

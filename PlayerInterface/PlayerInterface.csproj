@@ -80,6 +80,7 @@
     <Compile Include="FormatHelper.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="CustomControls\ScrollSlider.cs" />
+    <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="ScreenOverlay.xaml.cs">
       <DependentUpon>ScreenOverlay.xaml</DependentUpon>
     </Compile>

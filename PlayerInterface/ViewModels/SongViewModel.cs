@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace PlayerInterface.ViewModels {
 
-    public class SongViewModel : INotifyPropertyChanged {
+    public class SongViewModel : NotifyPropertyChanged {
         public string Info => $"[{FormatHelper.FormatTimeSpan(Song?.File?.TrackLength)}] {Song?.File?.BitRate}kbps, {Song?.File?.Track}/{Song?.File?.TrackCount}, {Song?.File?.Year}";
 
         public string Path => $"{Song?.FilePath}";
@@ -22,7 +22,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(playing != value) {
                     playing = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Playing)));
+                    RaisePropertiesChanged(nameof(Playing));
                 }
             }
         }
@@ -41,9 +41,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(value != menuActive) {
                     menuActive = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MenuActive)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrontVisibility)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MenuVisibility)));
+                    RaisePropertiesChanged(nameof(MenuActive), nameof(FrontVisibility), nameof(MenuVisibility));
                 }
             }
         }
@@ -51,7 +49,7 @@ namespace PlayerInterface.ViewModels {
         public Visibility FrontVisibility => MenuActive ? Visibility.Collapsed : Visibility.Visible;
         public Visibility MenuVisibility => MenuActive ? Visibility.Visible : Visibility.Collapsed;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         public static Dictionary<string, PropertyInfo> SortProperties;
 

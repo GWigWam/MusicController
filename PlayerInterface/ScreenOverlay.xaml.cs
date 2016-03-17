@@ -61,7 +61,7 @@ namespace PlayerInterface {
         }
     }
 
-    internal class ScreenOverlayViewModel : INotifyPropertyChanged {
+    internal class ScreenOverlayViewModel : NotifyPropertyChanged {
         private string text;
 
         public string Text {
@@ -69,11 +69,9 @@ namespace PlayerInterface {
             set {
                 if(value != text) {
                     text = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Text)));
+                    RaisePropertiesChanged(nameof(Text));
                 }
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

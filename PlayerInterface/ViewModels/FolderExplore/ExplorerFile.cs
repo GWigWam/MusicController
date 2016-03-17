@@ -20,7 +20,7 @@ namespace PlayerInterface.ViewModels.FolderExplore {
             set {
                 if(checkedState != value) {
                     checkedState = value ?? false;
-                    RaisePropertyChanged(nameof(CheckedState));
+                    RaisePropertiesChanged(nameof(checkedState));
                 }
             }
         }

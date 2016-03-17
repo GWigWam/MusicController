@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
 
-    public class SmallPlayerViewModel : INotifyPropertyChanged {
+    public class SmallPlayerViewModel : NotifyPropertyChanged {
         private const string ImgSourcePlay = "pack://application:,,,/res/img/Play.png";
         private const string ImgSourcePause = "pack://application:,,,/res/img/Pause.png";
         private const int PreviousRestartMinTimeMs = 5000;
@@ -54,8 +54,6 @@ namespace PlayerInterface.ViewModels {
         }
 
         public bool EnableChangeElapsed => SongPlayer?.CurrentSong != null && SongPlayer?.PlayerState != PlayerState.Stopped;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public SmallPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) {
             Settings = settings;
@@ -106,12 +104,6 @@ namespace PlayerInterface.ViewModels {
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
             if(e.ChangedPropertyName == nameof(Settings.Volume)) {
                 RaisePropertiesChanged(nameof(Volume));
-            }
-        }
-
-        protected void RaisePropertiesChanged(params string[] propertyNames) {
-            foreach(var propName in propertyNames) {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
             }
         }
 

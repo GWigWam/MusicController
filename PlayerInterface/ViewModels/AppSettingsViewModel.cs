@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
 
-    public class AppSettingsViewModel : INotifyPropertyChanged {
+    public class AppSettingsViewModel : NotifyPropertyChanged {
 
         public bool StartMinimized {
             get {
@@ -84,8 +84,6 @@ namespace PlayerInterface.ViewModels {
             get;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public AppSettingsViewModel(AppSettings settings) {
             Settings = settings;
             Settings.Changed += Settings_Changed;
@@ -105,7 +103,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(e.ChangedPropertyName));
+            RaisePropertiesChanged(e.ChangedPropertyName);
         }
 
         private void InitLoadPaths() {
