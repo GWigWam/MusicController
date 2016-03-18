@@ -96,7 +96,7 @@
                          ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type vm:SongViewModel}">
-                            <Border Height="42" BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
+                            <Border MinHeight="42" BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
@@ -123,9 +123,28 @@
                                         </Grid>
                                         <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
                                     </Grid>
-                                    <Grid Visibility="{Binding MenuVisibility}">
-                                        <Label Content="ToDo" />
-                                    </Grid>
+                                    <ItemsControl ItemsSource="{Binding MainViewModel.SongMenuItems}" Visibility="{Binding MenuVisibility}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
+                                                <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                                        Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_MouseLeftButtonUp">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Viewbox Height="20">
+                                                        <Label Padding="0" Content="{Binding Title}" />
+                                                    </Viewbox>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Grid>
                             </Border>
                         </DataTemplate>

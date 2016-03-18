@@ -114,9 +114,9 @@ namespace PlayerInterface {
             var allSelected = Lb_Playlist.SelectedItems.Cast<SongViewModel>();
 
             if(e.Key == Key.Delete) {
-                if(Model?.RemoveSongCommand != null && allSelected.Count() > 0) {
-                    if(Model.RemoveSongCommand.CanExecute(allSelected)) {
-                        Model.RemoveSongCommand.Execute(allSelected);
+                if(Model?.RemoveSongsCommand != null && allSelected.Count() > 0) {
+                    if(Model.RemoveSongsCommand.CanExecute(allSelected)) {
+                        Model.RemoveSongsCommand.Execute(allSelected);
                     }
                 }
             } else if(e.Key == Key.Enter) {
@@ -206,6 +206,15 @@ namespace PlayerInterface {
             var svm = ((sender as Grid).DataContext as SongViewModel);
             if(svm != null) {
                 svm.MenuActive = !svm.MenuActive;
+            }
+        }
+
+        private void Border_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+            var menuItem = ((sender as FrameworkElement)?.DataContext as SongMenuItemViewModel);
+            var svm = ((sender as FrameworkElement)?.Tag as SongViewModel);
+            if(menuItem != null && svm != null) {
+                svm.MenuActive = false;
+                menuItem.Execute(svm);
             }
         }
     }

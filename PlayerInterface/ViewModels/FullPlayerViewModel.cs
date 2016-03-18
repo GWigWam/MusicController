@@ -53,7 +53,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public ICommand RemoveSongCommand {
+        public ICommand RemoveSongsCommand {
             get; private set;
         }
 
@@ -82,6 +82,10 @@ namespace PlayerInterface.ViewModels {
 
         public string PlaylistStats => $"{Playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(Playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
 
+        public SongMenuItemViewModel[] SongMenuItems {
+            get; private set;
+        }
+
         public AppSettingsViewModel SettingsViewModel {
             get;
         }
@@ -100,10 +104,11 @@ namespace PlayerInterface.ViewModels {
 
         public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController) : base(settings, player, playlist) {
             SetupCommands();
+            SetupSongMenuItems();
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
-            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s)));
+            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s, this)));
 
             var commandDesc = speechController.Commands.Select(sc => sc.Description);
             AboutSpeechCommands = new ObservableCollection<string>(commandDesc);
@@ -144,7 +149,7 @@ namespace PlayerInterface.ViewModels {
                 (o) => o as PropertyInfo != null && (((PropertyInfo)o).DeclaringType == typeof(Song) || ((PropertyInfo)o).DeclaringType == typeof(SongFile))
             );
 
-            RemoveSongCommand = new RelayCommand((o) => {
+            RemoveSongsCommand = new RelayCommand((o) => {
                 Playlist.Remove(((IEnumerable<SongViewModel>)o).Select(svm => svm.Song));
             }, (o) => {
                 var songs = o as IEnumerable<SongViewModel>;
@@ -176,6 +181,28 @@ namespace PlayerInterface.ViewModels {
             });
         }
 
+        private void SetupSongMenuItems() {
+            SongMenuItems = new SongMenuItemViewModel[] {
+                new SongMenuItemViewModel() {
+                    Title = "Play",
+                    Action = svm => {
+                        if(PlaySongCommand.CanExecute(svm.Song)) {
+                            PlaySongCommand.Execute(svm.Song);
+                        }
+                    }
+                },
+                new SongMenuItemViewModel() {
+                    Title = "Remove",
+                    Action = svm => {
+                        var svmIEnum = new SongViewModel[] { svm };
+                        if(RemoveSongsCommand.CanExecute(svmIEnum)) {
+                            RemoveSongsCommand.Execute(svmIEnum);
+                        }
+                    }
+                }
+            };
+        }
+
         private void PlaylistChanged(object sender, EventArgs e) {
             RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
             Application.Current.Dispatcher.BeginInvoke((Action)(() => FillPlaylist()));
@@ -192,7 +219,7 @@ namespace PlayerInterface.ViewModels {
             }
 
             foreach(var addSong in Playlist) {
-                var svm = new SongViewModel(addSong) {
+                var svm = new SongViewModel(addSong, this) {
                     Playing = addSong == SongPlayer.CurrentSong
                 };
                 if(query == null) {

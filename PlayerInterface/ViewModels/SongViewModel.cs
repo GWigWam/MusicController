@@ -49,7 +49,9 @@ namespace PlayerInterface.ViewModels {
         public Visibility FrontVisibility => MenuActive ? Visibility.Collapsed : Visibility.Visible;
         public Visibility MenuVisibility => MenuActive ? Visibility.Visible : Visibility.Collapsed;
 
-        //public event PropertyChangedEventHandler PropertyChanged;
+        public FullPlayerViewModel MainViewModel {
+            get;
+        }
 
         public static Dictionary<string, PropertyInfo> SortProperties;
 
@@ -69,12 +71,16 @@ namespace PlayerInterface.ViewModels {
             };
         }
 
+        /// <summary>
+        /// For testing purposes only
+        /// </summary>
         public SongViewModel() {
-            menuActive = false;
         }
 
-        public SongViewModel(Song song) {
+        public SongViewModel(Song song, FullPlayerViewModel fpvm) {
+            menuActive = false;
             Song = song;
+            MainViewModel = fpvm;
         }
     }
 }
