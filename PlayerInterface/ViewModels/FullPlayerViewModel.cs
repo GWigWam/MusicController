@@ -130,6 +130,9 @@ namespace PlayerInterface.ViewModels {
             PlaySongCommand = new RelayCommand((s) => {
                 if(s as Song != null) {
                     Playlist.SelectFirstMatch((Song)s);
+                    if(SongPlayer.PlayerState != PlayerState.Playing) {
+                        SongPlayer.PlayerState = PlayerState.Playing;
+                    }
                 }
             }, (s) => {
                 return SongPlayer != null && s as Song != null;
