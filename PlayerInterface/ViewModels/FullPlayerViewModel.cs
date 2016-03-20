@@ -202,6 +202,14 @@ namespace PlayerInterface.ViewModels {
                             RemoveSongsCommand.Execute(svmIEnum);
                         }
                     }
+                },
+                new SongMenuItemViewModel() {
+                    Title = "Open file location",
+                    Action = svm => {
+                        if(File.Exists(svm.Path)) {
+                            System.Diagnostics.Process.Start("explorer.exe", $"/select, {svm.Path}");
+                        }
+                    }
                 }
             };
         }
