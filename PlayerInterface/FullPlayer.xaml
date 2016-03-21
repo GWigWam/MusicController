@@ -94,6 +94,18 @@
                 </Border>
                 <ListBox x:Name="Lb_Playlist" Grid.Row="3" Margin="2,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SelectionMode="Extended" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
+                    <ListBox.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="ListBoxItem.AllowDrop" Value="True" />
+                            <EventSetter Event="ListBoxItem.MouseMove" Handler="SongCard_MouseMove" />
+                            <EventSetter Event="ListBoxItem.DragOver" Handler="SongCard_DragOver" />
+                            <EventSetter Event="ListBoxItem.DragEnter" Handler="SongCard_DragEnter" />
+                            <EventSetter Event="ListBoxItem.DragLeave" Handler="SongCard_DragLeave" />
+                            <EventSetter Event="ListBoxItem.Drop" Handler="SongCard_Drop" />
+                            <EventSetter Event="ListBoxItem.PreviewMouseDown" Handler="SongCard_PreviewMouseDown" />
+                            <EventSetter Event="ListBoxItem.MouseUp" Handler="SongCard_MouseUp" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type vm:SongViewModel}">
                             <Border MinHeight="42" BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
@@ -123,7 +135,7 @@
                                         </Grid>
                                         <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
                                     </Grid>
-                                    <ItemsControl ItemsSource="{Binding MainViewModel.SongMenuItems}" Visibility="{Binding MenuVisibility}">
+                                    <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MainViewModel.SongMenuItems}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
                                                 <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
@@ -145,6 +157,10 @@
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
+                                    <StackPanel Height="45" Visibility="{Binding DropUnderHintVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Label Padding="2" Content="Insert below" HorizontalContentAlignment="Center" />
+                                        <Label Padding="0" Content="▼" HorizontalContentAlignment="Center" FontSize="18.667" />
+                                    </StackPanel>
                                 </Grid>
                             </Border>
                         </DataTemplate>

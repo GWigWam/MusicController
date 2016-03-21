@@ -136,6 +136,22 @@ namespace PlayerCore {
             }
         }
 
+        public void MoveTo(Song destination, params Song[] source) {
+            var index = Songs.IndexOf(destination);
+            MoveToIndex(index, source);
+        }
+
+        public void MoveToIndex(int index, params Song[] source) {
+            var curSong = CurrentSong;
+
+            var before = Songs.Take(index + 1).Except(source);
+            var after = Songs.Skip(index + 1).Except(source);
+            Songs = new List<Song>(before.Concat(source).Concat(after));
+
+            currentSongIndex = Songs.IndexOf(curSong);
+            RaiseListOrderChanged();
+        }
+
         public void Remove(IEnumerable<Song> songs) {
             var currentSongBeforeRemove = CurrentSong;
             foreach(var song in songs) {

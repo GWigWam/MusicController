@@ -34,20 +34,25 @@ namespace PlayerInterface.ViewModels {
         public string SubTitle => $"{Song?.Artist} ({Song?.Album})";
         public string Title => $"{Song?.Title}";
 
-        private bool menuActive;
+        public enum DisplayType {
+            Front, Menu, DropUnderHint
+        }
 
-        public bool MenuActive {
-            get { return menuActive; }
+        private DisplayType curDisplay;
+
+        public DisplayType CurDisplay {
+            get { return curDisplay; }
             set {
-                if(value != menuActive) {
-                    menuActive = value;
-                    RaisePropertiesChanged(nameof(MenuActive), nameof(FrontVisibility), nameof(MenuVisibility));
+                if(value != curDisplay) {
+                    curDisplay = value;
+                    RaisePropertiesChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility));
                 }
             }
         }
 
-        public Visibility FrontVisibility => MenuActive ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility MenuVisibility => MenuActive ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility FrontVisibility => CurDisplay == DisplayType.Front ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility MenuVisibility => CurDisplay == DisplayType.Menu ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility DropUnderHintVisibility => CurDisplay == DisplayType.DropUnderHint ? Visibility.Visible : Visibility.Collapsed;
 
         public FullPlayerViewModel MainViewModel {
             get;
@@ -78,7 +83,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         public SongViewModel(Song song, FullPlayerViewModel fpvm) {
-            menuActive = false;
+            curDisplay = DisplayType.Front;
             Song = song;
             MainViewModel = fpvm;
         }

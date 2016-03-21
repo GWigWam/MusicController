@@ -65,6 +65,10 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ICommand MovePlaylistSongsCommand {
+            get; private set;
+        }
+
         public SongViewModel CurrentFocusItem {
             get; set;
         }
@@ -181,6 +185,17 @@ namespace PlayerInterface.ViewModels {
                 UIEnabled = true;
                 if(t.IsFaulted)
                     Application.Current.Dispatcher.BeginInvoke((Action)(() => new ExceptionWindow(t.Exception).Show()));
+            });
+
+            MovePlaylistSongsCommand = new RelayCommand(inp => {
+                dynamic moveArgs = inp;
+                SongViewModel[] svms = moveArgs.SongViewModels;
+                SongViewModel insertUnder = moveArgs.InsertUnder;
+
+                Playlist.MoveTo(insertUnder.Song, svms.Select(svm => svm.Song).ToArray());
+            }, (inp) => {
+                //ToDo:
+                return true;
             });
         }
 
