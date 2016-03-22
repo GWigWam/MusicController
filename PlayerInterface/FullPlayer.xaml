@@ -24,7 +24,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid IsEnabled="{Binding UIEnabled}">
+    <Grid x:Name="Grid_Main" IsEnabled="{Binding UIEnabled}">
         <Grid.RowDefinitions>
             <RowDefinition Height="34" />
             <RowDefinition Height="*" />
@@ -66,7 +66,7 @@
                         <Label Padding="2" Content="{Binding StatusText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
                     </Viewbox>
                 </Border>
-                <Grid Grid.Row="1" Margin="0,0,3,0">
+                <Grid x:Name="Grid_BasicControl" Grid.Row="1" Margin="0,0,3,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30" />
                         <ColumnDefinition Width="30" />
@@ -81,7 +81,7 @@
                     <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" ToolTip="Volume" />
                 </Grid>
                 <Border Grid.Row="2" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
-                    <Grid>
+                    <Grid x:Name="Grid_Elapsed">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="5*" />
@@ -167,7 +167,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Label x:Name="Lb_DropHint" Grid.Row="3"  Content="Drag &amp; Drop files here!" Visibility="{Binding ShowDropHint}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333" Background="{x:Null}" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" AllowDrop="True" Drop="Lb_Playlist_Drop" />
-                <Grid Grid.Row="4">
+                <Grid x:Name="Grid_Footer" Grid.Row="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30" />
                         <ColumnDefinition Width="*" />
@@ -192,12 +192,12 @@
                     <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0">
-                    <StackPanel Orientation="Vertical" Margin="10">
+                    <StackPanel x:Name="Sp_Settings" Orientation="Vertical" Margin="10">
                         <Label Content="General:" FontWeight="Bold" FontSize="16" Padding="0" />
                         <CheckBox x:Name="Cb_StartMinimized" Content="Start Minimized" IsChecked="{Binding SettingsViewModel.StartMinimized}" />
                         <CheckBox x:Name="Cb_ShuffleOnStart" Content="Shuffle on Startup" IsChecked="{Binding SettingsViewModel.ShuffleOnStartup}" />
                         <CheckBox x:Name="Cb_EnableSpeech" Content="Enable Speech" IsChecked="{Binding SettingsViewModel.EnableSpeech}" />
-                        <Grid>
+                        <Grid x:Name="Grid_Settings_Timing">
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
@@ -222,7 +222,7 @@
                             <Label Grid.Row="2" Grid.Column="2" Content="Ms" />
                         </Grid>
                         <Label Margin="0,3,0,0" Content="Load on startup:" FontWeight="Bold" FontSize="16" Padding="0" />
-                        <TreeView Height="200" ItemsSource="{Binding SettingsViewModel.LoadPaths}" LostFocus="TreeView_LostFocus">
+                        <TreeView x:Name="Tv_Settings_StartupLoad" Height="200" ItemsSource="{Binding SettingsViewModel.LoadPaths}" LostFocus="TreeView_LostFocus">
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type vme:ExplorerFolder}" ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal" Height="18" Margin="1">
@@ -240,7 +240,7 @@
                         </TreeView>
                     </StackPanel>
                 </ScrollViewer>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel x:Name="Sp_Settings_Footer" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Margin="5"  Padding="5" Content="View File" Command="{Binding SettingsViewModel.OpenFileLocationCommand}" />
                     <Button Margin="5" Padding="5" Content="Save to Disk" Command="{Binding SettingsViewModel.SaveToDiskCommand}" />
                 </StackPanel>
