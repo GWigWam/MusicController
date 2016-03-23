@@ -46,7 +46,7 @@
                 </Border>
             </StackPanel>
             <Border Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
-                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="StackPanel_MouseDown" Background="Transparent">
+                <StackPanel x:Name="Sp_Drag" Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="Sp_Drag_MouseDown" Background="Transparent">
                     <cc:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
                     <cc:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
                 </StackPanel>
@@ -119,7 +119,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
-                                <Grid MouseRightButtonUp="Grid_MouseRightButtonUp">
+                                <Grid>
                                     <Grid Visibility="{Binding FrontVisibility}" ToolTip="{Binding Path}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
@@ -138,8 +138,8 @@
                                     <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MainViewModel.SongMenuItems}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
-                                                <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
-                                                        Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_MouseLeftButtonUp">
+                                                <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                                        Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_SongCard_Menu_MouseLeftButtonUp">
                                                     <Border.Style>
                                                         <Style TargetType="Border">
                                                             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />

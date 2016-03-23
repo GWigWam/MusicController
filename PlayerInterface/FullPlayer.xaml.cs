@@ -56,19 +56,6 @@ namespace PlayerInterface {
             };
         }
 
-        private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e) {
-            if(e.ChangedButton == MouseButton.Left)
-                this.DragMove();
-        }
-
-        private void Btn_Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Application.Current.Shutdown();
-        }
-
-        private void Btn_Minimize_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            MinimizeToTray();
-        }
-
         public void MinimizeToTray() {
             Hide();
             MinimizedToTray?.Invoke(this, new EventArgs());
@@ -94,6 +81,25 @@ namespace PlayerInterface {
                 }
             }
             return null;
+        }
+
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            if((bool)e.NewValue == true) {
+                ScrollCurrentSongIntoView();
+            }
+        }
+
+        private void Btn_Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            Application.Current.Shutdown();
+        }
+
+        private void Sp_Drag_MouseDown(object sender, MouseButtonEventArgs e) {
+            if(e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        private void Btn_Minimize_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            MinimizeToTray();
         }
 
         private void Slr_Elapsed_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
@@ -148,6 +154,18 @@ namespace PlayerInterface {
             }
         }
 
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
+            if(!Tb_Search.IsFocused && e.Key > Key.A && e.Key < Key.Z) {
+                Tb_Search.Focus();
+            } else if((!Tb_Search.IsFocused && e.Key == Key.Back) || e.Key == Key.Escape) {
+                Tb_Search.Text = string.Empty;
+            } else if(!Tb_Search.IsFocused && e.Key == Key.Space) {
+                if(Model?.SwitchCommand?.CanExecute(null) == true) {
+                    Model.SwitchCommand.Execute(null);
+                }
+            }
+        }
+
         private void Lb_Playlist_KeyUp(object sender, KeyEventArgs e) {
             var singleSelected = Lb_Playlist.SelectedItem as SongViewModel;
             var allSelected = Lb_Playlist.SelectedItems.Cast<SongViewModel>();
@@ -174,16 +192,8 @@ namespace PlayerInterface {
             }
         }
 
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
-            if(!Tb_Search.IsFocused && e.Key > Key.A && e.Key < Key.Z) {
-                Tb_Search.Focus();
-            } else if((!Tb_Search.IsFocused && e.Key == Key.Back) || e.Key == Key.Escape) {
-                Tb_Search.Text = string.Empty;
-            } else if(!Tb_Search.IsFocused && e.Key == Key.Space) {
-                if(Model?.SwitchCommand?.CanExecute(null) == true) {
-                    Model.SwitchCommand.Execute(null);
-                }
-            }
+        private void Tb_Search_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+            ((TextBox)sender).SelectAll();
         }
 
         private void SongCard_MouseMove(object sender, MouseEventArgs e) {
@@ -258,6 +268,13 @@ namespace PlayerInterface {
 
         private void SongCard_MouseUp(object sender, MouseEventArgs e) {
             ItemsToDrag = null;
+
+            var mbea = e as MouseButtonEventArgs;
+            var svm = (sender as ListBoxItem)?.DataContext as SongViewModel;
+
+            if(svm != null && mbea != null && mbea.ChangedButton == MouseButton.Right) {
+                svm.CurDisplay = (svm.CurDisplay == SongViewModel.DisplayType.Menu) ? SongViewModel.DisplayType.Front : SongViewModel.DisplayType.Menu;
+            }
         }
 
         private void Lb_Playlist_Drop(object sender, DragEventArgs e) {
@@ -267,10 +284,6 @@ namespace PlayerInterface {
                     Model.AddFilesCommand.Execute(paths);
                 }
             }
-        }
-
-        private void Tb_Search_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-            ((TextBox)sender).SelectAll();
         }
 
         private void Tab_MouseUp(object sender, MouseButtonEventArgs e) {
@@ -302,20 +315,7 @@ namespace PlayerInterface {
             }
         }
 
-        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-            if((bool)e.NewValue == true) {
-                ScrollCurrentSongIntoView();
-            }
-        }
-
-        private void Grid_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {
-            var svm = ((sender as Grid).DataContext as SongViewModel);
-            if(svm != null) {
-                svm.CurDisplay = (svm.CurDisplay == SongViewModel.DisplayType.Menu) ? SongViewModel.DisplayType.Front : SongViewModel.DisplayType.Menu;
-            }
-        }
-
-        private void Border_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+        private void Border_SongCard_Menu_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
             var menuItem = ((sender as FrameworkElement)?.DataContext as SongMenuItemViewModel);
             var svm = ((sender as FrameworkElement)?.Tag as SongViewModel);
             if(menuItem != null && svm != null) {
