@@ -65,7 +65,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public ICommand MovePlaylistSongsCommand {
+        public GenericRelayCommand<Tuple<SongViewModel[], SongViewModel>> MovePlaylistSongsCommand {
             get; private set;
         }
 
@@ -187,15 +187,10 @@ namespace PlayerInterface.ViewModels {
                     Application.Current.Dispatcher.BeginInvoke((Action)(() => new ExceptionWindow(t.Exception).Show()));
             });
 
-            MovePlaylistSongsCommand = new RelayCommand(inp => {
-                dynamic moveArgs = inp;
-                SongViewModel[] svms = moveArgs.SongViewModels;
-                SongViewModel insertUnder = moveArgs.InsertUnder;
-
-                Playlist.MoveTo(insertUnder.Song, svms.Select(svm => svm.Song).ToArray());
+            MovePlaylistSongsCommand = new GenericRelayCommand<Tuple<SongViewModel[], SongViewModel>>(inp => {
+                Playlist.MoveTo(inp.Item2.Song, inp.Item1.Select(svm => svm.Song).ToArray());
             }, (inp) => {
-                //ToDo:
-                return true;
+                return (inp.Item1?.Length ?? 0) > 0 && inp.Item2?.Song != null;
             });
         }
 

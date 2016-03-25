@@ -71,6 +71,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\AsyncCommand.cs" />
+    <Compile Include="Commands\GenericRelayCommand.cs" />
     <Compile Include="CustomControls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>

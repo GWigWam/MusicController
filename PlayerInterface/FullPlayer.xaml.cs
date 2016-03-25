@@ -248,7 +248,7 @@ namespace PlayerInterface {
                     var data = e.Data.GetData(typeof(SongViewModel[])) as SongViewModel[];
 
                     if(data != null && !data.Contains(droppedOn)) {
-                        var args = new { InsertUnder = droppedOn, SongViewModels = data };
+                        var args = Tuple.Create(data, droppedOn);
                         if(Model?.MovePlaylistSongsCommand?.CanExecute(args) == true) {
                             Model.MovePlaylistSongsCommand.Execute(args);
                         }
