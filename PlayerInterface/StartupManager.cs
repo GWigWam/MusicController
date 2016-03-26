@@ -108,8 +108,10 @@ namespace PlayerInterface {
             if(songfiles.Count > 0) {
                 var songsToAdd = songfiles.Select(sf => new Song(sf));
                 Playlist.AddSongs(songsToAdd);
-                Playlist.SelectFirstMatch(songsToAdd.First());
-                SongPlayer.PlayerState = PlayerState.Playing;
+                if(SongPlayer.PlayerState != PlayerState.Playing) {
+                    Playlist.SelectFirstMatch(songsToAdd.First());
+                    SongPlayer.PlayerState = PlayerState.Playing;
+                }
             }
         }
 
