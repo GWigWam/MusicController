@@ -3,6 +3,7 @@ using PlayerCore.Settings;
 using SpeechControl.CommandMatch;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Speech.Recognition;
 using System.Text;
@@ -24,7 +25,7 @@ namespace SpeechControl {
             get;
         }
 
-        public IEnumerable<SpeechCommand> Commands {
+        public ObservableCollection<SpeechCommand> Commands {
             get; private set;
         }
 
@@ -56,13 +57,16 @@ namespace SpeechControl {
         public void Init() {
             try {
                 SRecognize = new SpeechRecognitionEngine();
-                Commands = SpeechCommand.CreateCommands(this);
+
+                Commands = new ObservableCollection<SpeechCommand>(SpeechCommand.CreateCommands(this));
+                Commands.CollectionChanged += (s, a) => LoadGrammar();
+
                 LoadGrammar();
 
                 SRecognize.SetInputToDefaultAudioDevice();
                 SRecognize.RecognizeAsync(RecognizeMode.Multiple);
-
                 SRecognize.SpeechRecognized += SRecognize_SpeechRecognized;
+
                 Playlist.ListContentChanged += (s, a) => LoadGrammar();
             } catch(Exception e) {
                 //Todo: throw userfriendly exception

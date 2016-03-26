@@ -5,6 +5,7 @@ using PlayerInterface.Commands;
 using PlayerInterface.ViewModels;
 using SpeechControl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -85,6 +86,17 @@ namespace PlayerInterface {
                     Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
                 }
             };
+
+            speech.Commands.Add(new SpeechCommand() {
+                KeyWords = new List<IEnumerable<string>>() { new string[] { "current song" } },
+                Description = "Current song : Display current song name",
+                Execute = (sentence) => {
+                    var s = player.CurrentSong;
+                    Overlay.DisplayText($"{s.Title} - {s.Artist} ({s.Album})", 5000);
+                    return new string[0];
+                },
+                CanExecute = () => speech.Settings.EnableSpeech && player.CurrentSong != null
+            });
         }
 
         private void ShowSmallWindow() {
