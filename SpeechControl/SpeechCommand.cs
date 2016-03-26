@@ -70,7 +70,7 @@ namespace SpeechControl {
                         }
                         return new string[] { "music" };
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
 
                 new SpeechCommand() {
@@ -80,7 +80,7 @@ namespace SpeechControl {
                         speechController.Player.TogglePause(true);
                         return new string[0];
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
 
                 new SpeechCommand() {
@@ -95,7 +95,7 @@ namespace SpeechControl {
                         speechController.Playlist.CurrentSongIndex += increment;
                         return new string[] { "music" };
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
 
                 new SpeechCommand() {
@@ -108,7 +108,7 @@ namespace SpeechControl {
                         speechController.Playlist.Shuffle();
                         return new string[0];
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
 
                 new SpeechCommand() {
@@ -136,7 +136,7 @@ namespace SpeechControl {
                         speechController.Player.PlayerState = PlayerState.Playing;
                         return new string[0];
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
 
                 new SpeechCommand() {
@@ -151,7 +151,7 @@ namespace SpeechControl {
                         speechController.Player.PlayerState = PlayerState.Playing;
                         return new string[0];
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
 
                 new SpeechCommand() {
@@ -166,7 +166,7 @@ namespace SpeechControl {
                         speechController.Player.PlayerState = PlayerState.Playing;
                         return new string[0];
                     },
-                    CanExecute = () => speechController.Settings.EnableSpeech
+                    CanExecute = DefaultCanExecute(speechController)
                 },
                 #endregion play song/album/artist
             };
@@ -178,6 +178,10 @@ namespace SpeechControl {
                 retList.Add(new string[] { keyword });
             }
             return retList;
+        }
+
+        public static Func<bool> DefaultCanExecute(SpeechController speech, Func<bool> custom = null) {
+            return () => speech.Settings.EnableSpeech && custom?.Invoke() != false;
         }
     }
 

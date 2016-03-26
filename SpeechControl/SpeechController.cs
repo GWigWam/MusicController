@@ -89,25 +89,23 @@ namespace SpeechControl {
         }
 
         private void SRecognize_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) {
-            if(Settings.EnableSpeech) {
-                if(Environment.TickCount - LastInputTime > Settings.ResetSentenceTimeMs) {
-                    Sentence.Clear();
-                }
-                LastInputTime = Environment.TickCount;
+            if(Environment.TickCount - LastInputTime > Settings.ResetSentenceTimeMs) {
+                Sentence.Clear();
+            }
+            LastInputTime = Environment.TickCount;
 
-                var add = e.Result.Text;
-                Sentence.Add(add);
-                SentenceChanged?.Invoke(this, new SentenceChangedEventArgs(Sentence, add));
+            var add = e.Result.Text;
+            Sentence.Add(add);
+            SentenceChanged?.Invoke(this, new SentenceChangedEventArgs(Sentence, add));
 
-                var best = Matcher.BestMatch(Sentence, Commands);
-                if(best?.MatchType == MatchType.FullMatch) {
-                    FullSentenceMatch?.Invoke(this, best);
-                    Sentence.Clear();
-                    var newSentence = best.Execute();
-                    Sentence.AddRange(newSentence);
-                } else if(best?.MatchType == MatchType.StartMatch) {
-                    PartialSentenceMatch?.Invoke(this, best);
-                }
+            var best = Matcher.BestMatch(Sentence, Commands);
+            if(best?.MatchType == MatchType.FullMatch) {
+                FullSentenceMatch?.Invoke(this, best);
+                Sentence.Clear();
+                var newSentence = best.Execute();
+                Sentence.AddRange(newSentence);
+            } else if(best?.MatchType == MatchType.StartMatch) {
+                PartialSentenceMatch?.Invoke(this, best);
             }
         }
     }

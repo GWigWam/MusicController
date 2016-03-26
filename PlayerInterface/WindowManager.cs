@@ -74,11 +74,15 @@ namespace PlayerInterface {
             Overlay = new ScreenOverlay(settings);
 
             speech.PartialSentenceMatch += (s, a) => {
-                Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText(a.Sentence.Aggregate((acc, cur) => $"{acc} '{cur}'")));
+                if(settings.EnableSpeech) {
+                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText(a.Sentence.Aggregate((acc, cur) => $"{acc} '{cur}'")));
+                }
             };
 
             speech.FullSentenceMatch += (s, a) => {
-                Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"- {a.Sentence.Aggregate((acc, cur) => $"{acc} {cur}")} -"));
+                if(settings.EnableSpeech) {
+                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"- {a.Sentence.Aggregate((acc, cur) => $"{acc} {cur}")} -"));
+                }
             };
 
             player.SongChanged += (s, a) => {
