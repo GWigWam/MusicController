@@ -254,8 +254,16 @@ namespace PlayerInterface {
                         }
                         e.Handled = true;
                     }
+                } else if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                    if(Model?.AddFilesCommand != null) {
+                        var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
+                        var args = new { Paths = paths, Position = droppedOn.Song };
+                        if(Model.AddFilesCommand.CanExecute(args)) {
+                            Model.AddFilesCommand.Execute(args);
+                            e.Handled = true;
+                        }
+                    }
                 }
-
                 droppedOn.CurDisplay = SongViewModel.DisplayType.Front;
             }
         }
@@ -280,8 +288,9 @@ namespace PlayerInterface {
         private void Lb_Playlist_Drop(object sender, DragEventArgs e) {
             if(Model?.AddFilesCommand != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if(Model.AddFilesCommand.CanExecute(paths)) {
-                    Model.AddFilesCommand.Execute(paths);
+                var args = new { Paths = paths, Position = (int?)null };
+                if(Model.AddFilesCommand.CanExecute(args)) {
+                    Model.AddFilesCommand.Execute(args);
                 }
             }
         }
