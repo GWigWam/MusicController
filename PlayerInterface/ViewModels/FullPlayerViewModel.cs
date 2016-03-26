@@ -114,8 +114,7 @@ namespace PlayerInterface.ViewModels {
 
             PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s, this)));
 
-            var commandDesc = speechController.Commands.Select(sc => sc.Description);
-            AboutSpeechCommands = new ObservableCollection<string>(commandDesc);
+            SetupAboutSpeechCommands(speechController);
 
             SongPlayer.SongChanged += SongPlayer_SongChanged;
             Playlist.ListContentChanged += PlaylistChanged;
@@ -223,6 +222,20 @@ namespace PlayerInterface.ViewModels {
                     }
                 }
             };
+        }
+
+        private void SetupAboutSpeechCommands(SpeechController speechController) {
+            AboutSpeechCommands = new ObservableCollection<string>();
+            LoadAboutSpeechCommands(speechController);
+            speechController.Commands.CollectionChanged += (s, a) => LoadAboutSpeechCommands(speechController);
+        }
+
+        private void LoadAboutSpeechCommands(SpeechController speechController) {
+            var commandDesc = speechController.Commands.Select(sc => sc.Description);
+            AboutSpeechCommands.Clear();
+            foreach(var desc in commandDesc) {
+                AboutSpeechCommands.Add(desc);
+            }
         }
 
         private void PlaylistChanged(object sender, EventArgs e) {
