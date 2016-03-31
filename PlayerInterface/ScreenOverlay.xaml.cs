@@ -24,7 +24,7 @@ namespace PlayerInterface {
             InitializeComponent();
             Settings = settings;
 
-            Width = SystemParameters.WorkArea.Width;
+            SetupSize();
             DataContext = new ScreenOverlayViewModel();
         }
 
@@ -56,8 +56,18 @@ namespace PlayerInterface {
             });
         }
 
+        private void SetupSize() {
+            Width = SystemParameters.WorkArea.Width;
+            Left = 0;
+            Top = 0;
+        }
+
         private void Window_PreviewMouseMove(object sender, MouseEventArgs e) {
             Hide();
+        }
+
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            SetupSize();
         }
     }
 
