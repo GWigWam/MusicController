@@ -9,7 +9,7 @@
         ScrollViewer.VerticalScrollBarVisibility="Disabled"
         WindowStyle="None" WindowStartupLocation="Manual" Left="0" Top="0" ResizeMode="NoResize" ShowInTaskbar="False" IsTabStop="False"
         Opacity="0.5" AllowsTransparency="True" Background="White" Topmost="True" Focusable="False"
-        PreviewMouseMove="Window_PreviewMouseMove" IsVisibleChanged="Window_IsVisibleChanged">
+        PreviewMouseMove="Window_PreviewMouseMove" MouseLeave="Window_MouseLeave" IsVisibleChanged="Window_IsVisibleChanged">
     <Grid>
         <Viewbox>
             <Label Padding="0" x:Name="Lb_Main" Content="{Binding Text}" FontWeight="Bold" FontFamily="Trebuchet MS" FontSize="8" Background="{x:Null}" />

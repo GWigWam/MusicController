@@ -20,6 +20,14 @@ namespace PlayerInterface {
 
         private long HideTimeStamp;
 
+        private bool MouseInFormSinceStartup {
+            get; set;
+        }
+
+        private long FormStartShowTime {
+            get; set;
+        }
+
         public ScreenOverlay(AppSettings settings) {
             InitializeComponent();
             Settings = settings;
@@ -47,6 +55,8 @@ namespace PlayerInterface {
                 }
 
                 HideTimeStamp = Environment.TickCount + autoHideTimeMs;
+                FormStartShowTime = Environment.TickCount;
+                MouseInFormSinceStartup = false;
             });
 
             Task.Delay(autoHideTimeMs + 50).GetAwaiter().OnCompleted(() => {
@@ -63,11 +73,23 @@ namespace PlayerInterface {
         }
 
         private void Window_PreviewMouseMove(object sender, MouseEventArgs e) {
-            Hide();
+            if(!MouseInFormSinceStartup) {
+                if(Environment.TickCount - FormStartShowTime < 50) {
+                    MouseInFormSinceStartup = true;
+                } else {
+                    Hide();
+                }
+            }
         }
 
         private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-            SetupSize();
+            if((bool)e.NewValue == true) { // Visible == true
+                SetupSize();
+            }
+        }
+
+        private void Window_MouseLeave(object sender, MouseEventArgs e) {
+            MouseInFormSinceStartup = false;
         }
     }
 
