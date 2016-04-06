@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayerInterface"
         mc:Ignorable="d"
-        Title="Something went seriously wrong!" Height="300" Width="300">
+        Title="Something went seriously wrong!" Height="500" Width="500" WindowStartupLocation="CenterScreen">
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
-        <TextBox x:Name="Tb_Content" Text="Exceptions..." Padding="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" />
+        <TextBox x:Name="Tb_Content" Text="Exceptions..."
+            Padding="2" ScrollViewer.CanContentScroll="True"
+            HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" />
     </Grid>
 </Window>
