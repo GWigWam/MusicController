@@ -78,15 +78,17 @@ namespace PlayerCore {
         }
 
         public IEnumerable<Song> AddSongs(IEnumerable<Song> songs) {
+            var addedSongs = new List<Song>();
             if(songs.Count() > 0) {
                 foreach(var song in songs) {
                     var added = AddSong(song, false);
                     if(added != null) {
-                        yield return added;
+                        addedSongs.Add(added);
                     }
                 }
                 RaiseListContentChanged();
             }
+            return addedSongs;
         }
 
         public void Clear() {
