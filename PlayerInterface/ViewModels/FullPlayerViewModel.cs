@@ -17,6 +17,7 @@ using System.Windows.Input;
 namespace PlayerInterface.ViewModels {
 
     public class FullPlayerViewModel : SmallPlayerViewModel {
+        private const string SupportedFilePattern = "*.mp3"; /*TODO get from settings*/
         private Timer UpdateTimer;
 
         //Slider should not all the way to end of end of track, track should end 'naturaly'
@@ -173,7 +174,7 @@ namespace PlayerInterface.ViewModels {
                     var addFiles = new List<Song>();
                     foreach(var path in paths) {
                         if(Directory.Exists(path)) {
-                            addFiles.AddRange(SongFileReader.ReadFolderFiles(path, "*.mp3" /*TODO get from settings*/).Select(sf => new Song(sf)));
+                            addFiles.AddRange(SongFileReader.ReadFolderFiles(path, SupportedFilePattern).Select(sf => new Song(sf)));
                         } else if(File.Exists(path)) {
                             addFiles.Add(new Song(SongFileReader.ReadFile(path)));
                         }
@@ -219,6 +220,38 @@ namespace PlayerInterface.ViewModels {
                         if(File.Exists(svm.Path)) {
                             System.Diagnostics.Process.Start("explorer.exe", $"/select, {svm.Path}");
                         }
+                    }
+                },
+                new SongMenuItemViewModel() {
+                    Title = "Add/Remove from startup songs",
+                    Action = svm => {
+                        var found = Settings.StartupFolders.FirstOrDefault(path => svm.Path.StartsWith(path));
+                        if(found != null) { //Was in StartupFolders, remove it
+                            Action<string, string> addAllExcept = null;
+                            addAllExcept = (add, except) => {
+                                if(File.Exists(add)) {
+                                    if(add != except)
+                                        Settings.AddStartupFolder(add);
+                                }else {
+                                    var di = new DirectoryInfo(add);
+                                    foreach(var addFile in di.GetFiles(SupportedFilePattern, SearchOption.TopDirectoryOnly).Where(fi => fi.FullName != svm.Path)) {
+                                        Settings.AddStartupFolder(addFile.FullName);
+                                    }
+                                    foreach(var addFolder in di.GetDirectories("*", SearchOption.TopDirectoryOnly)) {
+                                        if(!except.StartsWith(addFolder.FullName)) {
+                                            Settings.AddStartupFolder(addFolder.FullName);
+                                        }else {
+                                            addAllExcept(addFolder.FullName, except);
+                                        }
+                                    }
+                                }
+                            };
+                            Settings.RemoveStartupFolder(found);
+                            addAllExcept(found, svm.Path);
+                        }else { //Wsa not in StartupFolders, add it
+                            Settings.AddStartupFolder(svm.Path);
+                        }
+                        SettingsViewModel.InitLoadPaths();
                     }
                 }
             };

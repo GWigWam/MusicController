@@ -87,6 +87,7 @@ namespace PlayerInterface.ViewModels {
         public AppSettingsViewModel(AppSettings settings) {
             Settings = settings;
             Settings.Changed += Settings_Changed;
+            LoadPaths = new ObservableCollection<ExplorerItem>();
 
             InitLoadPaths();
 
@@ -106,8 +107,8 @@ namespace PlayerInterface.ViewModels {
             RaisePropertiesChanged(e.ChangedPropertyName);
         }
 
-        private void InitLoadPaths() {
-            LoadPaths = new ObservableCollection<ExplorerItem>();
+        public void InitLoadPaths() {
+            LoadPaths.Clear();
 
             foreach(var drive in DriveInfo.GetDrives().Where(di => di.IsReady)) {
                 var folder = new ExplorerFolder(drive.Name, drive.Name);
