@@ -169,7 +169,7 @@ namespace PlayerInterface.ViewModels {
                 dynamic input = dyn;
                 UIEnabled = false;
                 var paths = input.Paths as string[];
-                Song position = (input.Position as Song) ?? Playlist.Last();
+                Song position = (input.Position as Song) ?? Playlist.LastOrDefault();
                 if(paths != null) {
                     var addFiles = new List<Song>();
                     foreach(var path in paths) {
@@ -179,8 +179,8 @@ namespace PlayerInterface.ViewModels {
                             addFiles.Add(new Song(SongFileReader.ReadFile(path)));
                         }
                     }
-                    Playlist.AddSongs(addFiles);
-                    Playlist.MoveTo(position, addFiles.ToArray());
+                    var added = Playlist.AddSongs(addFiles);
+                    Playlist.MoveTo(position, added.ToArray());
                 }
             }, (t) => {
                 UIEnabled = true;

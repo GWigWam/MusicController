@@ -60,7 +60,7 @@ namespace PlayerCore {
             Songs = new List<Song>();
         }
 
-        public void AddSong(Song song, bool handleInternally = true) {
+        public Song AddSong(Song song, bool handleInternally = true) {
             if(!Songs.Contains(song, CompareSongByPath.Instance)) {
                 Songs.Add(song);
 
@@ -71,13 +71,19 @@ namespace PlayerCore {
                 if(CurrentSongIndex < 0) {
                     CurrentSongIndex = 0;
                 }
+                return song;
+            } else {
+                return null;
             }
         }
 
-        public void AddSongs(IEnumerable<Song> songs) {
+        public IEnumerable<Song> AddSongs(IEnumerable<Song> songs) {
             if(songs.Count() > 0) {
                 foreach(var song in songs) {
-                    AddSong(song, false);
+                    var added = AddSong(song, false);
+                    if(added != null) {
+                        yield return added;
+                    }
                 }
                 RaiseListContentChanged();
             }
@@ -137,7 +143,7 @@ namespace PlayerCore {
         }
 
         public void MoveTo(Song destination, params Song[] source) {
-            var index = Songs.IndexOf(destination);
+            var index = destination == null ? 0 : Songs.IndexOf(destination);
             MoveToIndex(index, source);
         }
 
