@@ -100,7 +100,7 @@ namespace PlayerInterface.ViewModels {
                 });
             Settings.Changed += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
 
-            OpenFileLocationCommand = new RelayCommand((o) => System.Diagnostics.Process.Start("explorer.exe", $"//select, {Settings.FullFilePath}"));
+            OpenFileLocationCommand = new RelayCommand(o => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
         }
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
