@@ -47,13 +47,16 @@ namespace PlayerInterface {
 
         public FullPlayer(FullPlayerViewModel fpvm) {
             InitializeComponent();
-
             DataContext = fpvm;
+
+            Action scrollIntoView = () => Application.Current.Dispatcher.BeginInvoke((Action)(() => ScrollCurrentSongIntoView()));
+
             fpvm.PropertyChanged += (s, p) => {
                 if(p.PropertyName == nameof(FullPlayerViewModel.CurrentFocusItem)) {
-                    Application.Current.Dispatcher.BeginInvoke((Action)(() => ScrollCurrentSongIntoView()));
+                    scrollIntoView();
                 }
             };
+            fpvm.DisplayedSongsChanged += (s, a) => scrollIntoView();
         }
 
         public void MinimizeToTray() {

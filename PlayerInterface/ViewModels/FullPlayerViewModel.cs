@@ -23,6 +23,8 @@ namespace PlayerInterface.ViewModels {
         //Slider should not all the way to end of end of track, track should end 'naturaly'
         private int SliderTrackEndBufferMs = 500;
 
+        public event EventHandler DisplayedSongsChanged;
+
         public string ElapsedStr => FormatHelper.FormatTimeSpan(SongPlayer.Elapsed);
 
         public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
@@ -298,6 +300,8 @@ namespace PlayerInterface.ViewModels {
                     }
                 }
             }
+
+            DisplayedSongsChanged?.Invoke(this, new EventArgs());
         }
 
         private void SongPlayer_SongChanged(object sender, EventArgs e) {
