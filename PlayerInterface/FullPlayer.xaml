@@ -177,13 +177,17 @@
                         <cc:ImageButton.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Reverse" Command="{Binding ReverseSortCommand}" />
+                                <Separator />
+                                <MenuItem Header="Current search" Command="{Binding SortBySearchCommand}" />
                             </ContextMenu>
                         </cc:ImageButton.ContextMenu>
                     </cc:ImageButton>
                     <Viewbox Grid.Column="1" HorizontalAlignment="Left">
                         <Label Content="{Binding PlaylistStats}" />
                     </Viewbox>
-                    <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" TextChanged="Tb_Search_TextChanged" ToolTip="RegEx Search" GotKeyboardFocus="Tb_Search_GotKeyboardFocus" />
+                    <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" ToolTip="RegEx Search"
+                             GotKeyboardFocus="Tb_Search_GotKeyboardFocus" TextChanged="Tb_Search_TextChanged"
+                             Text="{Binding Path=SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </Grid>
             <Grid Visibility="Collapsed" x:Name="Grid_Tab_Settings">

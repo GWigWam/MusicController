@@ -44,6 +44,18 @@ namespace PlayerInterface.ViewModels {
 
         public Visibility ShowDropHint => (Playlist?.Length ?? 0) > 0 ? Visibility.Collapsed : Visibility.Visible;
 
+        private string _searchText;
+
+        public string SearchText {
+            get { return _searchText; }
+            set {
+                if(value != _searchText) {
+                    _searchText = value;
+                    RaisePropertiesChanged(nameof(SearchText));
+                }
+            }
+        }
+
         public ICommand PlaySongCommand {
             get; private set;
         }
@@ -53,6 +65,10 @@ namespace PlayerInterface.ViewModels {
         }
 
         public ICommand SortByCommand {
+            get; private set;
+        }
+
+        public ICommand SortBySearchCommand {
             get; private set;
         }
 
@@ -129,6 +145,7 @@ namespace PlayerInterface.ViewModels {
                 Interval = 1000
             };
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+            SearchText = string.Empty;
             UIEnabled = true;
         }
 
@@ -156,6 +173,21 @@ namespace PlayerInterface.ViewModels {
                     }
                 },
                 (o) => o as PropertyInfo != null && (((PropertyInfo)o).DeclaringType == typeof(Song) || ((PropertyInfo)o).DeclaringType == typeof(SongFile))
+            );
+
+            SortBySearchCommand = new RelayCommand(
+                _ => {
+                    var reg = new Regex(SearchText, RegexOptions.IgnoreCase);
+                    SearchText = string.Empty;
+                    Playlist.Order(s => {
+                        var res = 0;
+                        res += (reg.IsMatch(s.Title ?? string.Empty) ? 3 : 0);
+                        res += (reg.IsMatch(s.Artist ?? string.Empty) ? 2 : 0);
+                        res += (reg.IsMatch(s.Album ?? string.Empty) ? 1 : 0);
+                        return res;
+                    }, true);
+                },
+                _ => !string.IsNullOrEmpty(SearchText)
             );
 
             RemoveSongsCommand = new RelayCommand((o) => {
