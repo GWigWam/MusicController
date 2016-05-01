@@ -44,12 +44,11 @@ namespace PlayerCore {
 
         private void Player_PlayingStopped(object sender, PlayingStoppedEventArgs args) {
             if(args.PlayedToEnd) {
+                var curIndex = TrackList.CurrentSongIndex;
+                TrackList.CurrentSongIndex = TrackList.HasNext ? (curIndex + 1) : (Loop ? (0) : (curIndex));
+                Player.PlayerState = PlayerState.Paused;
                 Task.Delay((int)SongDelayMs).ContinueWith((t) => {
-                    if(TrackList.CurrentSongIndex < TrackList.Length - 1) {
-                        TrackList.CurrentSongIndex++;
-                    } else if(Loop) {
-                        TrackList.CurrentSongIndex = 0;
-                    }
+                    Player.PlayerState = PlayerState.Playing;
                 });
             }
         }
