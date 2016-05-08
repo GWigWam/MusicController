@@ -169,6 +169,15 @@ namespace PlayerInterface {
             }
         }
 
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
+            ICommand command = (e.ChangedButton == MouseButton.XButton1 ? Model?.PreviousCommand : (e.ChangedButton == MouseButton.XButton2 ? Model?.NextCommand : null));
+
+            if(command != null && command.CanExecute(null)) {
+                command.Execute(null);
+                e.Handled = true;
+            }
+        }
+
         private void Lb_Playlist_KeyUp(object sender, KeyEventArgs e) {
             var singleSelected = Lb_Playlist.SelectedItem as SongViewModel;
             var allSelected = Lb_Playlist.SelectedItems.Cast<SongViewModel>();
