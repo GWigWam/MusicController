@@ -51,7 +51,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(value != _searchText) {
                     _searchText = value;
-                    RaisePropertiesChanged(nameof(SearchText));
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -120,7 +120,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(_UIEnabled != value) {
                     _UIEnabled = value;
-                    RaisePropertiesChanged(nameof(UIEnabled));
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -345,7 +345,7 @@ namespace PlayerInterface.ViewModels {
             if(newPlaying != null) {
                 newPlaying.Playing = true;
                 CurrentFocusItem = newPlaying;
-                RaisePropertiesChanged(nameof(CurrentFocusItem));
+                RaisePropertyChanged(nameof(CurrentFocusItem));
             }
 
             RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));

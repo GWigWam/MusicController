@@ -22,7 +22,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(playing != value) {
                     playing = value;
-                    RaisePropertiesChanged(nameof(Playing));
+                    RaisePropertyChanged();
                 }
             }
         }

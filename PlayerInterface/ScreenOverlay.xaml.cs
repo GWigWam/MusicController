@@ -101,7 +101,7 @@ namespace PlayerInterface {
             set {
                 if(value != text) {
                     text = value;
-                    RaisePropertiesChanged(nameof(Text));
+                    RaisePropertyChanged();
                 }
             }
         }

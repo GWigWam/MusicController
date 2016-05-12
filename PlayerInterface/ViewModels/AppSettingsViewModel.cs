@@ -104,7 +104,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
-            RaisePropertiesChanged(e.ChangedPropertyName);
+            RaisePropertyChanged(e.ChangedPropertyName);
         }
 
         public void InitLoadPaths() {

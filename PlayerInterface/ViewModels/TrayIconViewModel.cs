@@ -20,7 +20,7 @@ namespace PlayerInterface.ViewModels {
                 } else if(value != toolTipText) {
                     toolTipText = value;
                 }
-                RaisePropertiesChanged(nameof(ToolTipText));
+                RaisePropertyChanged();
             }
         }
 

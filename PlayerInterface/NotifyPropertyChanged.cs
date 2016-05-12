@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,9 +12,15 @@ namespace PlayerInterface {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
+            if(propertyName != null) {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         protected void RaisePropertiesChanged(params string[] propertyNames) {
             foreach(var propName in propertyNames) {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+                RaisePropertyChanged(propName);
             }
         }
     }

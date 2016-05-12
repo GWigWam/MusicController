@@ -48,7 +48,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(value >= 0 && value <= 1) {
                     Settings.Volume = value;
-                    RaisePropertiesChanged("Volume");
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace PlayerInterface.ViewModels {
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
             if(e.ChangedPropertyName == nameof(Settings.Volume)) {
-                RaisePropertiesChanged(nameof(Volume));
+                RaisePropertyChanged(nameof(Volume));
             }
         }
 
