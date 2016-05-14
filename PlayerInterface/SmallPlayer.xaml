@@ -7,27 +7,36 @@
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         mc:Ignorable="d"
         Title="SmallPlayer" Height="40" Width="250" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize" Background="#FFEEEEF0" IsVisibleChanged="Window_IsVisibleChanged">
-    <Grid Margin="5">
-        <!-- Grid Heigt = 30 & Grid Width = 240 -->
-        <Grid.ColumnDefinitions>
-            <!-- Pause/Play -->
-            <ColumnDefinition Width="1*" />
-            <!-- Prev -->
-            <ColumnDefinition Width="1*" />
-            <!-- Next -->
-            <ColumnDefinition Width="1*" />
-            <!-- Shuffle -->
-            <ColumnDefinition Width="1*" />
-            <!-- Volume -->
-            <ColumnDefinition Width="3*" />
-            <!-- ShowFull -->
-            <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
-        <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
-        <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
-        <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
-        <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
-        <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
-        <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="5" Image="res/img/ShowFull.png" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <local:ProgressControl Grid.Row="0"
+            ProgressFill="{Binding ElapsedColor, Mode=OneWay}"
+            Fraction="{Binding Path=ElapsedFraction, Mode=OneWay}" />
+        <Grid Grid.Row="1" Margin="5,0,5,5">
+            <!-- Grid Heigt = 30 & Grid Width = 240 -->
+            <Grid.ColumnDefinitions>
+                <!-- Pause/Play -->
+                <ColumnDefinition Width="1*" />
+                <!-- Prev -->
+                <ColumnDefinition Width="1*" />
+                <!-- Next -->
+                <ColumnDefinition Width="1*" />
+                <!-- Shuffle -->
+                <ColumnDefinition Width="1*" />
+                <!-- Volume -->
+                <ColumnDefinition Width="3*" />
+                <!-- ShowFull -->
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
+            <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
+            <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
+            <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" />
+            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" />
+            <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="5" Image="res/img/ShowFull.png" />
+        </Grid>
     </Grid>
 </Window>

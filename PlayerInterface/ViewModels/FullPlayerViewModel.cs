@@ -18,29 +18,12 @@ namespace PlayerInterface.ViewModels {
 
     public class FullPlayerViewModel : SmallPlayerViewModel {
         private const string SupportedFilePattern = "*.mp3"; /*TODO get from settings*/
-        private Timer UpdateTimer;
-
-        //Slider should not all the way to end of end of track, track should end 'naturaly'
-        private int SliderTrackEndBufferMs = 500;
 
         public event EventHandler DisplayedSongsChanged;
-
-        public string ElapsedStr => FormatHelper.FormatTimeSpan(SongPlayer.Elapsed);
 
         public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
 
         public string StatusText => $"{SongPlayer?.CurrentSong?.Title} - {SongPlayer?.CurrentSong?.Artist}";
-
-        public double ElapsedFraction {
-            get { return SongPlayer.Elapsed.TotalMilliseconds / (SongPlayer.TrackLength.TotalMilliseconds - SliderTrackEndBufferMs); }
-            set {
-                if(value >= 0 && value <= 1) {
-                    var miliseconds = (SongPlayer.TrackLength.TotalMilliseconds - SliderTrackEndBufferMs) * value;
-                    var newTime = TimeSpan.FromMilliseconds(miliseconds);
-                    SongPlayer.Elapsed = newTime;
-                }
-            }
-        }
 
         public Visibility ShowDropHint => (Playlist?.Length ?? 0) > 0 ? Visibility.Collapsed : Visibility.Visible;
 
@@ -139,12 +122,6 @@ namespace PlayerInterface.ViewModels {
             Playlist.ListContentChanged += PlaylistChanged;
             Playlist.ListOrderChanged += PlaylistChanged;
 
-            UpdateTimer = new Timer() {
-                AutoReset = true,
-                Enabled = true,
-                Interval = 1000
-            };
-            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
             SearchText = string.Empty;
             UIEnabled = true;
         }
@@ -348,11 +325,7 @@ namespace PlayerInterface.ViewModels {
                 RaisePropertyChanged(nameof(CurrentFocusItem));
             }
 
-            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction), nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));
-        }
-
-        private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e) {
-            RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
+            RaisePropertiesChanged(nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));
         }
     }
 }

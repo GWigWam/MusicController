@@ -82,6 +82,9 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="CustomControls\ScrollSlider.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
+    <Compile Include="ProgressControl.xaml.cs">
+      <DependentUpon>ProgressControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScreenOverlay.xaml.cs">
       <DependentUpon>ScreenOverlay.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\ImageButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProgressControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,7 +4,9 @@ using PlayerCore.Songs;
 using PlayerInterface.Commands;
 using System;
 using System.ComponentModel;
+using System.Timers;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace PlayerInterface.ViewModels {
 
@@ -12,6 +14,11 @@ namespace PlayerInterface.ViewModels {
         private const string ImgSourcePlay = "pack://application:,,,/res/img/Play.png";
         private const string ImgSourcePause = "pack://application:,,,/res/img/Pause.png";
         private const int PreviousRestartMinTimeMs = 5000;
+
+        //Slider should not all the way to end of end of track, track should end 'naturaly'
+        private int ElapsedTrackEndBufferMs = 500;
+
+        private Timer UpdateTimer;
 
         protected AppSettings Settings {
             get;
@@ -55,6 +62,22 @@ namespace PlayerInterface.ViewModels {
 
         public bool EnableChangeElapsed => SongPlayer?.CurrentSong != null && SongPlayer?.PlayerState != PlayerState.Stopped;
 
+        public string ElapsedStr => FormatHelper.FormatTimeSpan(SongPlayer.Elapsed);
+
+        public double ElapsedFraction {
+            get { return SongPlayer.Elapsed.TotalMilliseconds / (SongPlayer.TrackLength.TotalMilliseconds - ElapsedTrackEndBufferMs); }
+            set {
+                if(value >= 0 && value <= 1) {
+                    var miliseconds = (SongPlayer.TrackLength.TotalMilliseconds - ElapsedTrackEndBufferMs) * value;
+                    var newTime = TimeSpan.FromMilliseconds(miliseconds);
+                    SongPlayer.Elapsed = newTime;
+                }
+            }
+        }
+
+        public Brush ElapsedColor => SongPlayer?.PlayerState == PlayerState.Playing ? System.Windows.SystemColors.HighlightBrush :
+            (SongPlayer?.PlayerState == PlayerState.Paused ? Brushes.OrangeRed : Brushes.Transparent);
+
         public SmallPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) {
             Settings = settings;
             SongPlayer = player;
@@ -62,9 +85,17 @@ namespace PlayerInterface.ViewModels {
 
             SetupCommands();
 
+            SongPlayer.SongChanged += (s, a) => RaisePropertiesChanged(nameof(ElapsedFraction), nameof(ElapsedStr));
             SongPlayer.PlayingStopped += Player_PlayingStopped;
             SongPlayer.PlaybackStateChanged += PlaybackStateChanged;
             Settings.Changed += Settings_Changed;
+
+            UpdateTimer = new Timer() {
+                AutoReset = true,
+                Enabled = true,
+                Interval = 1000
+            };
+            UpdateTimer.Elapsed += (s, a) => RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
         }
 
         private void SetupCommands() {
@@ -98,7 +129,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e) {
-            RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
+            RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed), nameof(ElapsedColor));
         }
 
         private void Settings_Changed(object sender, SettingChangedEventArgs e) {
