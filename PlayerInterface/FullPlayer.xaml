@@ -254,7 +254,16 @@
                 <StackPanel Orientation="Vertical" Margin="10">
                     <Label Content="About" FontWeight="Bold" FontSize="16" Padding="0" />
                     <TextBlock Text="By: GitHub.com/GWigWam" />
-                    <TextBlock Text="Readme: GitHub.com/GWigWam/SpeechMusicController/blob/master/README.md" TextWrapping="WrapWithOverflow" Margin="0,10,0,0" />
+                    <TextBlock>
+                        <Hyperlink NavigateUri="http://www.GitHub.com/GWigWam/SpeechMusicController" RequestNavigate="Hyperlink_RequestNavigate">
+                            GitHub repository
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock>
+                        <Hyperlink NavigateUri="http://www.GitHub.com/GWigWam/SpeechMusicController/blob/master/README.md" RequestNavigate="Hyperlink_RequestNavigate">
+                            Readme
+                        </Hyperlink>
+                    </TextBlock>
                     <Label Content="Available speech commands:" FontWeight="Bold" FontSize="16" Padding="0" Margin="0,10,0,0" />
                     <ListBox Height="Auto" MinHeight="30" ItemsSource="{Binding AboutSpeechCommands}" ScrollViewer.VerticalScrollBarVisibility="Hidden" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>

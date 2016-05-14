@@ -4,6 +4,7 @@ using PlayerInterface.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -343,6 +344,11 @@ namespace PlayerInterface {
                 svm.CurDisplay = SongViewModel.DisplayType.Front;
                 menuItem.Execute(svm);
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }
