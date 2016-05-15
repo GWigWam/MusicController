@@ -26,8 +26,6 @@ namespace PlayerInterface {
 
         public event EventHandler MinimizedToTray;
 
-        private bool SlidingElapsed = false;
-
         private FullPlayerViewModel Model => DataContext as FullPlayerViewModel;
 
         private ScrollViewer lb_Playlist_ScrollViewer;
@@ -104,26 +102,6 @@ namespace PlayerInterface {
 
         private void Btn_Minimize_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             MinimizeToTray();
-        }
-
-        private void Slr_Elapsed_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
-            if(e.LeftButton == MouseButtonState.Pressed) {
-                if(Model != null) {
-                    if(Model.SongPlayer.PlayerState == PlayerState.Playing) {
-                        Model.SongPlayer.PlayerState = PlayerState.Paused;
-                        SlidingElapsed = true;
-                    }
-                }
-            }
-        }
-
-        private void Slr_Elapsed_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
-            if(SlidingElapsed) {
-                if(Model != null) {
-                    Model.SongPlayer.PlayerState = PlayerState.Playing;
-                    SlidingElapsed = false;
-                }
-            }
         }
 
         private void Lb_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {

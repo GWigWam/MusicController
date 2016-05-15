@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         <local:ProgressControl Grid.Row="0"
             ProgressFill="{Binding ElapsedColor, Mode=OneWay}"
-            Fraction="{Binding Path=ElapsedFraction, Mode=OneWay}" />
+            Fraction="{Binding Path=ElapsedFraction, Mode=TwoWay}" />
         <Grid Grid.Row="1" Margin="5,0,5,5">
             <!-- Grid Heigt = 30 & Grid Width = 240 -->
             <Grid.ColumnDefinitions>

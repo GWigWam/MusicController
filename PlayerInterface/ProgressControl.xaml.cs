@@ -20,6 +20,7 @@ namespace PlayerInterface {
     /// Interaction logic for ProgressControl.xaml
     /// </summary>
     public partial class ProgressControl : UserControl, INotifyPropertyChanged {
+        private const double ScrollChange = 0.05;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,7 +37,6 @@ namespace PlayerInterface {
             set { SetValue(FractionProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Percentage.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FractionProperty =
             DependencyProperty.Register(nameof(Fraction), typeof(double), typeof(ProgressControl), new PropertyMetadata(0.0, new PropertyChangedCallback(OnFractionChanged)));
 
@@ -47,12 +47,38 @@ namespace PlayerInterface {
             }
         }
 
+        public bool Editable {
+            get { return (bool)GetValue(EditableProperty); }
+            set { SetValue(EditableProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Editable.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EditableProperty =
+            DependencyProperty.Register("Editable", typeof(bool), typeof(ProgressControl), new PropertyMetadata(true));
+
         public ProgressControl() {
             InitializeComponent();
         }
 
         private static void OnFractionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
             (sender as ProgressControl)?.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(nameof(ProgressWidth)));
+        }
+
+        private void ProgressControlCanvas_MouseWheel(object sender, MouseWheelEventArgs e) {
+            if(Editable) {
+                var change = ((e.Delta < 0) ? -1 : 1) * ScrollChange;
+                var newVal = Fraction + change;
+
+                Fraction = newVal < 0 ? 0 : (newVal > 1 ? 1 : newVal);
+            }
+        }
+
+        private void MouseHandler(object sender, MouseEventArgs e) {
+            if(e.LeftButton == MouseButtonState.Pressed && Editable) {
+                Point clickPos = e.GetPosition(ProgressControlCanvas);
+                var frac = clickPos.X / ProgressControlCanvas.ActualWidth;
+                Fraction = frac;
+            }
         }
     }
 }

@@ -24,6 +24,13 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="TimestampLabelStyle" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
     </Window.Resources>
     <Grid x:Name="Grid_Main" IsEnabled="{Binding UIEnabled}">
         <Grid.RowDefinitions>
@@ -58,7 +65,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="20" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
@@ -81,16 +88,16 @@
                     <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding ShuffleCommand}" />
                     <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding Volume}" LargeChange="0.1" IsMoveToPointEnabled="True" ToolTip="Volume" />
                 </Grid>
-                <Border Grid.Row="2" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2">
+                <Border Grid.Row="2" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,2,0,0">
                     <Grid x:Name="Grid_Elapsed">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="4*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="Lb_Elapsed" Grid.Column="0" Content="{Binding ElapsedStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                        <cc:ScrollSlider x:Name="Slr_Elapsed" Grid.Column="1" IsEnabled="{Binding EnableChangeElapsed}" VerticalAlignment="Center" Margin="1,0" Maximum="1" TickFrequency="0.1" SmallChange="0.01" TickPlacement="BottomRight" Value="{Binding ElapsedFraction}" LargeChange="0.1" IsMoveToPointEnabled="True" PreviewMouseDown="Slr_Elapsed_PreviewMouseDown" PreviewMouseUp="Slr_Elapsed_PreviewMouseUp" ToolTip="Timestamp" />
-                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Content="{Binding TrackLengthStr}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                        <local:ProgressControl x:Name="Pc_Elapsed" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding EnableChangeElapsed}" ProgressFill="{Binding ElapsedColor, Mode=OneWay}" Fraction="{Binding Path=ElapsedFraction, Mode=TwoWay}" ToolTip="Timestamp" />
+                        <Label x:Name="Lb_Elapsed" Grid.Column="0" Style="{StaticResource TimestampLabelStyle}" Content="{Binding ElapsedStr, FallbackValue=0:00}" />
+                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" />
                     </Grid>
                 </Border>
                 <ListBox x:Name="Lb_Playlist" Grid.Row="3" Margin="2,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SelectionMode="Extended" ScrollViewer.HorizontalScrollBarVisibility="Disabled"

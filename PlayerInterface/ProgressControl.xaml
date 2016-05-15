@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:PlayerInterface"
              mc:Ignorable="d"
              d:DesignHeight="10" d:DesignWidth="300" x:Name="Uc_ProgressControl">
-    <Canvas x:Name="ProgressControlCanvas">
+    <Canvas x:Name="ProgressControlCanvas" Background="Transparent"
+            MouseWheel="ProgressControlCanvas_MouseWheel" MouseMove="MouseHandler" MouseLeftButtonDown="MouseHandler">
         <Rectangle Height="{Binding ActualHeight, ElementName=ProgressControlCanvas}"
                    Width="{Binding ProgressWidth, ElementName=Uc_ProgressControl}"
                    Fill="{Binding ProgressFill, ElementName=Uc_ProgressControl}" />
