@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         mc:Ignorable="d"
-        Title="SmallPlayer" Height="40" Width="250" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize" Background="#FFEEEEF0" IsVisibleChanged="Window_IsVisibleChanged">
+        Title="SpeechMusicController" Height="40" Width="250" WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize" Background="#FFEEEEF0" IsVisibleChanged="Window_IsVisibleChanged">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="5" />
