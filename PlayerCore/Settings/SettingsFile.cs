@@ -64,20 +64,24 @@ namespace PlayerCore.Settings {
             }
         }
 
-        public void WriteToDisc() {
-            if(HasUnsavedChanges) {
-                HasUnsavedChanges = false;
-                //Write to .writing file
-                var writingPath = $"{FullFilePath}.writing";
-                using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
-                    string content = JsonConvert.SerializeObject(this, JSonSettings);
-                    sw.Write(content);
-                }
+        private static object WriteLock = new object();
 
-                //After writing is finished delete old file and remove .writing from the filename
-                if(File.Exists(writingPath)) {
-                    File.Delete(FullFilePath);
-                    File.Move(writingPath, FullFilePath);
+        public void WriteToDisc() {
+            lock(WriteLock) {
+                if(HasUnsavedChanges) {
+                    HasUnsavedChanges = false;
+                    //Write to .writing file
+                    var writingPath = $"{FullFilePath}.writing";
+                    using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
+                        string content = JsonConvert.SerializeObject(this, JSonSettings);
+                        sw.Write(content);
+                    }
+
+                    //After writing is finished delete old file and remove .writing from the filename
+                    if(File.Exists(writingPath)) {
+                        File.Delete(FullFilePath);
+                        File.Move(writingPath, FullFilePath);
+                    }
                 }
             }
         }
