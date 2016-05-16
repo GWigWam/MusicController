@@ -39,7 +39,7 @@ namespace PlayerInterface {
             get; private set;
         }
 
-        protected static App Application {
+        protected static SpeechMusicControllerApp Application {
             get; private set;
         }
 
@@ -74,7 +74,7 @@ namespace PlayerInterface {
             SpeechController = new SpeechController(SongPlayer, Playlist, ApplicationSettings);
             SpeechController.Init();
 
-            Application = new App();
+            Application = new SpeechMusicControllerApp();
             Application.InitializeComponent();
 
             var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource("Tbi_Icon"));

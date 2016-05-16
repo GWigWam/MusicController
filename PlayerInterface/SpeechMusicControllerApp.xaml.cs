@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace PlayerInterface {
 
-    public partial class App : Application {
+    public partial class SpeechMusicControllerApp : Application {
 
         public event EventHandler<ExitEventArgs> Exiting;
 
