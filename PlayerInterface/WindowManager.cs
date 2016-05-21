@@ -31,13 +31,6 @@ namespace PlayerInterface {
 
             SetupContextMenu(songPlayer);
 
-            TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
-            TrayIcon.TrayLeftMouseUp += (s, a) => {
-                if(!(Full?.IsVisible ?? false)) {
-                    ShowSmallWindow();
-                }
-            };
-
             SetupScreenOverlay(settings, speechControl, songPlayer);
         }
 
@@ -68,6 +61,15 @@ namespace PlayerInterface {
             };
 
             TrayIcon.DataContext = tivm;
+
+            TrayIcon.TrayMouseDoubleClick += (s, a) => ShowFullWindow();
+            TrayIcon.TrayLeftMouseUp += (s, a) => {
+                if(!(Full?.IsVisible ?? false)) {
+                    ShowSmallWindow();
+                } else if(Full?.IsVisible ?? false) {
+                    ShowFullWindow();
+                }
+            };
         }
 
         private void SetupScreenOverlay(AppSettings settings, SpeechController speech, SongPlayer player) {
