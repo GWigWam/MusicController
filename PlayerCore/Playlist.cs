@@ -171,10 +171,14 @@ namespace PlayerCore {
         }
 
         public void Remove(Song song, bool handleInternally = true) {
-            var currentSongBeforeRemove = CurrentSong;
+            Song currentSongBeforeRemove = null;
+            if(handleInternally) {
+                currentSongBeforeRemove = CurrentSong;
+            }
+
             Songs.Remove(song);
 
-            if(handleInternally) {
+            if(currentSongBeforeRemove != null) {
                 HandleIndexOnRemove(currentSongBeforeRemove);
                 RaiseListContentChanged();
             }
