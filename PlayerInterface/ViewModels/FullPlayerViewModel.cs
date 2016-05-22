@@ -114,7 +114,7 @@ namespace PlayerInterface.ViewModels {
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
-            PlaylistItems = new ObservableCollection<SongViewModel>(Playlist.Select(s => new SongViewModel(s, this)));
+            FillPlaylist();
 
             SetupAboutSpeechCommands(speechController);
 
@@ -288,6 +288,9 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void FillPlaylist(string filter = null) {
+            if(PlaylistItems == null) {
+                PlaylistItems = new ObservableCollection<SongViewModel>();
+            }
             PlaylistItems.Clear();
 
             Regex query;
