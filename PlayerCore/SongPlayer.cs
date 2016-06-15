@@ -53,7 +53,7 @@ namespace PlayerCore {
                 return StateConverter.Convert(Player?.PlaybackState ?? PlaybackState.Stopped);
             }
             set {
-                if(StateConverter.Convert(Player?.PlaybackState) != value) {
+                if(StateConverter.Convert(Player?.PlaybackState) != value && Player != null) {
                     var oldValue = StateConverter.Convert(Player?.PlaybackState);
                     if(value == PlayerState.Playing) {
                         Player.Play();
@@ -110,19 +110,34 @@ namespace PlayerCore {
 
         public void Stop() {
             CurrentSong = null;
-            if(File != null) {
-                File.Dispose();
-                File = null;
-            }
+
             if(Player != null) {
                 Player.Stop();
-                Player.Dispose();
-                Player = null;
             }
+
+            DisposeInternal(Player, File);
+            Player = null;
+            File = null;
+
             if(PlayerState != PlayerState.Stopped) {
                 PlayerState = PlayerState.Stopped;
             }
             PlayedToEnd = false;
+        }
+
+        private void DisposeInternal(IWavePlayer player, AudioFileReader file) {
+            new TaskFactory().StartNew(() => {
+                if(player != null) {
+                    player.Dispose();
+                }
+
+                if(file != null) {
+                    // Given that the NAudio framework gives no access to inner systems the best way to
+                    // assure the player has been disposed before disposing the file is to wait a while
+                    Task.Delay(1000).Wait();
+                    file.Dispose();
+                }
+            });
         }
 
         private void LoadSong(Song song) {
