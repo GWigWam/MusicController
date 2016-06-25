@@ -158,11 +158,11 @@ namespace PlayerInterface.ViewModels {
                     SearchText = string.Empty;
                     Playlist.Order(s => {
                         var res = 0;
-                        res += (reg.IsMatch(s.Title ?? string.Empty) ? 3 : 0);
-                        res += (reg.IsMatch(s.Artist ?? string.Empty) ? 2 : 0);
-                        res += (reg.IsMatch(s.Album ?? string.Empty) ? 1 : 0);
+                        res += (reg.IsMatch(s.Title ?? string.Empty) ? 0 : 3);
+                        res += (reg.IsMatch(s.Artist ?? string.Empty) ? 0 : 2);
+                        res += (reg.IsMatch(s.Album ?? string.Empty) ? 0 : 1);
                         return res;
-                    }, true);
+                    });
                 },
                 _ => !string.IsNullOrEmpty(SearchText)
             );
@@ -190,7 +190,7 @@ namespace PlayerInterface.ViewModels {
                             addFiles.Add(new Song(SongFileReader.ReadFile(path)));
                         }
                     }
-                    var added = Playlist.AddSongs(addFiles);
+                    var added = Playlist.AddSong(addFiles);
                     Playlist.MoveTo(position, added.ToArray());
                 }
             }, (t) => {

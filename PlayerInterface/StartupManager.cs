@@ -107,9 +107,9 @@ namespace PlayerInterface {
 
             if(songfiles.Count > 0) {
                 var songsToAdd = songfiles.Select(sf => new Song(sf));
-                Playlist.AddSongs(songsToAdd);
+                var added = Playlist.AddSong(songsToAdd);
                 if(SongPlayer.PlayerState != PlayerState.Playing) {
-                    Playlist.SelectFirstMatch(songsToAdd.First());
+                    Playlist.SelectFirstMatch(added.First());
                     SongPlayer.PlayerState = PlayerState.Playing;
                 }
             }
@@ -139,7 +139,11 @@ namespace PlayerInterface {
                     startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path, "*.mp3"));
                 }
             }
-            Playlist.AddSongs(startupSongFiles.Where(sf => sf != null).Select(sf => new Song(sf)));
+            Playlist.AddSong(
+                startupSongFiles
+                .Where(sf => sf != null)
+                .Select(sf => new Song(sf))
+            );
 
             if(ApplicationSettings.ShuffleOnStartup) {
                 Playlist.Shuffle();

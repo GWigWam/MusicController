@@ -56,75 +56,35 @@ namespace PlayerCore {
 
         public Playlist() {
             random = new Random();
-
             Songs = new List<Song>();
         }
 
-        public Song AddSong(Song song, bool handleInternally = true) {
-            if(!Songs.Contains(song, CompareSongByPath.Instance)) {
-                Songs.Add(song);
+        public IEnumerable<Song> AddSong(IEnumerable<Song> songs) => AddSong(songs.ToArray());
 
-                if(handleInternally) {
-                    RaiseListContentChanged();
-                }
-
-                if(CurrentSongIndex < 0) {
-                    CurrentSongIndex = 0;
-                }
-                return song;
-            } else {
-                return null;
-            }
-        }
-
-        public IEnumerable<Song> AddSongs(IEnumerable<Song> songs) {
+        public IEnumerable<Song> AddSong(params Song[] songs) {
             var addedSongs = new List<Song>();
-            if(songs.Count() > 0) {
-                foreach(var song in songs) {
-                    var added = AddSong(song, false);
-                    if(added != null) {
-                        addedSongs.Add(added);
-                    }
+            ChangeList(false, true, () => {
+                foreach(var song in songs.Except(Songs, CompareSongByPath.Instance)) {
+                    Songs.Add(song);
+                    addedSongs.Add(song);
                 }
-                RaiseListContentChanged();
-            }
+            });
             return addedSongs;
         }
 
-        public void Clear() {
-            Songs.Clear();
-            currentSongIndex = -1;
-            RaiseListContentChanged();
-            RaiseCurrentSongChanged();
+        public void Clear() => ChangeList(true, true, Songs.Clear);
+
+        public void Shuffle() => Order(s => random.NextDouble());
+
+        public void Order<TKey>(Func<Song, TKey> orderBy) {
+            ChangeList(true, false, () => {
+                Songs = Songs.OrderBy(orderBy).ToList();
+            });
         }
 
-        public void Shuffle() {
-            if(Songs.Count > 0) {
-                Songs = Songs.OrderBy(s => random.NextDouble()).ToList();
-                RaiseListOrderChanged();
-            }
-        }
+        public void Reverse() => ChangeList(true, false, Songs.Reverse);
 
-        public void Order<TKey>(Func<Song, TKey> by, bool reverse = false) {
-            if(Length > 0) {
-                if(reverse) {
-                    Songs = Songs.OrderBy(by).Reverse().ToList();
-                } else {
-                    Songs = Songs.OrderBy(by).ToList();
-                }
-
-                RaiseListOrderChanged();
-            }
-        }
-
-        public void Reverse() {
-            Songs.Reverse();
-            RaiseListOrderChanged();
-        }
-
-        public void SelectFirstMatch(Song song) {
-            SelectFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
-        }
+        public void SelectFirstMatch(Song song) => SelectFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
 
         public void SelectFirstMatch(Predicate<Song> filter) {
             var index = Songs.FindIndex(filter);
@@ -150,49 +110,51 @@ namespace PlayerCore {
         }
 
         public void MoveToIndex(int index, params Song[] source) {
-            var curSong = CurrentSong;
-
-            var before = Songs.Take(index + 1).Except(source);
-            var after = Songs.Skip(index + 1).Except(source);
-            Songs = new List<Song>(before.Concat(source).Concat(after));
-
-            currentSongIndex = Songs.IndexOf(curSong);
-            RaiseListOrderChanged();
+            ChangeList(true, false, () => {
+                var before = Songs.Take(index + 1).Except(source);
+                var after = Songs.Skip(index + 1).Except(source);
+                Songs = new List<Song>(before.Concat(source).Concat(after));
+            });
         }
 
         public void Remove(IEnumerable<Song> songs) {
-            var currentSongBeforeRemove = CurrentSong;
-            foreach(var song in songs) {
-                Remove(song, false);
-            }
-
-            HandleIndexOnRemove(currentSongBeforeRemove);
-            RaiseListContentChanged();
+            ChangeList(false, true, () => {
+                foreach(var song in songs) {
+                    Remove(song, false);
+                }
+            });
         }
 
         public void Remove(Song song, bool handleInternally = true) {
-            Song currentSongBeforeRemove = null;
             if(handleInternally) {
-                currentSongBeforeRemove = CurrentSong;
-            }
-
-            Songs.Remove(song);
-
-            if(currentSongBeforeRemove != null) {
-                HandleIndexOnRemove(currentSongBeforeRemove);
-                RaiseListContentChanged();
+                ChangeList(false, true, () => {
+                    Songs.Remove(song);
+                });
+            } else {
+                Songs.Remove(song);
             }
         }
 
-        private void HandleIndexOnRemove(Song prefCurrentSong) {
-            var foundIndex = Songs.FindIndex((s) => s == prefCurrentSong);
-            if(foundIndex >= 0) { //Songs stays the same
+        private void ChangeList(bool orderChanging, bool contentChanging, Action change) {
+            var orgIndex = CurrentSongIndex;
+            var orgLenght = Length;
+            var orgSong = CurrentSong;
+            change();
+
+            var foundIndex = orgSong != null ? Songs.FindIndex((s) => s == orgSong) : -1;
+            if(foundIndex > -1) {
                 currentSongIndex = foundIndex;
-            } else if(Length > 0) { //Set song to first in list
-                currentSongIndex = 0;
-                RaiseCurrentSongChanged();
-            } else { //No songs to play
-                CurrentSongIndex = -1;
+            } else {
+                var newIndex = (orgIndex - (orgLenght - Length)) + 1;
+                newIndex = newIndex < Length ? newIndex : (Length > 0 ? Length - 1 : -1);
+                SetIndexForceUpdate(newIndex);
+            }
+
+            if(orderChanging) {
+                RaiseListOrderChanged();
+            }
+            if(contentChanging) {
+                RaiseListContentChanged();
             }
         }
 
