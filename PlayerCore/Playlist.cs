@@ -74,7 +74,12 @@ namespace PlayerCore {
 
         public void Clear() => ChangeList(true, true, Songs.Clear);
 
-        public void Shuffle() => Order(s => random.NextDouble());
+        public void Shuffle() {
+            Order(s => random.NextDouble());
+            if(Length > 0) {
+                SetIndexForceUpdate(0);
+            }
+        }
 
         public void Order<TKey>(Func<Song, TKey> orderBy) {
             ChangeList(true, false, () => {
