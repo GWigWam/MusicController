@@ -11,10 +11,14 @@ using System.Timers;
 namespace PlayerCore {
 
     public class SongPlayer : IDisposable {
+        public static string[] SupportedExtensions { get; }
+
         private Song currentSong;
-        private AudioFileReader File;
         private IWavePlayer Player;
         private bool PlayedToEnd;
+
+        private WaveStream File;
+        private AudioFileReader AudioFileReader => File as AudioFileReader;
 
         public Song CurrentSong {
             get { return currentSong; }
@@ -85,6 +89,22 @@ namespace PlayerCore {
             }
         }
 
+        private bool legacyVolumeMode = false;
+
+        protected bool LegacyVolumeMode {
+            get { return legacyVolumeMode; }
+            set {
+                if(value != legacyVolumeMode) {
+                    if(AudioFileReader != null) {
+                        AudioFileReader.Volume = value ? 1 : Volume;
+                    }
+                    if(Player != null) {
+                        Player.Volume = value ? Volume : 1;
+                    }
+                }
+            }
+        }
+
         private float volume;
 
         public float Volume {
@@ -92,8 +112,12 @@ namespace PlayerCore {
             set {
                 if(volume != value && value >= 0 && value <= 1) {
                     volume = value;
-                    if(File != null)
-                        File.Volume = value;
+
+                    if(!LegacyVolumeMode && AudioFileReader != null) {
+                        AudioFileReader.Volume = value;
+                    } else if(Player != null) {
+                        Player.Volume = value;
+                    }
                 }
             }
         }
@@ -106,6 +130,12 @@ namespace PlayerCore {
 
         public SongPlayer(float volume = 1) {
             Volume = volume;
+        }
+
+        static SongPlayer() {
+            SupportedExtensions = new string[] {
+                ".mp3", ".flac"
+            };
         }
 
         public void Stop() {
@@ -125,7 +155,7 @@ namespace PlayerCore {
             PlayedToEnd = false;
         }
 
-        private void DisposeInternal(IWavePlayer player, AudioFileReader file) {
+        private void DisposeInternal(IWavePlayer player, WaveStream file) {
             new TaskFactory().StartNew(() => {
                 if(player != null) {
                     player.Dispose();
@@ -155,7 +185,13 @@ namespace PlayerCore {
                         File = null;
                     }
 
-                    File = new AudioFileReader(song.FilePath) { Volume = Volume };
+                    if(song.FilePath.EndsWith("flac", StringComparison.CurrentCultureIgnoreCase)) {
+                        File = new NAudio.Flac.FlacReader(song.FilePath);
+                        LegacyVolumeMode = true;
+                    } else {
+                        File = new AudioFileReader(song.FilePath) { Volume = Volume };
+                        LegacyVolumeMode = false;
+                    }
 
                     // 'WaveOutEvent' should be less bound to UI than 'WaveOut', they are interchangable (both IWavePlayer)
                     // High latency makes player unresponsive when changing 'Elapsed' time, and 'Elapsed' property is less accurate

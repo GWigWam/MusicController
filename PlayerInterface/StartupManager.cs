@@ -136,7 +136,7 @@ namespace PlayerInterface {
                 if(File.Exists(path)) {
                     startupSongFiles.Add(SongFileReader.ReadFile(path));
                 } else if(Directory.Exists(path)) {
-                    startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path, "*.mp3"));
+                    startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path));
                 }
             }
             Playlist.AddSong(

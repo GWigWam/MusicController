@@ -13,14 +13,14 @@ namespace PlayerCore.Songs {
         private static readonly Regex SongNameInfo = new Regex(@"^\s*(?<artist>.+?) - (?<title>.+?)(?<extension>\.[a-z]\S*)$");
         private static readonly Regex Parenthesis = new Regex(@"\(|\)");
 
-        public static SongFile[] ReadFolderFiles(string path, string filter) {
-            return YieldReadFolderFiles(path, filter).ToArray();
+        public static SongFile[] ReadFolderFiles(string path) {
+            return YieldReadFolderFiles(path).ToArray();
         }
 
-        private static IEnumerable<SongFile> YieldReadFolderFiles(string path, string filter) {
+        private static IEnumerable<SongFile> YieldReadFolderFiles(string path) {
             var dir = new DirectoryInfo(path);
             if(dir.Exists) {
-                foreach(FileInfo f in dir.GetFiles(filter, SearchOption.AllDirectories)) {
+                foreach(FileInfo f in dir.GetFiles("*", SearchOption.AllDirectories)) {
                     var read = ReadFile(f);
                     if(read != null) {
                         yield return read;
@@ -34,6 +34,10 @@ namespace PlayerCore.Songs {
         }
 
         public static SongFile ReadFile(FileInfo file) {
+            if(!SongPlayer.SupportedExtensions.Contains(file.Extension)) {
+                return null;
+            }
+
             TagLib.File fileInfo = null;
             try {
                 fileInfo = TagLib.File.Create(file.FullName);

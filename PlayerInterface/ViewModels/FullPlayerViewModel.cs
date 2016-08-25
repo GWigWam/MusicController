@@ -17,7 +17,6 @@ using System.Windows.Input;
 namespace PlayerInterface.ViewModels {
 
     public class FullPlayerViewModel : SmallPlayerViewModel {
-        private const string SupportedFilePattern = "*.mp3"; /*TODO get from settings*/
 
         public event EventHandler DisplayedSongsChanged;
 
@@ -185,7 +184,7 @@ namespace PlayerInterface.ViewModels {
                     var addFiles = new List<Song>();
                     foreach(var path in paths) {
                         if(Directory.Exists(path)) {
-                            addFiles.AddRange(SongFileReader.ReadFolderFiles(path, SupportedFilePattern).Select(sf => new Song(sf)));
+                            addFiles.AddRange(SongFileReader.ReadFolderFiles(path).Select(sf => new Song(sf)));
                         } else if(File.Exists(path)) {
                             addFiles.Add(new Song(SongFileReader.ReadFile(path)));
                         }
@@ -245,7 +244,7 @@ namespace PlayerInterface.ViewModels {
                                         Settings.AddStartupFolder(add);
                                 }else {
                                     var di = new DirectoryInfo(add);
-                                    foreach(var addFile in di.GetFiles(SupportedFilePattern, SearchOption.TopDirectoryOnly).Where(fi => fi.FullName != svm.Path)) {
+                                    foreach(var addFile in di.GetFiles("*", SearchOption.TopDirectoryOnly).Where(fi => fi.FullName != svm.Path)) {
                                         Settings.AddStartupFolder(addFile.FullName);
                                     }
                                     foreach(var addFolder in di.GetDirectories("*", SearchOption.TopDirectoryOnly)) {
