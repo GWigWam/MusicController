@@ -186,7 +186,10 @@ namespace PlayerInterface.ViewModels {
                         if(Directory.Exists(path)) {
                             addFiles.AddRange(SongFileReader.ReadFolderFiles(path).Select(sf => new Song(sf)));
                         } else if(File.Exists(path)) {
-                            addFiles.Add(new Song(SongFileReader.ReadFile(path)));
+                            var sf = SongFileReader.ReadFile(path);
+                            if(sf != null) {
+                                addFiles.Add(new Song(sf));
+                            }
                         }
                     }
                     var added = Playlist.AddSong(addFiles);
