@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PlayerInterface {
 
@@ -66,7 +67,7 @@ namespace PlayerInterface {
             TransitionMgr = new TransitionManager(SongPlayer, Playlist, ApplicationSettings);
 
             if(eventArgs.CommandLine.Count > 0) {
-                ArgsPassed(eventArgs.CommandLine.ToArray());
+                ArgsPassed(eventArgs.CommandLine.ToArray()).Wait();
             } else {
                 LoadStartupSongFiles();
             }
@@ -89,25 +90,16 @@ namespace PlayerInterface {
             return false;
         }
 
-        protected override void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs) {
-            ArgsPassed(eventArgs.CommandLine.ToArray());
+        protected override async void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs) {
+            await ArgsPassed(eventArgs.CommandLine.ToArray());
             base.OnStartupNextInstance(eventArgs);
         }
 
-        protected void ArgsPassed(string[] args) {
-            var songfiles = new List<SongFile>();
-            foreach(var arg in args) {
-                if(File.Exists(arg)) {
-                    var read = SongFileReader.ReadFile(arg);
-                    if(read != null) {
-                        songfiles.Add(read);
-                    }
-                }
-            }
+        protected async Task ArgsPassed(string[] args) {
+            var songs = await SongFileReader.ReadFilePathsAsync(args);
 
-            if(songfiles.Count > 0) {
-                var songsToAdd = songfiles.Select(sf => new Song(sf));
-                var added = Playlist.AddSong(songsToAdd);
+            if(songs.Length > 0) {
+                var added = Playlist.AddSong(songs);
                 if(SongPlayer.PlayerState != PlayerState.Playing) {
                     Playlist.SelectFirstMatch(added.First());
                     SongPlayer.PlayerState = PlayerState.Playing;
@@ -131,19 +123,8 @@ namespace PlayerInterface {
         }
 
         private void LoadStartupSongFiles() {
-            var startupSongFiles = new List<SongFile>();
-            foreach(var path in ApplicationSettings.StartupFolders) {
-                if(File.Exists(path)) {
-                    startupSongFiles.Add(SongFileReader.ReadFile(path));
-                } else if(Directory.Exists(path)) {
-                    startupSongFiles.AddRange(SongFileReader.ReadFolderFiles(path));
-                }
-            }
-            Playlist.AddSong(
-                startupSongFiles
-                .Where(sf => sf != null)
-                .Select(sf => new Song(sf))
-            );
+            var startupSongFiles = SongFileReader.ReadFilePaths(ApplicationSettings.StartupFolders.ToArray());
+            Playlist.AddSong(startupSongFiles);
 
             if(ApplicationSettings.ShuffleOnStartup) {
                 Playlist.Shuffle();

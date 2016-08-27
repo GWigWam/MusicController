@@ -13,11 +13,30 @@ namespace PlayerCore.Songs {
         private static readonly Regex SongNameInfo = new Regex(@"^\s*(?<artist>.+?) - (?<title>.+?)(?<extension>\.[a-z]\S*)$");
         private static readonly Regex Parenthesis = new Regex(@"\(|\)");
 
-        public static SongFile[] ReadFolderFiles(string path) {
-            return YieldReadFolderFiles(path).ToArray();
+        public static Song[] ReadFilePaths(params string[] paths) {
+            var files = new List<SongFile>();
+
+            foreach(var path in paths) {
+                if(System.IO.File.Exists(path)) {
+                    var read = ReadFile(path);
+                    if(read != null) {
+                        files.Add(read);
+                    }
+                } else if(Directory.Exists(path)) {
+                    files.AddRange(ReadFolderFiles(path));
+                }
+            }
+
+            return files.Select(sf => new Song(sf)).ToArray();
         }
 
-        private static IEnumerable<SongFile> YieldReadFolderFiles(string path) {
+        public static async Task<Song[]> ReadFilePathsAsync(params string[] paths) {
+            return await Task.Run(() => {
+                return ReadFilePaths(paths);
+            }).ConfigureAwait(false);
+        }
+
+        private static IEnumerable<SongFile> ReadFolderFiles(string path) {
             var dir = new DirectoryInfo(path);
             if(dir.Exists) {
                 foreach(FileInfo f in dir.GetFiles("*", SearchOption.AllDirectories)) {
@@ -29,11 +48,11 @@ namespace PlayerCore.Songs {
             }
         }
 
-        public static SongFile ReadFile(string filePath) {
+        private static SongFile ReadFile(string filePath) {
             return ReadFile(new FileInfo(filePath));
         }
 
-        public static SongFile ReadFile(FileInfo file) {
+        private static SongFile ReadFile(FileInfo file) {
             if(!SongPlayer.SupportedExtensions.Contains(file.Extension)) {
                 return null;
             }

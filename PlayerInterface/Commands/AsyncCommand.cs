@@ -9,31 +9,43 @@ using System.Windows.Input;
 namespace PlayerInterface.Commands {
 
     public class AsyncCommand : ICommand {
-        private Action<object> CommandExecute;
+        private Func<object, Task> CommandExecute;
         private Predicate<object> CommandCanExecute;
         private Action<Task> ContinueWith;
 
+        public bool IsExecuting { get; protected set; } = false;
+
         public event EventHandler CanExecuteChanged;
 
-        public bool CanExecute(object parameter) => CommandCanExecute?.Invoke(parameter) ?? false;
+        public bool CanExecute(object parameter) => (!IsExecuting) && (CommandCanExecute?.Invoke(parameter) ?? false);
 
         public void Execute(object parameter) {
-            var task = new Task(CommandExecute, parameter);
-            if(ContinueWith != null) {
-                task.ContinueWith((t) => {
-                    ContinueWith(t);
-                    RaiseCanExecuteChanged();
-                });
+            IsExecuting = true;
+            RaiseCanExecuteChanged();
+            var task = CommandExecute(parameter);
+            if(task.Status == TaskStatus.Created) {
+                task.Start();
             }
-            task.Start();
+            if(ContinueWith != null) {
+                if(task.Status != TaskStatus.Canceled && task.Status != TaskStatus.Faulted && task.Status != TaskStatus.RanToCompletion) {
+                    task.ContinueWith((t) => {
+                        ContinueWith(t);
+                        IsExecuting = false;
+                        RaiseCanExecuteChanged();
+                    });
+                } else {
+                    IsExecuting = false;
+                    ContinueWith(task);
+                }
+            }
             RaiseCanExecuteChanged();
         }
 
-        public AsyncCommand(Action<object> execute, Action<Task> continueWith = null)
+        public AsyncCommand(Func<object, Task> execute, Action<Task> continueWith = null)
             : this(execute, DefaultCanExecute, continueWith) {
         }
 
-        public AsyncCommand(Action<object> execute, Predicate<object> canExecute, Action<Task> continueWith = null) {
+        public AsyncCommand(Func<object, Task> execute, Predicate<object> canExecute, Action<Task> continueWith = null) {
             if(execute == null) {
                 throw new ArgumentNullException("execute");
             }

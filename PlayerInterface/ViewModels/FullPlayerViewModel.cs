@@ -175,23 +175,13 @@ namespace PlayerInterface.ViewModels {
 
             SearchCommand = new RelayCommand((o) => FillPlaylist(o as string));
 
-            AddFilesCommand = new AsyncCommand((dyn) => {
+            AddFilesCommand = new AsyncCommand(async (dyn) => {
                 dynamic input = dyn;
                 UIEnabled = false;
                 var paths = input.Paths as string[];
                 Song position = (input.Position as Song) ?? Playlist.LastOrDefault();
                 if(paths != null) {
-                    var addFiles = new List<Song>();
-                    foreach(var path in paths) {
-                        if(Directory.Exists(path)) {
-                            addFiles.AddRange(SongFileReader.ReadFolderFiles(path).Select(sf => new Song(sf)));
-                        } else if(File.Exists(path)) {
-                            var sf = SongFileReader.ReadFile(path);
-                            if(sf != null) {
-                                addFiles.Add(new Song(sf));
-                            }
-                        }
-                    }
+                    var addFiles = await SongFileReader.ReadFilePathsAsync(paths);
                     var added = Playlist.AddSong(addFiles);
                     Playlist.MoveTo(position, added.ToArray());
                 }
