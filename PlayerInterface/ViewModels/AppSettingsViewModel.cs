@@ -92,7 +92,7 @@ namespace PlayerInterface.ViewModels {
             InitLoadPaths();
 
             SaveToDiskCommand = new AsyncCommand(
-                async (o) => await new System.Threading.Tasks.TaskFactory().StartNew(Settings.WriteToDisc),
+                (o) => Settings.WriteToDisc(),
                 (o) => Settings.HasUnsavedChanges,
                 (t) => {
                     if(t.IsFaulted)

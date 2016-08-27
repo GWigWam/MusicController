@@ -26,23 +26,29 @@ namespace PlayerInterface.Commands {
             if(task.Status == TaskStatus.Created) {
                 task.Start();
             }
-            if(ContinueWith != null) {
-                if(task.Status != TaskStatus.Canceled && task.Status != TaskStatus.Faulted && task.Status != TaskStatus.RanToCompletion) {
-                    task.ContinueWith((t) => {
-                        ContinueWith(t);
-                        IsExecuting = false;
-                        RaiseCanExecuteChanged();
-                    });
-                } else {
+            if(task.Status != TaskStatus.Canceled && task.Status != TaskStatus.Faulted && task.Status != TaskStatus.RanToCompletion) {
+                task.ContinueWith((t) => {
+                    ContinueWith(t);
                     IsExecuting = false;
-                    ContinueWith(task);
-                }
+                    RaiseCanExecuteChanged();
+                });
+            } else {
+                IsExecuting = false;
+                ContinueWith(task);
             }
             RaiseCanExecuteChanged();
         }
 
+        public AsyncCommand(Action<object> execute, Action<Task> continueWith = null)
+            : this(async o => await new TaskFactory().StartNew(() => execute(o)), continueWith) {
+        }
+
         public AsyncCommand(Func<object, Task> execute, Action<Task> continueWith = null)
             : this(execute, DefaultCanExecute, continueWith) {
+        }
+
+        public AsyncCommand(Action<object> execute, Predicate<object> canExecute, Action<Task> continueWith = null)
+            : this(async o => await new TaskFactory().StartNew(() => execute(o)), canExecute, continueWith) {
         }
 
         public AsyncCommand(Func<object, Task> execute, Predicate<object> canExecute, Action<Task> continueWith = null) {
@@ -52,6 +58,10 @@ namespace PlayerInterface.Commands {
 
             if(canExecute == null) {
                 throw new ArgumentNullException("canExecute");
+            }
+
+            if(continueWith == null) {
+                continueWith = DefaultContinueWith;
             }
 
             CommandExecute = execute;
@@ -67,6 +77,9 @@ namespace PlayerInterface.Commands {
 
         private static bool DefaultCanExecute(object parameter) {
             return true;
+        }
+
+        private static void DefaultContinueWith(Task t) {
         }
     }
 }

@@ -126,16 +126,19 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void SetupCommands() {
-            PlaySongCommand = new RelayCommand((s) => {
-                if(s as Song != null) {
-                    Playlist.SelectFirstMatch((Song)s);
-                    if(SongPlayer.PlayerState != PlayerState.Playing) {
-                        SongPlayer.PlayerState = PlayerState.Playing;
+            PlaySongCommand = new AsyncCommand(
+                execute: (s) => {
+                    UIEnabled = false;
+                    if(s as Song != null) {
+                        Playlist.SelectFirstMatch((Song)s);
+                        if(SongPlayer.PlayerState != PlayerState.Playing) {
+                            SongPlayer.PlayerState = PlayerState.Playing;
+                        }
                     }
-                }
-            }, (s) => {
-                return SongPlayer != null && s as Song != null;
-            });
+                },
+                continueWith: t => UIEnabled = true,
+                canExecute: (s) => SongPlayer != null && s as Song != null
+            );
 
             ReverseSortCommand = new RelayCommand((o) => Playlist.Reverse(), (o) => Playlist != null);
 
