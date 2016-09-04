@@ -32,7 +32,7 @@
             <Setter Property="Padding" Value="0" />
         </Style>
     </Window.Resources>
-    <Grid x:Name="Grid_Main" IsEnabled="{Binding UIEnabled}">
+    <Grid x:Name="Grid_Main">
         <Grid.RowDefinitions>
             <RowDefinition Height="34" />
             <RowDefinition Height="*" />
@@ -60,7 +60,7 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" IsEnabled="{Binding UIEnabled}">
             <Grid Visibility="Visible" x:Name="Grid_Tab_Main">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
