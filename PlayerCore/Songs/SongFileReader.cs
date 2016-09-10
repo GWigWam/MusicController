@@ -27,7 +27,12 @@ namespace PlayerCore.Songs {
                 }
             }
 
-            return files.Select(sf => new Song(sf)).ToArray();
+            return files
+                .OrderBy(s => s.Artist)
+                .ThenBy(s => s.Album)
+                .ThenBy(s => s.Track)
+                .Select(sf => new Song(sf))
+                .ToArray();
         }
 
         public static async Task<Song[]> ReadFilePathsAsync(params string[] paths) {
