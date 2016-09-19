@@ -20,7 +20,7 @@ namespace PlayerInterface.ViewModels {
 
         private Timer UpdateTimer;
 
-        protected AppSettings Settings {
+        public AppSettings Settings {
             get;
         }
 

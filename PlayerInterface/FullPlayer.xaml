@@ -9,7 +9,7 @@
         xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
         xmlns:vme="clr-namespace:PlayerInterface.ViewModels.FolderExplore"
         mc:Ignorable="d"
-        Title="SpeechMusicController" Height="390" MinHeight="230" Width="300" MinWidth="190" WindowStyle="None"
+        Title="SpeechMusicController" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
         PreviewKeyDown="Window_PreviewKeyDown" IsVisibleChanged="Window_IsVisibleChanged" MouseDown="Window_MouseDown"
         AllowsTransparency="True" ResizeMode="CanResizeWithGrip">
     <Window.Resources>

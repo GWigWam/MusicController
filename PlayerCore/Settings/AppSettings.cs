@@ -99,6 +99,32 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private int windowHeight = 390;
+
+        [JsonProperty]
+        public int WindowHeight {
+            get { return windowHeight; }
+            set {
+                if(value != windowHeight) {
+                    windowHeight = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(WindowHeight)));
+                }
+            }
+        }
+
+        private int windowWidth = 300;
+
+        [JsonProperty]
+        public int WindowWidth {
+            get { return windowWidth; }
+            set {
+                if(value != windowWidth) {
+                    windowWidth = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(WindowWidth)));
+                }
+            }
+        }
+
         [JsonProperty]
         private HashSet<string> startupFolders {
             get; set;
