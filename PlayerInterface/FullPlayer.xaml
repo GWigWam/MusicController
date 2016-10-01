@@ -8,6 +8,7 @@
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         xmlns:vm="clr-namespace:PlayerInterface.ViewModels"
         xmlns:vme="clr-namespace:PlayerInterface.ViewModels.FolderExplore"
+        xmlns:cnv="clr-namespace:PlayerInterface.ValueConverters"
         mc:Ignorable="d"
         Title="SpeechMusicController" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
         PreviewKeyDown="Window_PreviewKeyDown" IsVisibleChanged="Window_IsVisibleChanged" MouseDown="Window_MouseDown"
@@ -71,9 +72,27 @@
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <Border Grid.Row="0" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,0,0,2">
-                    <Viewbox>
-                        <Label Padding="2" Content="{Binding StatusText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                    </Viewbox>
+                    <Grid x:Name="Grid_StatusText">
+                        <Grid.Resources>
+                            <cnv:NegativeValueConverter x:Key="Conv_Negative" />
+                            <Storyboard x:Key="Sb_StatusText" RepeatBehavior="Forever">
+                                <DoubleAnimation
+                                    From="{Binding ElementName=Lb_StatusText, Path=ActualWidth, Converter={StaticResource Conv_Negative}, ConverterParameter='-'}"
+                                    To="{Binding ElementName=Grid_StatusText, Path=ActualWidth}"
+                                    Duration="0:0:7"
+                                    Storyboard.TargetName="translateStatusText"
+                                    Storyboard.TargetProperty="X" />
+                            </Storyboard>
+                        </Grid.Resources>
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="translateStatusText" />
+                        </Grid.RenderTransform>
+                        <Canvas x:Name="Cv_StatusText">
+                            <Label x:Name="Lb_StatusText" Content="{Binding StatusText, FallbackValue=StatusText}"
+                                FontSize="17" Padding="0" Height="{Binding ElementName=Cv_StatusText, Path=ActualHeight}"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="Auto" />
+                        </Canvas>
+                    </Grid>
                 </Border>
                 <Grid x:Name="Grid_BasicControl" Grid.Row="1" Margin="0,0,3,0">
                     <Grid.ColumnDefinitions>

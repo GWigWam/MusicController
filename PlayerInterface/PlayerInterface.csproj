@@ -92,6 +92,7 @@
       <DependentUpon>SmallPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartupManager.cs" />
+    <Compile Include="ValueConverters\NegativeValueConverter.cs" />
     <Compile Include="ViewModels\AppSettingsViewModel.cs" />
     <Compile Include="ViewModels\FolderExplore\ExplorerFile.cs" />
     <Compile Include="ViewModels\FolderExplore\ExplorerFolder.cs" />

@@ -14,6 +14,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -53,9 +54,13 @@ namespace PlayerInterface {
             fpvm.PropertyChanged += (s, p) => {
                 if(p.PropertyName == nameof(FullPlayerViewModel.CurrentFocusItem)) {
                     scrollIntoView();
+                } else if(p.PropertyName == nameof(FullPlayerViewModel.StatusText)) {
+                    UpdateStatusTextAnimation();
                 }
             };
             fpvm.DisplayedSongsChanged += (s, a) => scrollIntoView();
+
+            SizeChanged += (s, a) => UpdateStatusTextAnimation();
         }
 
         public void MinimizeToTray() {
@@ -83,6 +88,18 @@ namespace PlayerInterface {
                 }
             }
             return null;
+        }
+
+        private void UpdateStatusTextAnimation() {
+            // Delay to make sure the 'ActualWidht' property has updated
+            // Yes this is a hack, however both OnInitialize and OnLoaded are called before 'ActualWidht' is set so it's hard to act at the right moment
+            Task.Delay(500).ContinueWith((t) =>
+                Dispatcher.BeginInvoke(new Action(() => {
+                    var sb = Grid_StatusText.Resources["Sb_StatusText"] as Storyboard;
+                    sb.Stop(this);
+                    sb.Begin(this, true);
+                }))
+            );
         }
 
         private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
