@@ -13,10 +13,11 @@ namespace PlayerInterface {
 
     public class StartupManager : WindowsFormsApplicationBase {
 #if DEBUG
-        public static bool IsDebug = true;
+        public const bool IsDebug = true;
 #else
-        public static bool IsDebug = false;
+        public const bool IsDebug = false;
 #endif
+        private const string TrayIconResourceName = "Tbi_Icon";
 
         public static string AppSettingsFileName = "AppSettings.json";
 
@@ -78,7 +79,7 @@ namespace PlayerInterface {
             Application = new SpeechMusicControllerApp();
             Application.InitializeComponent();
 
-            var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource("Tbi_Icon"));
+            var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource(TrayIconResourceName));
             windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController);
 
             Application.Exiting += (s, a) => {
