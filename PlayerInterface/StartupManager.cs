@@ -68,7 +68,7 @@ namespace PlayerInterface {
             TransitionMgr = new TransitionManager(SongPlayer, Playlist, ApplicationSettings);
 
             if(eventArgs.CommandLine.Count > 0) {
-                ArgsPassed(eventArgs.CommandLine.ToArray()).Wait();
+                HandleArgs(eventArgs.CommandLine.ToArray()).Wait();
             } else {
                 LoadStartupSongFiles();
             }
@@ -92,11 +92,11 @@ namespace PlayerInterface {
         }
 
         protected override async void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs) {
-            await ArgsPassed(eventArgs.CommandLine.ToArray());
+            await HandleArgs(eventArgs.CommandLine.ToArray());
             base.OnStartupNextInstance(eventArgs);
         }
 
-        protected async Task ArgsPassed(string[] args) {
+        protected async Task HandleArgs(string[] args) {
             var songs = await SongFileReader.ReadFilePathsAsync(args);
 
             if(songs.Length > 0) {
