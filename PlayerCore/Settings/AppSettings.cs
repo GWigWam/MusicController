@@ -117,10 +117,21 @@ namespace PlayerCore.Settings {
             get; set;
         } = new HashSet<string>();
 
-        [JsonProperty]
-        public List<SongStats> Statistics {
-            get; set;
-        } = new List<SongStats>();
+        private List<SongStats> statistics = new List<SongStats>();
+
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        protected List<SongStats> Statistics {
+            get { return statistics; }
+            set {
+                statistics = value;
+                foreach(var s in statistics) {
+                    s.PropertyChanged += SongStat_PropertyChanged;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public IEnumerable<SongStats> SongStats => Statistics;
 
         [JsonIgnore]
         public IEnumerable<string> StartupFolders => startupFolders;
@@ -153,6 +164,18 @@ namespace PlayerCore.Settings {
         public void ClearStarupFolders() {
             startupFolders.Clear();
             RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+        }
+
+        public void AddSongStats(params SongStats[] stats) {
+            Statistics.AddRange(stats);
+            foreach(var s in stats) {
+                s.PropertyChanged += SongStat_PropertyChanged;
+            }
+            RaiseChanged(nameof(SongStats));
+        }
+
+        private void SongStat_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            RaiseChanged(nameof(SongStats));
         }
     }
 }

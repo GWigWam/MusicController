@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PlayerCore.Settings {
 
-    public class SongStats {
+    public class SongStats : INotifyPropertyChanged {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public string Path { get; }
 
-        public float? Volume { get; set; }
+        private float? volume = null;
+        public float? Volume {
+            get { return volume; }
+            set {
+                if(value != volume) {
+                    volume = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Volume)));
+                }
+            }
+        }
 
         public SongStats(string path) {
             Path = path;
@@ -23,19 +36,18 @@ namespace PlayerCore.Settings {
                 const float defVolume = 0.5f;
 
                 if(args.Previous != null && Environment.TickCount - playingSince > minPlayTimeMs) {
-                    var songStats = settings.Statistics.FirstOrDefault(ss => ss.Path == args.Previous.FilePath);
+                    var songStats = settings.SongStats.FirstOrDefault(ss => ss.Path == args.Previous.FilePath);
                     if(songStats == null) {
                         songStats = new SongStats(args.Previous.FilePath);
-                        settings.Statistics.Add(songStats);
+                        settings.AddSongStats(songStats);
                     }
                     if(songStats.Volume != player.Volume) {
                         songStats.Volume = player.Volume;
-                        settings.RaiseChanged(nameof(AppSettings.Statistics));
                     }
                 }
 
                 if(args.Next != null) {
-                    var nextVolume = settings.Statistics.FirstOrDefault(ss => ss.Path == args.Next.FilePath)?.Volume;
+                    var nextVolume = settings.SongStats.FirstOrDefault(ss => ss.Path == args.Next.FilePath)?.Volume;
                     if(nextVolume != null) {
                         player.Volume = nextVolume.Value;
                     } else {

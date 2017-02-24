@@ -86,12 +86,12 @@ namespace PlayerCore.Settings {
             }
         }
 
-        public void RaiseChanged(SettingChangedEventArgs args) {
+        protected void RaiseChanged(SettingChangedEventArgs args) {
             HasUnsavedChanges = true;
             Changed?.Invoke(this, args);
         }
 
-        public void RaiseChanged(string propertyName) {
+        protected void RaiseChanged(string propertyName) {
             var prop = typeof(AppSettings).GetProperty(propertyName);
             if(prop == null) {
                 throw new ArgumentException("Invalid property name");
