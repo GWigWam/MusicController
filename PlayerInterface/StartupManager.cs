@@ -62,6 +62,7 @@ namespace PlayerInterface {
 
         protected override bool OnStartup(StartupEventArgs eventArgs) {
             InitSettings();
+            new AutoSave(ApplicationSettings, 60 * 10);
 
             SongPlayer = new SongPlayer();
 

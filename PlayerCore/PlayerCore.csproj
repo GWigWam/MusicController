@@ -68,6 +68,7 @@
     <Compile Include="Playlist.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="Settings\AutoSave.cs" />
     <Compile Include="Settings\SettingChangedEventArgs.cs" />
     <Compile Include="Settings\SettingsFile.cs" />
     <Compile Include="Settings\SongStats.cs" />
