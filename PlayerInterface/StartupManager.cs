@@ -63,7 +63,10 @@ namespace PlayerInterface {
         protected override bool OnStartup(StartupEventArgs eventArgs) {
             InitSettings();
 
-            SongPlayer = new SongPlayer(ApplicationSettings.Volume);
+            SongPlayer = new SongPlayer();
+
+            SongStats.SetupStats(ApplicationSettings, SongPlayer);
+
             Playlist = new Playlist();
             TransitionMgr = new TransitionManager(SongPlayer, Playlist, ApplicationSettings);
 
@@ -115,12 +118,6 @@ namespace PlayerInterface {
             }
 
             ApplicationSettings = SettingsFile.ReadSettingFile<AppSettings>(AppSettingsFileName);
-
-            ApplicationSettings.Changed += (sender, args) => {
-                if(args.ChangedPropertyName == nameof(AppSettings.Volume)) {
-                    SongPlayer.Volume = ((AppSettings)sender).Volume;
-                }
-            };
         }
 
         private void LoadStartupSongFiles() {

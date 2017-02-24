@@ -86,9 +86,18 @@ namespace PlayerCore.Settings {
             }
         }
 
-        protected void RaiseChanged(SettingChangedEventArgs args) {
+        public void RaiseChanged(SettingChangedEventArgs args) {
             HasUnsavedChanges = true;
             Changed?.Invoke(this, args);
+        }
+
+        public void RaiseChanged(string propertyName) {
+            var prop = typeof(AppSettings).GetProperty(propertyName);
+            if(prop == null) {
+                throw new ArgumentException("Invalid property name");
+            }
+            var args = new SettingChangedEventArgs(prop);
+            RaiseChanged(args);
         }
 
         /// <summary>

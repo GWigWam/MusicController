@@ -8,19 +8,6 @@ using System.Threading.Tasks;
 namespace PlayerCore.Settings {
 
     public class AppSettings : SettingsFile {
-        private float volume = 1;
-
-        [JsonProperty]
-        public float Volume {
-            get { return volume; }
-            set {
-                if(value != volume && value >= 0 && value <= 1) {
-                    volume = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(Volume)));
-                }
-            }
-        }
-
         private bool startMinimized = true;
 
         [JsonProperty]
@@ -129,6 +116,11 @@ namespace PlayerCore.Settings {
         private HashSet<string> startupFolders {
             get; set;
         } = new HashSet<string>();
+
+        [JsonProperty]
+        public List<SongStats> Statistics {
+            get; set;
+        } = new List<SongStats>();
 
         [JsonIgnore]
         public IEnumerable<string> StartupFolders => startupFolders;
