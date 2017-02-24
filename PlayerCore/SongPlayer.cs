@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using PlayerCore.PlayerEventArgs;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace PlayerCore {
         public Song CurrentSong {
             get { return currentSong; }
             set {
+                var oldSong = currentSong;
                 currentSong = value;
                 if(currentSong != null) {
                     bool wasPlaying = PlayerState == PlayerState.Playing;
@@ -34,7 +36,7 @@ namespace PlayerCore {
                     }
                     PlayedToEnd = false;
                 }
-                SongChanged?.Invoke(this, new EventArgs());
+                SongChanged?.Invoke(this, new SongChangedEventArgs(oldSong, currentSong));
             }
         }
 
@@ -118,15 +120,19 @@ namespace PlayerCore {
                     } else if(Player != null) {
                         Player.Volume = value;
                     }
+
+                    VolumeChanged?.Invoke(this, volume);
                 }
             }
         }
 
         public event EventHandler<PlayingStoppedEventArgs> PlayingStopped;
 
-        public event EventHandler SongChanged;
+        public event EventHandler<SongChangedEventArgs> SongChanged;
 
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
+
+        public event EventHandler<float> VolumeChanged;
 
         public SongPlayer(float volume = 1) {
             Volume = volume;

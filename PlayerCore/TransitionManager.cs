@@ -1,4 +1,5 @@
-﻿using PlayerCore.Settings;
+﻿using PlayerCore.PlayerEventArgs;
+using PlayerCore.Settings;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;

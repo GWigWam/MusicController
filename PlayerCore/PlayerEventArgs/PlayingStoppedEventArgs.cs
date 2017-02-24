@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore {
+namespace PlayerCore.PlayerEventArgs {
 
     public class PlayingStoppedEventArgs : EventArgs {
-
         public bool PlayedToEnd {
             get;
         }

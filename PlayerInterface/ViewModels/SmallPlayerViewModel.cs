@@ -1,4 +1,5 @@
 ﻿using PlayerCore;
+using PlayerCore.PlayerEventArgs;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
@@ -51,10 +52,10 @@ namespace PlayerInterface.ViewModels {
         public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlayerState.Playing ? ImgSourcePause : ImgSourcePlay;
 
         public float Volume {
-            get { return Settings.Volume; }
+            get { return SongPlayer.Volume; }
             set {
                 if(value >= 0 && value <= 1) {
-                    Settings.Volume = value;
+                    SongPlayer.Volume = value;
                     RaisePropertyChanged();
                 }
             }
@@ -88,7 +89,7 @@ namespace PlayerInterface.ViewModels {
             SongPlayer.SongChanged += (s, a) => RaisePropertiesChanged(nameof(ElapsedFraction), nameof(ElapsedStr));
             SongPlayer.PlayingStopped += Player_PlayingStopped;
             SongPlayer.PlaybackStateChanged += PlaybackStateChanged;
-            Settings.Changed += Settings_Changed;
+            SongPlayer.VolumeChanged += SongPlayer_VolumeChanged;
 
             UpdateTimer = new Timer() {
                 AutoReset = true,
@@ -132,10 +133,8 @@ namespace PlayerInterface.ViewModels {
             RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed), nameof(ElapsedColor));
         }
 
-        private void Settings_Changed(object sender, SettingChangedEventArgs e) {
-            if(e.ChangedPropertyName == nameof(Settings.Volume)) {
-                RaisePropertyChanged(nameof(Volume));
-            }
+        private void SongPlayer_VolumeChanged(object sender, float e) {
+            RaisePropertyChanged(nameof(Volume));
         }
 
         protected void Player_PlayingStopped(object sender, PlayingStoppedEventArgs args) {

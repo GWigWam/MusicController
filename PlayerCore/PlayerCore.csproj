@@ -11,6 +11,7 @@
     <AssemblyName>PlayerCore</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,14 +61,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PlayingStoppedEventArgs.cs" />
-    <Compile Include="PlaybackStateChangedEventArgs.cs" />
+    <Compile Include="PlayerEventArgs\PlayingStoppedEventArgs.cs" />
+    <Compile Include="PlayerEventArgs\PlaybackStateChangedEventArgs.cs" />
+    <Compile Include="PlayerEventArgs\SongChangedEventArgs.cs" />
     <Compile Include="PlayerState.cs" />
     <Compile Include="Playlist.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\SettingChangedEventArgs.cs" />
     <Compile Include="Settings\SettingsFile.cs" />
+    <Compile Include="Settings\SongStats.cs" />
     <Compile Include="SongPlayer.cs" />
     <Compile Include="Songs\Song.cs" />
     <Compile Include="Songs\SongFile.cs" />
@@ -77,6 +80,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
