@@ -13,7 +13,6 @@ using System.Windows.Input;
 namespace PlayerInterface.ViewModels {
 
     public class AppSettingsViewModel : NotifyPropertyChanged {
-
         public bool StartMinimized {
             get {
                 return Settings.StartMinimized;
@@ -99,6 +98,7 @@ namespace PlayerInterface.ViewModels {
                         Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
                 });
             Settings.Changed += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
+            Settings.Saved += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
 
             OpenFileLocationCommand = new RelayCommand(o => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
         }

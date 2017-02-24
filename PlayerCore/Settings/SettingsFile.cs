@@ -23,6 +23,8 @@ namespace PlayerCore.Settings {
 
         public event EventHandler<SettingChangedEventArgs> Changed;
 
+        public event EventHandler Saved;
+
         static SettingsFile() {
             JSonSettings = new JsonSerializerSettings() {
                 Formatting = Formatting.Indented,
@@ -84,6 +86,7 @@ namespace PlayerCore.Settings {
                     }
                 }
             }
+            RaiseSaved();
         }
 
         protected void RaiseChanged(SettingChangedEventArgs args) {
@@ -98,6 +101,10 @@ namespace PlayerCore.Settings {
             }
             var args = new SettingChangedEventArgs(prop);
             RaiseChanged(args);
+        }
+
+        protected void RaiseSaved() {
+            Saved?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
