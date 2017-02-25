@@ -184,7 +184,7 @@ namespace PlayerInterface.ViewModels {
                 var paths = input.Paths as string[];
                 Song position = (input.Position as Song) ?? Playlist.LastOrDefault();
                 if(paths != null) {
-                    var addFiles = await SongFileReader.ReadFilePathsAsync(paths);
+                    var addFiles = await SongFileReader.ReadFilePathsAsync(Settings, paths);
                     var added = Playlist.AddSong(addFiles);
                     Playlist.MoveTo(position, added.ToArray());
                 }

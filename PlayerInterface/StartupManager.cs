@@ -101,7 +101,7 @@ namespace PlayerInterface {
         }
 
         protected async Task HandleArgs(string[] args) {
-            var songs = await SongFileReader.ReadFilePathsAsync(args);
+            var songs = await SongFileReader.ReadFilePathsAsync(ApplicationSettings, args);
 
             if(songs.Length > 0) {
                 var added = Playlist.AddSong(songs);
@@ -122,7 +122,7 @@ namespace PlayerInterface {
         }
 
         private void LoadStartupSongFiles() {
-            var startupSongFiles = SongFileReader.ReadFilePaths(ApplicationSettings.StartupFolders.ToArray());
+            var startupSongFiles = SongFileReader.ReadFilePaths(ApplicationSettings, ApplicationSettings.StartupFolders.ToArray());
             Playlist.AddSong(startupSongFiles);
 
             if(ApplicationSettings.ShuffleOnStartup) {

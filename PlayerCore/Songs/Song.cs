@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Settings;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace PlayerCore.Songs {
     [DebuggerDisplay("{Title} - {Artist} ({Album})")]
     public class Song {
         public SongFile File { get; }
+
+        public SongStats Stats { get; }
 
         private string title;
 
@@ -46,11 +49,17 @@ namespace PlayerCore.Songs {
 
         public string FilePath => File.Path;
 
-        public Song(SongFile file) {
+        public Song(SongFile file, AppSettings settings) {
             if(file == null || string.IsNullOrEmpty(file.Path)) {
                 throw new ArgumentException(nameof(file));
             }
             File = file;
+
+            Stats = settings.SongStats.FirstOrDefault(ss => ss.Path == FilePath);
+            if(Stats == null) {
+                Stats = new SongStats(FilePath);
+                settings.AddSongStats(Stats);
+            }
         }
     }
 

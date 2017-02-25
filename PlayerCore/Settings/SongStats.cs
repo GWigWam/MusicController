@@ -36,19 +36,15 @@ namespace PlayerCore.Settings {
                 const float defVolume = 0.5f;
 
                 if(args.Previous != null && Environment.TickCount - playingSince > minPlayTimeMs) {
-                    var songStats = settings.SongStats.FirstOrDefault(ss => ss.Path == args.Previous.FilePath);
-                    if(songStats == null) {
-                        songStats = new SongStats(args.Previous.FilePath);
-                        settings.AddSongStats(songStats);
-                    }
+                    var songStats = args.Previous.Stats;
                     if(songStats.Volume != player.Volume) {
                         songStats.Volume = player.Volume;
                     }
                 }
 
                 if(args.Next != null) {
-                    var nextVolume = settings.SongStats.FirstOrDefault(ss => ss.Path == args.Next.FilePath)?.Volume;
-                    if(nextVolume != null) {
+                    var nextVolume = args.Next.Stats.Volume;
+                    if(nextVolume.HasValue) {
                         player.Volume = nextVolume.Value;
                     } else {
                         player.Volume = defVolume;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Settings;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace PlayerCore.Songs {
         private static readonly Regex SongNameInfo = new Regex(@"^\s*(?<artist>.+?) - (?<title>.+?)(?<extension>\.[a-z]\S*)$");
         private static readonly Regex Parenthesis = new Regex(@"\(|\)");
 
-        public static Song[] ReadFilePaths(params string[] paths) {
+        public static Song[] ReadFilePaths(AppSettings settings, params string[] paths) {
             var files = new List<SongFile>();
 
             foreach(var path in paths) {
@@ -31,13 +32,13 @@ namespace PlayerCore.Songs {
                 .OrderBy(s => s.Artist)
                 .ThenBy(s => s.Album)
                 .ThenBy(s => s.Track)
-                .Select(sf => new Song(sf))
+                .Select(sf => new Song(sf, settings))
                 .ToArray();
         }
 
-        public static async Task<Song[]> ReadFilePathsAsync(params string[] paths) {
+        public static async Task<Song[]> ReadFilePathsAsync(AppSettings settings, params string[] paths) {
             return await Task.Run(() => {
-                return ReadFilePaths(paths);
+                return ReadFilePaths(settings, paths);
             }).ConfigureAwait(false);
         }
 
