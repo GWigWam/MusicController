@@ -158,7 +158,7 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Lb_Title" Padding="2" Grid.Column="0" Content="{Binding Title}" FontWeight="Bold" />
+                                            <Label x:Name="Lb_Title" Padding="2" Grid.Column="0" Content="{Binding Title}" ToolTip="{Binding Title}" FontWeight="Bold" />
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <StackPanel.Style>
                                                     <Style TargetType="{x:Type StackPanel}">
