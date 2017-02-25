@@ -66,6 +66,7 @@ namespace PlayerInterface.ViewModels {
         static SongViewModel() {
             var songtype = typeof(Song);
             var filetype = typeof(SongFile);
+            var statType = typeof(PlayerCore.Settings.SongStats);
             SortProperties = new Dictionary<string, PropertyInfo>() {
                 //Song:
                 ["Title"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Title)),
@@ -75,7 +76,9 @@ namespace PlayerInterface.ViewModels {
                 ["Genre"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Genre)),
                 ["Length"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.TrackLength)),
                 ["Year"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Year)),
-                ["Track #"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Track))
+                ["Track #"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Track)),
+                //Stats
+                ["Play Count"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount))
             };
         }
 

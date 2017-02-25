@@ -149,9 +149,14 @@ namespace PlayerInterface.ViewModels {
                         Playlist.Order((s) => pi.GetValue(s));
                     } else if(pi.DeclaringType == typeof(SongFile)) {
                         Playlist.Order((s) => pi.GetValue(s.File));
+                    } else if(pi.DeclaringType == typeof(SongStats)) {
+                        Playlist.Order((s) => pi.GetValue(s.Stats));
                     }
                 },
-                (o) => o as PropertyInfo != null && (((PropertyInfo)o).DeclaringType == typeof(Song) || ((PropertyInfo)o).DeclaringType == typeof(SongFile))
+                (o) => o as PropertyInfo != null && (
+                    ((PropertyInfo)o).DeclaringType == typeof(Song) ||
+                    ((PropertyInfo)o).DeclaringType == typeof(SongFile) ||
+                    ((PropertyInfo)o).DeclaringType == typeof(SongStats))
             );
 
             SortBySearchCommand = new RelayCommand(
