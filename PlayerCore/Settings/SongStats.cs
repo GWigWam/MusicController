@@ -24,6 +24,17 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private int playCount = 0;
+        public int PlayCount {
+            get { return playCount; }
+            set {
+                if(value != playCount) {
+                    playCount = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PlayCount)));
+                }
+            }
+        }
+
         public SongStats(string path) {
             Path = path;
         }
@@ -40,6 +51,7 @@ namespace PlayerCore.Settings {
                     if(songStats.Volume != player.Volume) {
                         songStats.Volume = player.Volume;
                     }
+                    songStats.PlayCount++;
                 }
 
                 if(args.Next != null) {

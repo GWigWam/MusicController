@@ -11,12 +11,7 @@ using System.Windows;
 namespace PlayerInterface.ViewModels {
 
     public class SongViewModel : NotifyPropertyChanged {
-        public string Info => $"[{FormatHelper.FormatTimeSpan(Song?.File?.TrackLength)}] {Song?.File?.BitRate}kbps, {Song?.File?.Track}/{Song?.File?.TrackCount}, {Song?.File?.Year}";
-
-        public string Path => $"{Song?.FilePath}";
-
         private bool playing = false;
-
         public bool Playing {
             get { return playing; }
             set {
@@ -31,8 +26,16 @@ namespace PlayerInterface.ViewModels {
             get;
         }
 
-        public string SubTitle => $"{Song?.Artist} ({Song?.Album})";
-        public string Title => $"{Song?.Title}";
+        public string Path => $"{Song.FilePath}";
+
+        public string SubTitle => $"{Song.Artist} {(string.IsNullOrEmpty(Song.Album) ? string.Empty : $"({Song.Album})")}";
+        public string Title => $"{Song.Title}";
+
+        public string TrackLengthStr => $"[{FormatHelper.FormatTimeSpan(Song.File.TrackLength)}]";
+        public string BitRateStr => $"{Song.File.BitRate}kbps";
+        public string TrackNrStr => Song.File.TrackCount == 0 ? $"#{Song.File.Track}" : $"{Song.File.Track}/{Song.File.TrackCount}";
+        public string YearStr => Song.File.Year != 0 ? $"{Song.File.Year}" : "-";
+        public string PlayCountStr => $"{Song.Stats.PlayCount}x";
 
         public enum DisplayType {
             Front, Menu, DropUnderHint
@@ -86,6 +89,8 @@ namespace PlayerInterface.ViewModels {
             curDisplay = DisplayType.Front;
             Song = song;
             MainViewModel = fpvm;
+
+            Song.Stats.PropertyChanged += (s, a) => RaisePropertiesChanged(nameof(PlayCountStr));
         }
     }
 }
