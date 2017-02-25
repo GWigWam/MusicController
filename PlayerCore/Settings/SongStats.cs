@@ -51,7 +51,6 @@ namespace PlayerCore.Settings {
                     if(songStats.Volume != player.Volume) {
                         songStats.Volume = player.Volume;
                     }
-                    songStats.PlayCount++;
                 }
 
                 if(args.Next != null) {
@@ -64,6 +63,12 @@ namespace PlayerCore.Settings {
                 }
 
                 playingSince = Environment.TickCount;
+            };
+
+            player.PlayingStopped += (_, a) => {
+                if(a.PlayedToEnd && player.CurrentSong != null) {
+                    player.CurrentSong.Stats.PlayCount++;
+                }
             };
         }
     }
