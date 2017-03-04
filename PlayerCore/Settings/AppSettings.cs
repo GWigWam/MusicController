@@ -123,7 +123,7 @@ namespace PlayerCore.Settings {
         protected List<SongStats> Statistics {
             get { return statistics; }
             set {
-                statistics = value;
+                statistics = value.Where(ss => System.IO.File.Exists(ss.Path)).ToList();
                 foreach(var s in statistics) {
                     s.PropertyChanged += SongStat_PropertyChanged;
                 }
