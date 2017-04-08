@@ -84,7 +84,7 @@ namespace PlayerInterface {
             Application.InitializeComponent();
 
             var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource(TrayIconResourceName));
-            windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController);
+            windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController, TransitionMgr);
 
             Application.Exiting += (s, a) => {
                 ApplicationSettings.WriteToDisc();

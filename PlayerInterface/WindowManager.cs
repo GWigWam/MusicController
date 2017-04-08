@@ -23,8 +23,8 @@ namespace PlayerInterface {
             TrayIcon = icon;
         }
 
-        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl) {
-            ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl);
+        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl, TransitionManager transitionMngr) {
+            ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl, transitionMngr);
 
             CreateFullPlayer(!settings.StartMinimized);
             CreateSmallPlayer(settings.StartMinimized);

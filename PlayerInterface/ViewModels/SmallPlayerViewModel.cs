@@ -21,17 +21,13 @@ namespace PlayerInterface.ViewModels {
 
         private Timer UpdateTimer;
 
-        public AppSettings Settings {
-            get;
-        }
+        public AppSettings Settings { get; }
 
-        public SongPlayer SongPlayer {
-            get;
-        }
+        public SongPlayer SongPlayer { get; }
 
-        public Playlist Playlist {
-            get;
-        }
+        public Playlist Playlist { get; }
+
+        public TransitionManager TransitionMngr { get; }
 
         public ICommand SwitchCommand {
             get; private set;
@@ -49,7 +45,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlayerState.Playing ? ImgSourcePause : ImgSourcePlay;
+        public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlayerState.Playing || TransitionMngr.IsTransitioning ? ImgSourcePause : ImgSourcePlay;
 
         public float Volume {
             get { return SongPlayer.Volume; }
@@ -79,10 +75,13 @@ namespace PlayerInterface.ViewModels {
         public Brush ElapsedColor => SongPlayer?.PlayerState == PlayerState.Playing ? System.Windows.SystemColors.HighlightBrush :
             (SongPlayer?.PlayerState == PlayerState.Paused ? Brushes.OrangeRed : Brushes.Transparent);
 
-        public SmallPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist) {
+        public SmallPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, TransitionManager transitionMngr) {
             Settings = settings;
             SongPlayer = player;
             Playlist = playlist;
+
+            TransitionMngr = transitionMngr;
+            TransitionMngr.TransitionChanged += (s, a) => RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
 
             SetupCommands();
 
@@ -101,7 +100,9 @@ namespace PlayerInterface.ViewModels {
 
         private void SetupCommands() {
             SwitchCommand = new RelayCommand((o) => {
-                if(SongPlayer.PlayerState == PlayerState.Playing) {
+                if(TransitionMngr.IsTransitioning) {
+                    TransitionMngr.CancelTransition();
+                } else if(SongPlayer.PlayerState == PlayerState.Playing) {
                     SongPlayer.PlayerState = PlayerState.Paused;
                 } else {
                     SongPlayer.PlayerState = PlayerState.Playing;

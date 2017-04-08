@@ -107,7 +107,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController) : base(settings, player, playlist) {
+        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController, TransitionManager transitionMngr) : base(settings, player, playlist, transitionMngr) {
             SetupCommands();
             SetupSongMenuItems();
 
