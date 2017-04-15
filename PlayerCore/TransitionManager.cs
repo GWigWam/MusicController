@@ -98,8 +98,6 @@ namespace PlayerCore {
                 if(slfe.Song != null && TrackList.Contains(slfe.Song)) {
                     TrackList.Remove(slfe.Song);
                 }
-            } catch(Exception) {
-                // ---
             }
         }
     }
