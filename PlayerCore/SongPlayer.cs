@@ -112,13 +112,11 @@ namespace PlayerCore {
         public float Volume {
             get { return volume; }
             set {
-                if(volume != value && value >= 0 && value <= 1) {
-                    volume = value;
-
+                if(volume != value && value >= 0) {
                     if(!LegacyVolumeMode && AudioFileReader != null) {
-                        AudioFileReader.Volume = value;
-                    } else if(Player != null) {
-                        Player.Volume = value;
+                        AudioFileReader.Volume = volume = value;
+                    } else if(Player != null && value <= 1) {
+                        Player.Volume = volume = value;
                     }
 
                     VolumeChanged?.Invoke(this, volume);

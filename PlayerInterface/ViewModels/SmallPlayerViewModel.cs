@@ -48,12 +48,10 @@ namespace PlayerInterface.ViewModels {
         public string SwitchButtonImgSource => SongPlayer?.PlayerState == PlayerState.Playing || TransitionMngr.IsTransitioning ? ImgSourcePause : ImgSourcePlay;
 
         public float Volume {
-            get { return SongPlayer.Volume; }
+            get { return (float)Math.Round(SongPlayer.Volume, 2); }
             set {
-                if(value >= 0 && value <= 1) {
-                    SongPlayer.Volume = value;
-                    RaisePropertyChanged();
-                }
+                SongPlayer.Volume = value;
+                RaisePropertyChanged();
             }
         }
 
