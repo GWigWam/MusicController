@@ -213,7 +213,7 @@ namespace PlayerCore {
                     Stop();
                     PlayingStopped?.Invoke(this, new PlayingStoppedEventArgs(false, e));
                     //TODO: Throw userfriendly exception
-                    if(e is FileNotFoundException) {
+                    if(e is FileNotFoundException || e is InvalidDataException) {
                         throw new SongLoadFailedException(song, e);
                     } else {
                         throw e;
