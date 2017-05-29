@@ -17,8 +17,8 @@ namespace PlayerInterface {
         }
 
         public static string FormatTimeSpan(TimeSpan ts) {
-            var format = Math.Floor(ts.TotalHours) > 0 ? @"h\:m\:ss" : @"m\:ss";
-            return ts.ToString(format);
+            var res = ts.ToString(ts.Days > 0 ? @"d\.hh\:mm" : ts.Hours > 1 ? @"h\:mm\:ss" : ts.Minutes > 0 ? @"mm\:ss" : "ss");
+            return res;
         }
     }
 }
