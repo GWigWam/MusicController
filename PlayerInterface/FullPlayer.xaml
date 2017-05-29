@@ -27,7 +27,7 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="TimestampLabelStyle" TargetType="Label">
-            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="3,0,3,0" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Background" Value="{x:Null}" />
             <Setter Property="IsHitTestVisible" Value="False" />
@@ -119,7 +119,7 @@
                         </Grid.ColumnDefinitions>
                         <local:ProgressControl x:Name="Pc_Elapsed" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding EnableChangeElapsed}" ProgressFill="{Binding ElapsedColor, Mode=OneWay}" Fraction="{Binding Path=ElapsedFraction, Mode=TwoWay}" ToolTip="Timestamp" />
                         <Label x:Name="Lb_Elapsed" Grid.Column="0" Style="{StaticResource TimestampLabelStyle}" Content="{Binding ElapsedStr, FallbackValue=0:00}" />
-                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" />
+                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
                 <ListBox x:Name="Lb_Playlist" Grid.Row="3" Margin="2,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SelectionMode="Extended" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -235,7 +235,7 @@
                         </cc:ImageButton.ContextMenu>
                     </cc:ImageButton>
                     <Viewbox Grid.Column="1" HorizontalAlignment="Left">
-                        <Label Content="{Binding PlaylistStats}" />
+                        <Label Content="{Binding PlaylistStats, FallbackValue='[STATS]'}" />
                     </Viewbox>
                     <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" ToolTip="RegEx Search"
                              GotKeyboardFocus="Tb_Search_GotKeyboardFocus" TextChanged="Tb_Search_TextChanged"
