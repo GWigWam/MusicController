@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -145,20 +146,25 @@ namespace PlayerCore.Settings {
         }
 
         public void AddStartupFolder(string path) {
-            startupFolders.Add(path);
-            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+            if(AddStartupPath(path)) {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+            }
         }
 
         public void AddStartupFolders(IEnumerable<string> paths) {
+            bool change = false;
             foreach(var path in paths) {
-                startupFolders.Add(path);
+                change |= AddStartupPath(path);
             }
-            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+            if(change) {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+            }
         }
 
         public void RemoveStartupFolder(string path) {
-            startupFolders.Remove(path);
-            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+            if(RemoveStartupPath(path)) {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+            }
         }
 
         public void ClearStarupFolders() {
@@ -177,5 +183,35 @@ namespace PlayerCore.Settings {
         private void SongStat_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
             RaiseChanged(nameof(SongStats));
         }
+
+        private bool AddStartupPath(string path) {
+            if(Directory.Exists(path) || (File.Exists(path) && new string[] { ".mp3", ".flac" }.Contains(new FileInfo(path).Extension))) {
+                if(!IsStatupPath(path)) {
+                    startupFolders.Add(path);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool RemoveStartupPath(string path) {
+            if(IsStatupPath(path)) {
+                var containing = startupFolders.First(p => path.StartsWith(p));
+                if(containing == path) {
+                    startupFolders.Remove(path);
+                    return true;
+                } else {
+                    startupFolders.Remove(containing);
+                    foreach(var contained in new DirectoryInfo(containing).EnumerateFileSystemInfos()
+                        .Where(i => i.FullName != path)) {
+                        AddStartupPath(contained.FullName);
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool IsStatupPath(string path) => startupFolders.Any(p => path.StartsWith(p));
     }
 }

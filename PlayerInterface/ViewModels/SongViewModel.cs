@@ -144,30 +144,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void RemoveFromStartup() {
-            Action<string, string> addAllExcept = null;
-            addAllExcept = (add, except) => {
-                if(File.Exists(add)) {
-                    if(add != except) {
-                        MainViewModel.Settings.AddStartupFolder(add);
-                    }
-                } else {
-                    var di = new DirectoryInfo(add);
-                    foreach(var addFile in di.GetFiles("*", SearchOption.TopDirectoryOnly).Where(fi => fi.FullName != Path)) {
-                        MainViewModel.Settings.AddStartupFolder(addFile.FullName);
-                    }
-                    foreach(var addFolder in di.GetDirectories("*", SearchOption.TopDirectoryOnly)) {
-                        if(!except.StartsWith(addFolder.FullName)) {
-                            MainViewModel.Settings.AddStartupFolder(addFolder.FullName);
-                        } else {
-                            addAllExcept(addFolder.FullName, except);
-                        }
-                    }
-                }
-            };
-
-            var existingPath = MainViewModel.Settings.StartupFolders.FirstOrDefault(path => Path.StartsWith(path));
-            MainViewModel.Settings.RemoveStartupFolder(existingPath);
-            addAllExcept(existingPath, Path);
+            MainViewModel.Settings.RemoveStartupFolder(Path);
             MainViewModel.SettingsViewModel.InitLoadPaths();
         }
     }
