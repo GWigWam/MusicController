@@ -140,12 +140,10 @@ namespace PlayerInterface.ViewModels {
 
         private void AddToStartup() {
             MainViewModel.Settings.AddStartupFolder(Path);
-            MainViewModel.SettingsViewModel.InitLoadPaths();
         }
 
         private void RemoveFromStartup() {
             MainViewModel.Settings.RemoveStartupFolder(Path);
-            MainViewModel.SettingsViewModel.InitLoadPaths();
         }
     }
 }

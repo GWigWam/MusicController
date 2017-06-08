@@ -97,7 +97,12 @@ namespace PlayerInterface.ViewModels {
                     if(t.IsFaulted)
                         Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
                 });
-            Settings.Changed += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
+            Settings.Changed += (s, a) => {
+                ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
+                if(a.ChangedPropertyName == nameof(Settings.StartupFolders)) {
+                    InitLoadPaths();
+                }
+            };
             Settings.Saved += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
 
             OpenFileLocationCommand = new RelayCommand(o => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
