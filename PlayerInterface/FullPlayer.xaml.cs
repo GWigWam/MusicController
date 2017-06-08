@@ -337,7 +337,7 @@ namespace PlayerInterface {
             var svm = ((sender as FrameworkElement)?.Tag as SongViewModel);
             if(menuItem != null && svm != null) {
                 svm.CurDisplay = SongViewModel.DisplayType.Front;
-                menuItem.Execute(svm);
+                menuItem.Execute();
             }
         }
 

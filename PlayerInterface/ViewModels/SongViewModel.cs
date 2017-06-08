@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -48,7 +49,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(value != curDisplay) {
                     curDisplay = value;
-                    RaisePropertiesChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility));
+                    RaisePropertiesChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
                 }
             }
         }
@@ -62,6 +63,8 @@ namespace PlayerInterface.ViewModels {
         }
 
         public static Dictionary<string, PropertyInfo> SortProperties;
+
+        public IEnumerable<SongMenuItemViewModel> MenuItems => GetMenuItems();
 
         static SongViewModel() {
             var songtype = typeof(Song);
@@ -94,6 +97,78 @@ namespace PlayerInterface.ViewModels {
             MainViewModel = fpvm;
 
             Song.Stats.PropertyChanged += (s, a) => RaisePropertiesChanged(nameof(PlayCountStr));
+        }
+
+        private IEnumerable<SongMenuItemViewModel> GetMenuItems() {
+            if(CurDisplay != DisplayType.Menu) {
+                yield break;
+            }
+
+            if(MainViewModel.SongPlayer.CurrentSong != Song) {
+                yield return new SongMenuItemViewModel("Play", Play);
+            }
+            yield return new SongMenuItemViewModel("Remove", Remove);
+
+            yield return new SongMenuItemViewModel("Open file location", OpenFileLocation);
+
+            var foundStartup = MainViewModel.Settings.StartupFolders.FirstOrDefault(path => Path.StartsWith(path));
+            if(foundStartup == null) {
+                yield return new SongMenuItemViewModel("Add to startup songs", AddToStartup);
+            } else {
+                yield return new SongMenuItemViewModel("Remove from startup songs", RemoveFromStartup);
+            }
+        }
+
+        private void OpenFileLocation() {
+            if(File.Exists(Path)) {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select, {Path}");
+            }
+        }
+
+        private void Play() {
+            if(MainViewModel.PlaySongCommand.CanExecute(Song)) {
+                MainViewModel.PlaySongCommand.Execute(Song);
+            }
+        }
+
+        private void Remove() {
+            var svmIEnum = new SongViewModel[] { this };
+            if(MainViewModel.RemoveSongsCommand.CanExecute(svmIEnum)) {
+                MainViewModel.RemoveSongsCommand.Execute(svmIEnum);
+            }
+        }
+
+        private void AddToStartup() {
+            MainViewModel.Settings.AddStartupFolder(Path);
+            MainViewModel.SettingsViewModel.InitLoadPaths();
+        }
+
+        private void RemoveFromStartup() {
+            Action<string, string> addAllExcept = null;
+            addAllExcept = (add, except) => {
+                if(File.Exists(add)) {
+                    if(add != except) {
+                        MainViewModel.Settings.AddStartupFolder(add);
+                    }
+                } else {
+                    var di = new DirectoryInfo(add);
+                    foreach(var addFile in di.GetFiles("*", SearchOption.TopDirectoryOnly).Where(fi => fi.FullName != Path)) {
+                        MainViewModel.Settings.AddStartupFolder(addFile.FullName);
+                    }
+                    foreach(var addFolder in di.GetDirectories("*", SearchOption.TopDirectoryOnly)) {
+                        if(!except.StartsWith(addFolder.FullName)) {
+                            MainViewModel.Settings.AddStartupFolder(addFolder.FullName);
+                        } else {
+                            addAllExcept(addFolder.FullName, except);
+                        }
+                    }
+                }
+            };
+
+            var existingPath = MainViewModel.Settings.StartupFolders.FirstOrDefault(path => Path.StartsWith(path));
+            MainViewModel.Settings.RemoveStartupFolder(existingPath);
+            addAllExcept(existingPath, Path);
+            MainViewModel.SettingsViewModel.InitLoadPaths();
         }
     }
 }

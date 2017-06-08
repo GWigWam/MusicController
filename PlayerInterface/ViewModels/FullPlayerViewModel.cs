@@ -87,10 +87,6 @@ namespace PlayerInterface.ViewModels {
 
         public string PlaylistStats => $"{Playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(Playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
 
-        public SongMenuItemViewModel[] SongMenuItems {
-            get; private set;
-        }
-
         public AppSettingsViewModel SettingsViewModel {
             get;
         }
@@ -109,7 +105,6 @@ namespace PlayerInterface.ViewModels {
 
         public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController, TransitionManager transitionMngr) : base(settings, player, playlist, transitionMngr) {
             SetupCommands();
-            SetupSongMenuItems();
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
@@ -204,68 +199,6 @@ namespace PlayerInterface.ViewModels {
             }, (inp) => {
                 return (inp.Item1?.Length ?? 0) > 0 && inp.Item2?.Song != null;
             });
-        }
-
-        private void SetupSongMenuItems() {
-            SongMenuItems = new SongMenuItemViewModel[] {
-                new SongMenuItemViewModel() {
-                    Title = "Play",
-                    Action = svm => {
-                        if(PlaySongCommand.CanExecute(svm.Song)) {
-                            PlaySongCommand.Execute(svm.Song);
-                        }
-                    }
-                },
-                new SongMenuItemViewModel() {
-                    Title = "Remove",
-                    Action = svm => {
-                        var svmIEnum = new SongViewModel[] { svm };
-                        if(RemoveSongsCommand.CanExecute(svmIEnum)) {
-                            RemoveSongsCommand.Execute(svmIEnum);
-                        }
-                    }
-                },
-                new SongMenuItemViewModel() {
-                    Title = "Open file location",
-                    Action = svm => {
-                        if(File.Exists(svm.Path)) {
-                            System.Diagnostics.Process.Start("explorer.exe", $"/select, {svm.Path}");
-                        }
-                    }
-                },
-                new SongMenuItemViewModel() {
-                    Title = "Add/Remove from startup songs",
-                    Action = svm => {
-                        var found = Settings.StartupFolders.FirstOrDefault(path => svm.Path.StartsWith(path));
-                        if(found != null) { //Was in StartupFolders, remove it
-                            Action<string, string> addAllExcept = null;
-                            addAllExcept = (add, except) => {
-                                if(File.Exists(add)) {
-                                    if(add != except)
-                                        Settings.AddStartupFolder(add);
-                                }else {
-                                    var di = new DirectoryInfo(add);
-                                    foreach(var addFile in di.GetFiles("*", SearchOption.TopDirectoryOnly).Where(fi => fi.FullName != svm.Path)) {
-                                        Settings.AddStartupFolder(addFile.FullName);
-                                    }
-                                    foreach(var addFolder in di.GetDirectories("*", SearchOption.TopDirectoryOnly)) {
-                                        if(!except.StartsWith(addFolder.FullName)) {
-                                            Settings.AddStartupFolder(addFolder.FullName);
-                                        }else {
-                                            addAllExcept(addFolder.FullName, except);
-                                        }
-                                    }
-                                }
-                            };
-                            Settings.RemoveStartupFolder(found);
-                            addAllExcept(found, svm.Path);
-                        }else { //Wsa not in StartupFolders, add it
-                            Settings.AddStartupFolder(svm.Path);
-                        }
-                        SettingsViewModel.InitLoadPaths();
-                    }
-                }
-            };
         }
 
         private void SetupAboutSpeechCommands(SpeechController speechController) {

@@ -7,16 +7,13 @@ using System.Threading.Tasks;
 namespace PlayerInterface.ViewModels {
 
     public class SongMenuItemViewModel {
-        public string Title { get; set; }
+        public string Title { get; }
 
-        public Action<SongViewModel> Action { get; set; }
+        public Action Execute { get; }
 
-        public void Execute(SongViewModel svm) {
-            if(svm != null) {
-                Action?.Invoke(svm);
-            } else {
-                throw new ArgumentNullException(nameof(svm));
-            }
+        public SongMenuItemViewModel(string title, Action action) {
+            Title = title;
+            Execute = action;
         }
     }
 }

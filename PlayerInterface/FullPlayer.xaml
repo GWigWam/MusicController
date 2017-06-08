@@ -187,7 +187,7 @@
                                         </Grid>
                                         <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
                                     </Grid>
-                                    <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MainViewModel.SongMenuItems}">
+                                    <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MenuItems}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
                                                 <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
