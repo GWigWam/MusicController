@@ -125,7 +125,9 @@
                 <ListBox x:Name="Lb_Playlist" Grid.Row="3" Margin="2,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SelectionMode="Extended" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
                     <ListBox.ItemContainerStyle>
-                        <Style>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="ListBoxItem.AllowDrop" Value="True" />
                             <EventSetter Event="ListBoxItem.MouseMove" Handler="SongCard_MouseMove" />
                             <EventSetter Event="ListBoxItem.DragOver" Handler="SongCard_DragOver" />
@@ -138,9 +140,10 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type vm:SongViewModel}">
-                            <Border MinHeight="42" BorderThickness="0,0,0,2" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
+                            <Border MinHeight="42" BorderThickness="0,0,0,2">
                                 <Border.Style>
                                     <Style TargetType="Border">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" />
                                         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Playing}" Value="True">
