@@ -204,7 +204,8 @@ namespace PlayerCore {
                     // See: https://github.com/naudio/NAudio/wiki/Understanding-Output-Devices
                     Player = new WaveOutEvent() {
                         DesiredLatency = 400, // In ms, Default = 300
-                        NumberOfBuffers = 10 // Default = 2
+                        NumberOfBuffers = 10, // Default = 2
+                        DeviceNumber = -1 // 1- for default device, 0 for first device
                     };
 
                     Player.Init(File);
