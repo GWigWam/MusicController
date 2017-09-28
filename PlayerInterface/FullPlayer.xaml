@@ -33,6 +33,9 @@
             <Setter Property="IsHitTestVisible" Value="False" />
             <Setter Property="Padding" Value="0" />
         </Style>
+        <Style TargetType="Image">
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
+        </Style>
     </Window.Resources>
     <Grid x:Name="Grid_Main">
         <Grid.RowDefinitions>
