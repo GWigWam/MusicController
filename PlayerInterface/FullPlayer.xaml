@@ -122,8 +122,10 @@
                         <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
-                <ListBox x:Name="Lb_Playlist" Grid.Row="3" Margin="2,0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SelectionMode="Extended" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ItemsSource="{Binding PlaylistItems}" MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
+                <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding PlaylistItems}"
+                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="2,0"
+                         SelectionMode="Extended"
+                         MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="0" />
@@ -140,14 +142,13 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type vm:SongViewModel}">
-                            <Border MinHeight="42" BorderThickness="0,0,0,2">
+                            <Border MinHeight="42" BorderThickness="0,0,0,1">
                                 <Border.Style>
                                     <Style TargetType="Border">
-                                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" />
-                                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                                        <Setter Property="BorderBrush" Value="Black" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Playing}" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                                                <Setter Property="Background" Value="#7888" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
