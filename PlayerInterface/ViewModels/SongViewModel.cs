@@ -105,7 +105,8 @@ namespace PlayerInterface.ViewModels {
             }
 
             if(MainViewModel.SongPlayer.CurrentSong != Song) {
-                yield return new SongMenuItemViewModel("Play", Play);
+                yield return new SongMenuItemViewModel("Play now", Play);
+                yield return new SongMenuItemViewModel("Play next", PlayNext);
             }
             yield return new SongMenuItemViewModel("Remove", Remove);
 
@@ -130,6 +131,8 @@ namespace PlayerInterface.ViewModels {
                 MainViewModel.PlaySongCommand.Execute(Song);
             }
         }
+
+        private void PlayNext() => MainViewModel.Playlist.MoveTo(MainViewModel.Playlist.CurrentSong, Song);
 
         private void Remove() {
             var svmIEnum = new SongViewModel[] { this };
