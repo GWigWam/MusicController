@@ -40,13 +40,10 @@ namespace PlayerCore.Settings {
         }
 
         public static void SetupStats(AppSettings settings, SongPlayer player) {
-            long playingSince = Environment.TickCount;
-
             player.SongChanged += (_, args) => {
-                const int minPlayTimeMs = 5000;
                 const float defVolume = 0.5f;
 
-                if(args.Previous != null && Environment.TickCount - playingSince > minPlayTimeMs) {
+                if(args.Previous != null) {
                     var songStats = args.Previous.Stats;
                     if(songStats.Volume != player.Volume) {
                         songStats.Volume = player.Volume;
@@ -61,8 +58,6 @@ namespace PlayerCore.Settings {
                         player.Volume = defVolume;
                     }
                 }
-
-                playingSince = Environment.TickCount;
             };
 
             player.PlayingStopped += (_, a) => {
