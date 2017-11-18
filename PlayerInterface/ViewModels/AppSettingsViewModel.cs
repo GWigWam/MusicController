@@ -67,6 +67,11 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public string Theme {
+            get => Settings.Theme;
+            set => Settings.Theme = value;
+        }
+
         public ObservableCollection<ExplorerItem> LoadPaths {
             get; private set;
         }

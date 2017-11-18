@@ -93,6 +93,7 @@
       <DependentUpon>SmallPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartupManager.cs" />
+    <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="ValueConverters\NegativeValueConverter.cs" />
     <Compile Include="ViewModels\AppSettingsViewModel.cs" />
     <Compile Include="ViewModels\FolderExplore\ExplorerFile.cs" />
@@ -158,6 +159,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SmallPlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

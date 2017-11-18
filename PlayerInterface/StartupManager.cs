@@ -2,6 +2,7 @@
 using PlayerCore;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
+using PlayerInterface.Themes;
 using SpeechControl;
 using System;
 using System.Collections.Generic;
@@ -82,10 +83,17 @@ namespace PlayerInterface {
 
             Application = new SpeechMusicControllerApp();
             Application.InitializeComponent();
+          
+            ThemeManager.Instance.LoadTheme(ApplicationSettings.Theme);
+            ApplicationSettings.Changed += (s, a) => {
+                if (a.ChangedPropertyName == nameof(AppSettings.Theme)) {
+                    ThemeManager.Instance.LoadTheme(ApplicationSettings.Theme);
+                }
+            };
 
             var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource(TrayIconResourceName));
             windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController, TransitionMgr);
-
+             
             Application.Exiting += (s, a) => {
                 ApplicationSettings.WriteToDisc();
             };

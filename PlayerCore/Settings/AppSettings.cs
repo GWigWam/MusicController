@@ -113,6 +113,19 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private string theme = "Default";
+
+        [JsonProperty]
+        public string Theme {
+            get { return theme; }
+            set {
+                if (value != theme) {
+                    theme = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(Theme)));
+                }
+            }
+        }
+
         [JsonProperty]
         private HashSet<string> startupFolders {
             get; set;
