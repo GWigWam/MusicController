@@ -82,6 +82,20 @@
                 <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" />
                 <Setter Property="Foreground" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" />
             </Style>
+            <Style TargetType="ContextMenu">
+                <Setter Property="Foreground" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ContextMenu}">
+                            <Border BorderThickness="1"
+                                Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}"
+                                BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" >
+                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
         </ResourceDictionary>
     </Application.Resources>
