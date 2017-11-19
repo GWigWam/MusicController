@@ -34,7 +34,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Padding="5" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" >
+                                    <Border Padding="5" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundDisabled]}" >
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>

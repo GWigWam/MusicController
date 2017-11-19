@@ -5,7 +5,7 @@
     <SolidColorBrush x:Key="TBackground" Color="#F0F0F0" />
     <SolidColorBrush x:Key="TBackgroundLight" Color="White" />
     <SolidColorBrush x:Key="TBackgroundHighlight" Color="#C7C7C7" />
-    <SolidColorBrush x:Key="TBackgroundDisabled" Color="#707070" />
+    <SolidColorBrush x:Key="TBackgroundDisabled" Color="#606060" />
 
     <SolidColorBrush x:Key="TBorder" Color="#B4B4B4" />
     <SolidColorBrush x:Key="TText" Color="Black" />
