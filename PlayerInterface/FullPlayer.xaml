@@ -124,9 +124,8 @@
                         <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
-                <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding PlaylistItems}" Background="Transparent"
-                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="2,0"
-                         SelectionMode="Extended"
+                <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding PlaylistItems}" Margin="2,0" SelectionMode="Extended"
+                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -151,6 +150,9 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Playing}" Value="True">
                                                 <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=IsEnabled}" Value="false">
+                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundDisabled]}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -197,7 +199,7 @@
                                     <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MenuItems}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
-                                                <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                                <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}"
                                                         Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_SongCard_Menu_MouseLeftButtonUp">
                                                     <Border.Style>
                                                         <Style TargetType="Border">
@@ -301,11 +303,18 @@
 
                             <Label Grid.Column="0" Content="Theme:" />                            
                             <ListBox Grid.Column="1" ItemsSource="{x:Static th:ThemeManager.AvailableThemes}" SelectedItem="{Binding SettingsViewModel.Theme}">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel IsItemsHost="True" />
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
+                                <ListBox.Template>
+                                    <ControlTemplate TargetType="ListBox">
+                                        <WrapPanel IsItemsHost="True" VerticalAlignment="Center" />
+                                    </ControlTemplate>
+                                </ListBox.Template>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="5">
+                                            <ContentPresenter Content="{Binding}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
                         </Grid>
                         
@@ -351,14 +360,14 @@
                         </Hyperlink>
                     </TextBlock>
                     <Label Content="Available speech commands:" FontWeight="Bold" FontSize="16" Padding="0" Margin="0,10,0,0" />
-                    <ListBox Height="Auto" MinHeight="30" ItemsSource="{Binding AboutSpeechCommands}" Background="Transparent"
-                        ScrollViewer.VerticalScrollBarVisibility="Hidden" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch">
+                    <ListBox Height="Auto" MinHeight="30" ItemsSource="{Binding AboutSpeechCommands}"
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type sys:String}">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding}" Margin="0,2" />
-                                    <Line Stroke="Black" X2="1" Stretch="Fill" />
-                                </StackPanel>
+                                <Border BorderThickness="0,1,0,0" Padding="3"
+                                    BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}" >
+                                    <TextBlock Text="{Binding}" />
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

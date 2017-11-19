@@ -45,7 +45,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border BorderThickness="1" Padding="5" BorderBrush="White"
+                                    <Border BorderThickness="1" Padding="5" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[THighlight]}"
                                             Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" >
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
@@ -56,24 +56,31 @@
                 </Style.Triggers>
             </Style>
             <Style TargetType="ListBox">
-                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBox">
+                            <Border BorderThickness="1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}">
+                                <ScrollViewer>
+                                    <StackPanel IsItemsHost="True" />
+                                </ScrollViewer>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
             <Style TargetType="ListBoxItem">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ListBoxItem">
-                            <Border Padding="3">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}" Value="true">
-                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
+                            <Border x:Name="B_ItemBorder" Background="Transparent">
                                 <ContentPresenter />
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="B_ItemBorder" Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -89,7 +96,7 @@
                         <ControlTemplate TargetType="{x:Type ContextMenu}">
                             <Border BorderThickness="1"
                                 Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}"
-                                BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" >
+                                BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}" >
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                             </Border>
                         </ControlTemplate>
