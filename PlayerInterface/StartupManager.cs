@@ -83,11 +83,11 @@ namespace PlayerInterface {
 
             Application = new SpeechMusicControllerApp();
             Application.InitializeComponent();
-          
-            ThemeManager.Instance.LoadTheme(ApplicationSettings.Theme);
+
+            ThemeManager.Instance.SetTheme(ApplicationSettings.Theme);
             ApplicationSettings.Changed += (s, a) => {
                 if (a.ChangedPropertyName == nameof(AppSettings.Theme)) {
-                    ThemeManager.Instance.LoadTheme(ApplicationSettings.Theme);
+                    ThemeManager.Instance.SetTheme(ApplicationSettings.Theme);
                 }
             };
 
