@@ -62,7 +62,7 @@
                         <ControlTemplate TargetType="ListBox">
                             <Border BorderThickness="1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}">
                                 <ScrollViewer>
-                                    <StackPanel IsItemsHost="True" />
+                                    <VirtualizingStackPanel IsItemsHost="True" />
                                 </ScrollViewer>
                             </Border>
                         </ControlTemplate>
