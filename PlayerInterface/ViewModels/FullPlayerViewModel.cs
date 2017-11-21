@@ -66,6 +66,10 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
+        public ICommand ShuffleCommand {
+            get; private set;
+        }
+
         public GenericRelayCommand<Tuple<SongViewModel[], SongViewModel>> MovePlaylistSongsCommand {
             get; private set;
         }
@@ -199,6 +203,8 @@ namespace PlayerInterface.ViewModels {
             }, (inp) => {
                 return (inp.Item1?.Length ?? 0) > 0 && inp.Item2?.Song != null;
             });
+
+            ShuffleCommand = new RelayCommand((o) => Playlist.Shuffle(), (o) => Playlist != null);
         }
 
         private void SetupAboutSpeechCommands(SpeechController speechController) {
