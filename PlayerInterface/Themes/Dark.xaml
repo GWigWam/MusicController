@@ -5,12 +5,14 @@
     <SolidColorBrush x:Key="TBackground" Color="#1E1E1E" />
     <SolidColorBrush x:Key="TBackgroundLight" Color="#2D2D30" />
     <SolidColorBrush x:Key="TBackgroundHighlight" Color="#434346" />
-    <SolidColorBrush x:Key="TBackgroundDisabled" Color="#241E1E" />
+    <SolidColorBrush x:Key="TBackgroundDisabled" Color="#342020" />
     
     <SolidColorBrush x:Key="TBorder" Color="#3F3F46" />
     <SolidColorBrush x:Key="TText" Color="#F1F1F1" />
     <SolidColorBrush x:Key="TTextDisabled" Color="#656565" />
 
     <SolidColorBrush x:Key="THighlight" Color="#FF0C3A61" />
+
+    <SolidColorBrush x:Key="TButton" Color="#505059" />
     
 </ResourceDictionary>

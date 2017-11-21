@@ -3,9 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid x:Name="ContainerGrid">
-        <Image x:Name="ButtonImage" Margin="2" Source="{Binding ElementName=ImageButtonControl, Path=Image}" MouseLeftButtonUp="Image_MouseLeftButtonUp" Cursor="Hand" />
+             xmlns:th="clr-namespace:PlayerInterface.Themes"
+             mc:Ignorable="d">
+    <Grid Background="Transparent" MouseLeftButtonUp="ControlMouseLeftButtonUp">
+        <Rectangle>
+            <Rectangle.Style>
+                <Style TargetType="Rectangle">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Fill" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[THighlight]}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding ElementName=ImageButtonControl, Path=CanCommandExecute}" Value="false">
+                            <Setter Property="Fill" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundDisabled]}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Fill" Value="{Binding ElementName=ImageButtonControl, Path=ButtonColor}" />
+                    <Setter Property="OpacityMask">
+                        <Setter.Value>
+                            <ImageBrush
+                                ImageSource="{Binding ElementName=ImageButtonControl, Path=Image}"
+                                RenderOptions.BitmapScalingMode="HighQuality" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
     </Grid>
 </UserControl>
+    

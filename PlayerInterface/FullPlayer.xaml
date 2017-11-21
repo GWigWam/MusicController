@@ -44,7 +44,7 @@
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="Sp_Tabs" Grid.Column="0" Orientation="Horizontal">
                 <Border Tag="Active" x:Name="Btn_Tab_Main" Style="{StaticResource TabBorderStyle}">
@@ -58,10 +58,15 @@
                 </Border>
             </StackPanel>
             <Border Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}">
-                <StackPanel x:Name="Sp_Drag" Orientation="Horizontal" FlowDirection="RightToLeft" MouseDown="Sp_Drag_MouseDown" Background="Transparent">
-                    <cc:ImageButton x:Name="Btn_Close" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" GlowOnHover="False" />
-                    <cc:ImageButton x:Name="Btn_Minimize" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" GlowOnHover="False" />
-                </StackPanel>
+                <Grid x:Name="Sp_Drag" MouseDown="Sp_Drag_MouseDown" Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="34" />
+                    </Grid.ColumnDefinitions>
+                    <cc:ImageButton x:Name="Btn_Minimize" Grid.Column="1" Margin="4,4,0,4" Image="res/img/MinimizeWindow.png" MouseLeftButtonDown="Btn_Minimize_MouseLeftButtonDown" />
+                    <cc:ImageButton x:Name="Btn_Close" Grid.Column="2" Margin="4" Image="res/img/CloseWindow.png" MouseLeftButtonDown="Btn_Close_MouseLeftButtonDown" />
+                </Grid>
             </Border>
         </Grid>
         <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackground]}" IsEnabled="{Binding UIEnabled}">
