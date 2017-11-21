@@ -83,7 +83,7 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="CustomControls\ScrollSlider.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
-    <Compile Include="ProgressControl.xaml.cs">
+    <Compile Include="CustomControls\ProgressControl.xaml.cs">
       <DependentUpon>ProgressControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ScreenOverlay.xaml.cs">
@@ -150,7 +150,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProgressControl.xaml">
+    <Page Include="CustomControls\ProgressControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
