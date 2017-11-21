@@ -47,14 +47,33 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="Sp_Tabs" Grid.Column="0" Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="Rectangle">
+                        <Setter Property="Fill" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TButton]}" />
+                        <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}" />
+                        <EventSetter Event="MouseUp" Handler="Tab_MouseUp" />
+                    </Style>
+                </StackPanel.Resources>
                 <Border Tag="Active" x:Name="Btn_Tab_Main" Style="{StaticResource TabBorderStyle}">
-                    <Image Source="res/img/MusicNote.png" MouseUp="Tab_MouseUp" ToolTip="Music" />
+                    <Rectangle ToolTip="Music">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="res/img/MusicNote.png" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
                 </Border>
                 <Border Tag="InActive" x:Name="Btn_Tab_Settings" Style="{StaticResource TabBorderStyle}">
-                    <Image Source="res/img/SettingsGear.png" MouseUp="Tab_MouseUp" ToolTip="Settings" />
+                    <Rectangle ToolTip="Settings">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="res/img/SettingsGear.png" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
                 </Border>
                 <Border Tag="InActive" x:Name="Btn_Tab_About" Style="{StaticResource TabBorderStyle}">
-                    <Image Source="res/img/Info.png" MouseUp="Tab_MouseUp" ToolTip="About" />
+                    <Rectangle ToolTip="About">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="res/img/Info.png" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
                 </Border>
             </StackPanel>
             <Border Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}">

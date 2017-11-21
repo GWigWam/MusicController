@@ -305,7 +305,7 @@ namespace PlayerInterface {
 
         private void Tab_MouseUp(object sender, MouseButtonEventArgs e) {
             if(e.ChangedButton == MouseButton.Left) {
-                var currentTab = (sender as Image)?.Parent as Border;
+                var currentTab = (sender as FrameworkElement)?.Parent as Border;
                 var currentTabName = currentTab.Name.Replace("Btn_", "");
                 if(currentTab != null) {
                     foreach(var tab in Sp_Tabs.Children.Cast<Border>()) {
