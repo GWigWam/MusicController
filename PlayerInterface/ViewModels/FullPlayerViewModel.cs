@@ -268,6 +268,7 @@ namespace PlayerInterface.ViewModels {
             }
 
             RaisePropertiesChanged(nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));
+            SearchText = string.Empty;
         }
     }
 }
