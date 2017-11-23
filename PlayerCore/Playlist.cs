@@ -54,6 +54,8 @@ namespace PlayerCore {
 
         public event EventHandler CurrentSongChanged;
 
+        public Song this[int index] => Songs[index];
+
         public Playlist() {
             random = new Random();
             Songs = new List<Song>();
