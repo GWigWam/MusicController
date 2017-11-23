@@ -78,12 +78,7 @@ namespace PlayerInterface.ViewModels {
             get; set;
         }
 
-        /// <summary>
-        /// Items for the visible playlist WARNING apparantly ObservableCollection isn't thread safe :(
-        /// </summary>
-        public ObservableCollection<SongViewModel> PlaylistItems {
-            get; private set;
-        }
+        public ObservableCollection<SongViewModel> PlaylistItems { get; }
 
         public ObservableCollection<string> AboutSpeechCommands {
             get; private set;
@@ -111,6 +106,7 @@ namespace PlayerInterface.ViewModels {
             SetupCommands();
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
+            PlaylistItems = new ObservableCollection<SongViewModel>();
 
             FillPlaylist();
 
@@ -227,9 +223,6 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void FillPlaylist(string filter = null) {
-            if(PlaylistItems == null) {
-                PlaylistItems = new ObservableCollection<SongViewModel>();
-            }
             PlaylistItems.Clear();
 
             Regex query;
