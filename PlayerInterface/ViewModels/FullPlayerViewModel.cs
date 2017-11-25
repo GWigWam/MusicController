@@ -78,7 +78,9 @@ namespace PlayerInterface.ViewModels {
             get; set;
         }
 
-        public ObservableCollection<SongViewModel> PlaylistItems { get; }
+        public ObservableCollection<SongViewModel> AllPlaylistItems { get; }
+
+        public ObservableCollection<SongViewModel> PlaylistItems { get; private set; }
 
         public ObservableCollection<string> AboutSpeechCommands {
             get; private set;
@@ -106,7 +108,8 @@ namespace PlayerInterface.ViewModels {
             SetupCommands();
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
-            PlaylistItems = new ObservableCollection<SongViewModel>();
+            AllPlaylistItems = new ObservableCollection<SongViewModel>();
+            PlaylistItems = AllPlaylistItems;
 
             FillPlaylist();
 
@@ -118,6 +121,12 @@ namespace PlayerInterface.ViewModels {
 
             SearchText = string.Empty;
             UIEnabled = true;
+
+            PropertyChanged += (s, a) => {
+                if (a.PropertyName == nameof(SearchText)) {
+                    HandleSearchChanged();
+                }
+            };
         }
 
         private void SetupCommands() {
@@ -175,9 +184,7 @@ namespace PlayerInterface.ViewModels {
                 var songs = o as IEnumerable<SongViewModel>;
                 return songs != null && songs.Count() > 0;
             });
-
-            SearchCommand = new RelayCommand((o) => FillPlaylist(o as string));
-
+            
             AddFilesCommand = new AsyncCommand(async (dyn) => {
                 dynamic input = dyn;
                 UIEnabled = false;
@@ -218,30 +225,58 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void PlaylistChanged(object sender, EventArgs e) {
+            SearchText = string.Empty;
             RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
-            Application.Current.Dispatcher.BeginInvoke((Action)(() => FillPlaylist()));
+            Application.Current.Dispatcher.Invoke(FillPlaylist);
         }
 
-        private void FillPlaylist(string filter = null) {
-            PlaylistItems.Clear();
+        private void HandleSearchChanged() {
+            if (string.IsNullOrEmpty(SearchText)) {
+                if (PlaylistItems != AllPlaylistItems) {
+                    PlaylistItems = AllPlaylistItems;
+                    RaisePropertyChanged(nameof(PlaylistItems));
+                }
+            } else {
+                PlaylistItems = new ObservableCollection<SongViewModel>(GetSearchResult());
+                RaisePropertyChanged(nameof(PlaylistItems));
+            }
+        }
 
-            Regex query;
+        private IEnumerable<SongViewModel> GetSearchResult() {
+            Regex query = null;
             try {
-                query = string.IsNullOrEmpty(filter) ? null : new Regex(filter, RegexOptions.IgnoreCase);
-            } catch(ArgumentException) {
-                query = null;
+                query = string.IsNullOrEmpty(SearchText) ? null : new Regex(SearchText, RegexOptions.IgnoreCase);
+            } catch (ArgumentException) { }
+
+            if (query != null) {
+                return AllPlaylistItems.Where(pli => query.IsMatch(pli.Title) || query.IsMatch(pli.SubTitle));
+            } else {
+                return AllPlaylistItems;
+            }
+        }
+
+        private void FillPlaylist() {
+            foreach (var removed in AllPlaylistItems.Where(svm => !Playlist.Any(s => s.FilePath == svm.Path)).ToArray()) {
+                AllPlaylistItems.Remove(removed);
             }
 
-            foreach(var addSong in Playlist) {
-                var svm = new SongViewModel(addSong, this) {
-                    Playing = addSong == SongPlayer.CurrentSong
-                };
-                if(query == null) {
-                    PlaylistItems.Add(svm);
+            IEnumerable<(Song song, SongViewModel svm)> Match() {
+                for (int i = 0; i < Playlist.Length; i++) {
+                    var s = Playlist[i];
+                    var vm = AllPlaylistItems.FirstOrDefault(svm => svm.Path == s.FilePath);
+                    yield return (s, vm);
+                }
+            }
+            var matched = Match().ToArray();
+
+            for (int i = 0; i < matched.Length; i++) {
+                var curMatch = matched[i];
+                var curSvmIndex = AllPlaylistItems.IndexOf(curMatch.svm);
+                if (curSvmIndex >= 0) {
+                    AllPlaylistItems.Move(curSvmIndex, i);
                 } else {
-                    if(query.IsMatch(svm.Title) || query.IsMatch(svm.SubTitle)) {
-                        PlaylistItems.Add(svm);
-                    }
+                    var newSvm = new SongViewModel(curMatch.song, this);
+                    AllPlaylistItems.Insert(i, newSvm);
                 }
             }
 
@@ -249,11 +284,11 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void SongPlayer_SongChanged(object sender, EventArgs e) {
-            var curPlaying = PlaylistItems.FirstOrDefault(svm => svm.Playing);
+            var curPlaying = AllPlaylistItems.FirstOrDefault(svm => svm.Playing);
             if(curPlaying != null)
                 curPlaying.Playing = false;
 
-            var newPlaying = PlaylistItems.FirstOrDefault(svm => svm.Song == SongPlayer.CurrentSong);
+            var newPlaying = AllPlaylistItems.FirstOrDefault(svm => svm.Song == SongPlayer.CurrentSong);
             if(newPlaying != null) {
                 newPlaying.Playing = true;
                 CurrentFocusItem = newPlaying;
