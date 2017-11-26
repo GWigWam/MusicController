@@ -115,18 +115,24 @@ namespace PlayerInterface.ViewModels {
 
             SetupAboutSpeechCommands(speechController);
 
-            SongPlayer.SongChanged += SongPlayer_SongChanged;
+            SearchText = string.Empty;
+            UpdatePlayingInfo();
+
+            SongPlayer.SongChanged += (s, a) => {
+                UpdatePlayingInfo();
+                SearchText = string.Empty;
+            };
+
             Playlist.ListContentChanged += PlaylistChanged;
             Playlist.ListOrderChanged += PlaylistChanged;
-
-            SearchText = string.Empty;
-            UIEnabled = true;
 
             PropertyChanged += (s, a) => {
                 if (a.PropertyName == nameof(SearchText)) {
                     HandleSearchChanged();
                 }
             };
+
+            UIEnabled = true;
         }
 
         private void SetupCommands() {
@@ -283,20 +289,19 @@ namespace PlayerInterface.ViewModels {
             DisplayedSongsChanged?.Invoke(this, new EventArgs());
         }
 
-        private void SongPlayer_SongChanged(object sender, EventArgs e) {
+        private void UpdatePlayingInfo() {
             var curPlaying = AllPlaylistItems.FirstOrDefault(svm => svm.Playing);
-            if(curPlaying != null)
+            if (curPlaying != null)
                 curPlaying.Playing = false;
 
             var newPlaying = AllPlaylistItems.FirstOrDefault(svm => svm.Song == SongPlayer.CurrentSong);
-            if(newPlaying != null) {
+            if (newPlaying != null) {
                 newPlaying.Playing = true;
                 CurrentFocusItem = newPlaying;
                 RaisePropertyChanged(nameof(CurrentFocusItem));
             }
 
             RaisePropertiesChanged(nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));
-            SearchText = string.Empty;
         }
     }
 }
