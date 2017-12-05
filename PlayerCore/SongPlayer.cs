@@ -12,7 +12,7 @@ using System.Timers;
 namespace PlayerCore {
 
     public class SongPlayer : IDisposable {
-        public static string[] SupportedExtensions { get; }
+        public static readonly string[] SupportedExtensions = new string[] { ".mp3", ".flac" };
 
         private Song currentSong;
         private IWavePlayer Player;
@@ -134,12 +134,6 @@ namespace PlayerCore {
 
         public SongPlayer(float volume = 1) {
             Volume = volume;
-        }
-
-        static SongPlayer() {
-            SupportedExtensions = new string[] {
-                ".mp3", ".flac"
-            };
         }
 
         public void Stop() {

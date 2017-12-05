@@ -11,6 +11,8 @@ namespace PlayerCore.Settings {
     public class AppSettings : SettingsFile {
         private bool startMinimized = true;
 
+        private readonly string[] AllowedStartupFileExtensions = new string[] { ".mp3", ".flac", ".lnk" };
+
         [JsonProperty]
         public bool StartMinimized {
             get { return startMinimized; }
@@ -137,7 +139,7 @@ namespace PlayerCore.Settings {
         protected List<SongStats> Statistics {
             get { return statistics; }
             set {
-                statistics = value.Where(ss => System.IO.File.Exists(ss.Path)).ToList();
+                statistics = value.Where(ss => File.Exists(ss.Path)).ToList();
                 foreach(var s in statistics) {
                     s.PropertyChanged += SongStat_PropertyChanged;
                 }
@@ -198,7 +200,7 @@ namespace PlayerCore.Settings {
         }
 
         private bool AddStartupPath(string path) {
-            if(Directory.Exists(path) || (File.Exists(path) && new string[] { ".mp3", ".flac" }.Contains(new FileInfo(path).Extension))) {
+            if(Directory.Exists(path) || (File.Exists(path) && AllowedStartupFileExtensions.Any(e => e.Equals(new FileInfo(path).Extension, StringComparison.CurrentCultureIgnoreCase)))) {
                 if(!IsStatupPath(path)) {
                     startupFolders.Add(path);
                     return true;

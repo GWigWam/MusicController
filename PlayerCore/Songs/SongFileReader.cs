@@ -59,7 +59,11 @@ namespace PlayerCore.Songs {
         }
 
         private static SongFile ReadFile(FileInfo file) {
-            if(!SongPlayer.SupportedExtensions.Contains(file.Extension)) {
+            if (file.Extension.Equals(".lnk", StringComparison.CurrentCultureIgnoreCase)) {
+                file = LinkHelper.GetLinkTarget(file);
+            }
+
+            if(!SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
                 return null;
             }
 
