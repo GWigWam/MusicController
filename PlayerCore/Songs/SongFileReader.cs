@@ -63,7 +63,7 @@ namespace PlayerCore.Songs {
                 file = LinkHelper.GetLinkTarget(file);
             }
 
-            if(!SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
+            if(file == null || !SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
                 return null;
             }
 
