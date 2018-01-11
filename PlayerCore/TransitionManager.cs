@@ -56,19 +56,23 @@ namespace PlayerCore {
 
         public void StartTransition(int delayMs) {
             var curIndex = TrackList.CurrentSongIndex;
-            TrackList.CurrentSongIndex = TrackList.HasNext ? (curIndex + 1) : (Loop ? (0) : (curIndex));
-            Player.PlayerState = PlayerState.Paused;
+            var nexIndex = TrackList.HasNext ? (curIndex + 1) : (Loop ? (0) : (curIndex));
 
-            CancelSrc = new CancellationTokenSource();
-            Task.Run(async () => {
-                try {
-                    IsTransitioning = true;
-                    await Task.Delay(SongDelayMs, CancelSrc.Token);
-                    Player.PlayerState = PlayerState.Playing;
-                } finally {
-                    IsTransitioning = false;
-                }
-            }, CancelSrc.Token);
+            if (nexIndex != curIndex) {
+                TrackList.CurrentSongIndex = nexIndex;
+                Player.PlayerState = PlayerState.Paused;
+
+                CancelSrc = new CancellationTokenSource();
+                Task.Run(async () => {
+                    try {
+                        IsTransitioning = true;
+                        await Task.Delay(SongDelayMs, CancelSrc.Token);
+                        Player.PlayerState = PlayerState.Playing;
+                    } finally {
+                        IsTransitioning = false;
+                    }
+                }, CancelSrc.Token);
+            }
         }
 
         public void StartTransition() => StartTransition(SongDelayMs);
