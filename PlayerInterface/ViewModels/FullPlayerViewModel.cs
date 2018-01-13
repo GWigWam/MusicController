@@ -233,7 +233,7 @@ namespace PlayerInterface.ViewModels {
         private void PlaylistChanged(object sender, EventArgs e) {
             SearchText = string.Empty;
             RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
-            Application.Current.Dispatcher.Invoke(FillPlaylist);
+            FillPlaylist();
         }
 
         private void HandleSearchChanged() {
