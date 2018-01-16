@@ -14,23 +14,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace PlayerInterface {
-
-    /// <summary>
-    /// Interaction logic for SmallPlayer.xaml
-    /// </summary>
     public partial class SmallPlayer : Window {
 
         public SmallPlayer(SmallPlayerViewModel spvm) {
             InitializeComponent();
-
             DataContext = spvm;
-            spvm.SongPlayer.PlayingStopped += (s, a) => {
-                if(a.Exception != null) {
-                    Dispatcher.Invoke(() => {
-                        new ExceptionWindow(a.Exception).Show();
-                    });
-                }
-            };
         }
 
         private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {

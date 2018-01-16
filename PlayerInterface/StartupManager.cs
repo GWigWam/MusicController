@@ -66,6 +66,13 @@ namespace PlayerInterface {
             new AutoSave(ApplicationSettings, 60 * 10);
 
             SongPlayer = new SongPlayer();
+            SongPlayer.PlayingStopped += (s, a) => {
+                if (a.Exception != null) {
+                    Application.Dispatcher.Invoke(() => {
+                        new ExceptionWindow(a.Exception).Show();
+                    });
+                }
+            };
 
             SongStats.SetupStats(ApplicationSettings, SongPlayer);
 
