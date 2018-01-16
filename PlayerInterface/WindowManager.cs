@@ -10,10 +10,7 @@ using System.Linq;
 using System.Windows;
 
 namespace PlayerInterface {
-
     internal class WindowManager {
-        private FullPlayerViewModel ViewModel;
-
         public TaskbarIcon TrayIcon { get; protected set; }
         public FullPlayer Full { get; protected set; }
         public SmallPlayer Small { get; protected set; }
@@ -24,26 +21,29 @@ namespace PlayerInterface {
         }
 
         public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl, TransitionManager transitionMngr) {
-            ViewModel = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl, transitionMngr);
+            var playVm = new PlayingVm(songPlayer, transitionMngr);
+            var npVm = new NextPrevVm(songPlayer, playlist);
+            var smallVm = new SmallPlayerViewModel(playVm, npVm);
+            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl, transitionMngr, playVm, npVm);
 
-            CreateFullPlayer(!settings.StartMinimized);
-            CreateSmallPlayer(settings.StartMinimized);
+            CreateFullPlayer(!settings.StartMinimized, fullVm);
+            CreateSmallPlayer(settings.StartMinimized, smallVm);
 
             SetupContextMenu(songPlayer);
 
             SetupScreenOverlay(settings, speechControl, songPlayer);
         }
 
-        private void CreateSmallPlayer(bool show) {
-            Small = new SmallPlayer(ViewModel);
+        private void CreateSmallPlayer(bool show, SmallPlayerViewModel vm) {
+            Small = new SmallPlayer(vm);
             Small.Btn_ShowFull.Command = new RelayCommand((o) => ShowFullWindow());
 
             if(show)
                 Small.Show();
         }
 
-        private void CreateFullPlayer(bool show) {
-            Full = new FullPlayer(ViewModel);
+        private void CreateFullPlayer(bool show, FullPlayerViewModel vm) {
+            Full = new FullPlayer(vm);
             Full.MinimizedToTray += (s, a) => ShowSmallWindow();
             if(show)
                 Full.Show();

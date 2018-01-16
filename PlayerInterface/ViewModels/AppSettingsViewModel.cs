@@ -11,8 +11,10 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
-
     public class AppSettingsViewModel : NotifyPropertyChanged {
+
+        public AppSettings Settings { get; }
+
         public bool StartMinimized {
             get {
                 return Settings.StartMinimized;
@@ -82,10 +84,6 @@ namespace PlayerInterface.ViewModels {
 
         public ICommand OpenFileLocationCommand {
             get; private set;
-        }
-
-        private AppSettings Settings {
-            get;
         }
 
         public AppSettingsViewModel(AppSettings settings) {

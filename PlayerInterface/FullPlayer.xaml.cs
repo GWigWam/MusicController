@@ -19,15 +19,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace PlayerInterface {
-
-    /// <summary>
-    /// Interaction logic for FullPlayer.xaml
-    /// </summary>
     public partial class FullPlayer : Window {
 
         public event EventHandler MinimizedToTray;
 
-        private FullPlayerViewModel Model => DataContext as FullPlayerViewModel;
+        private FullPlayerViewModel Vm => (FullPlayerViewModel)DataContext;
 
         private ScrollViewer lb_Playlist_ScrollViewer;
 
@@ -123,9 +119,9 @@ namespace PlayerInterface {
 
         private void Lb_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             var selected = Lb_Playlist.SelectedItem as SongViewModel;
-            if(Model?.PlaySongCommand != null && selected != null && e.ChangedButton == MouseButton.Left) {
-                if(Model.PlaySongCommand.CanExecute(selected.Song)) {
-                    Model.PlaySongCommand.Execute(selected.Song);
+            if(Vm?.PlaySongCommand != null && selected != null && e.ChangedButton == MouseButton.Left) {
+                if(Vm.PlaySongCommand.CanExecute(selected.Song)) {
+                    Vm.PlaySongCommand.Execute(selected.Song);
                 }
             }
         }
@@ -145,7 +141,7 @@ namespace PlayerInterface {
                 foreach(var prop in SongViewModel.SortProperties) {
                     var mi = new MenuItem() {
                         Header = prop.Key,
-                        Command = Model.SortByCommand,
+                        Command = Vm.SortByCommand,
                         CommandParameter = prop.Value
                     };
                     cm.Items.Add(mi);
@@ -159,19 +155,21 @@ namespace PlayerInterface {
             } else if((!Tb_Search.IsFocused && e.Key == Key.Back) || e.Key == Key.Escape) {
                 Tb_Search.Text = string.Empty;
             } else if(!Tb_Search.IsFocused && e.Key == Key.Space) {
-                if(Model?.SwitchCommand?.CanExecute(null) == true) {
-                    Model.SwitchCommand.Execute(null);
+                var switchCmd = Vm?.Playing?.SwitchCommand;
+                if(switchCmd?.CanExecute(null) == true) {
+                    switchCmd.Execute(null);
                 }
             }
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
-            ICommand command = (e.ChangedButton == MouseButton.XButton1 ? Model?.PreviousCommand : (e.ChangedButton == MouseButton.XButton2 ? Model?.NextCommand : null));
+#warning TODO: Use inputbinding
+            /*ICommand command = (e.ChangedButton == MouseButton.XButton1 ? Vm?.PreviousCommand : (e.ChangedButton == MouseButton.XButton2 ? Vm?.NextCommand : null));
 
             if(command != null && command.CanExecute(null)) {
                 command.Execute(null);
                 e.Handled = true;
-            }
+            }*/
         }
 
         private void Lb_Playlist_KeyUp(object sender, KeyEventArgs e) {
@@ -179,15 +177,15 @@ namespace PlayerInterface {
             var allSelected = Lb_Playlist.SelectedItems.Cast<SongViewModel>();
 
             if(e.Key == Key.Delete) {
-                if(Model?.RemoveSongsCommand != null && allSelected.Count() > 0) {
-                    if(Model.RemoveSongsCommand.CanExecute(allSelected)) {
-                        Model.RemoveSongsCommand.Execute(allSelected);
+                if(Vm?.RemoveSongsCommand != null && allSelected.Count() > 0) {
+                    if(Vm.RemoveSongsCommand.CanExecute(allSelected)) {
+                        Vm.RemoveSongsCommand.Execute(allSelected);
                     }
                 }
             } else if(e.Key == Key.Enter) {
-                if(Model?.PlaySongCommand != null && singleSelected != null) {
-                    if(Model.PlaySongCommand.CanExecute(singleSelected.Song)) {
-                        Model.PlaySongCommand.Execute(singleSelected.Song);
+                if(Vm?.PlaySongCommand != null && singleSelected != null) {
+                    if(Vm.PlaySongCommand.CanExecute(singleSelected.Song)) {
+                        Vm.PlaySongCommand.Execute(singleSelected.Song);
                     }
                 }
             }
@@ -195,8 +193,8 @@ namespace PlayerInterface {
 
         private void Tb_Search_TextChanged(object sender, TextChangedEventArgs e) {
             var input = (sender as TextBox)?.Text;
-            if(input != null && Model?.SearchCommand != null && Model.SearchCommand.CanExecute(input)) {
-                Model.SearchCommand.Execute(input);
+            if(input != null && Vm?.SearchCommand != null && Vm.SearchCommand.CanExecute(input)) {
+                Vm.SearchCommand.Execute(input);
             }
         }
 
@@ -257,17 +255,17 @@ namespace PlayerInterface {
 
                     if(data != null && !data.Contains(droppedOn)) {
                         var args = Tuple.Create(data, droppedOn);
-                        if(Model?.MovePlaylistSongsCommand?.CanExecute(args) == true) {
-                            Model.MovePlaylistSongsCommand.Execute(args);
+                        if(Vm?.MovePlaylistSongsCommand?.CanExecute(args) == true) {
+                            Vm.MovePlaylistSongsCommand.Execute(args);
                         }
                         e.Handled = true;
                     }
                 } else if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
-                    if(Model?.AddFilesCommand != null) {
+                    if(Vm?.AddFilesCommand != null) {
                         var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
                         var args = new { Paths = paths, Position = droppedOn.Song };
-                        if(Model.AddFilesCommand.CanExecute(args)) {
-                            Model.AddFilesCommand.Execute(args);
+                        if(Vm.AddFilesCommand.CanExecute(args)) {
+                            Vm.AddFilesCommand.Execute(args);
                             e.Handled = true;
                         }
                     }
@@ -294,11 +292,11 @@ namespace PlayerInterface {
         }
 
         private void Lb_Playlist_Drop(object sender, DragEventArgs e) {
-            if(Model?.AddFilesCommand != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
+            if(Vm?.AddFilesCommand != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
                 var args = new { Paths = paths, Position = (int?)null };
-                if(Model.AddFilesCommand.CanExecute(args)) {
-                    Model.AddFilesCommand.Execute(args);
+                if(Vm.AddFilesCommand.CanExecute(args)) {
+                    Vm.AddFilesCommand.Execute(args);
                 }
             }
         }
@@ -328,7 +326,7 @@ namespace PlayerInterface {
         private void TreeView_LostFocus(object sender, RoutedEventArgs e) {
             var tv = sender as TreeView;
             if(!tv.IsFocused && !tv.IsKeyboardFocusWithin) {
-                Model.SettingsViewModel.TreeView_LostFocus(sender, e);
+                Vm.SettingsViewModel.TreeView_LostFocus(sender, e);
             }
         }
 

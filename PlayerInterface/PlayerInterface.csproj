@@ -103,6 +103,8 @@
     <Compile Include="ViewModels\FolderExplore\ExplorerFolder.cs" />
     <Compile Include="ViewModels\FolderExplore\ExplorerItem.cs" />
     <Compile Include="ViewModels\FullPlayerViewModel.cs" />
+    <Compile Include="ViewModels\NextPrevVm.cs" />
+    <Compile Include="ViewModels\PlayingVm.cs" />
     <Compile Include="ViewModels\SmallPlayerViewModel.cs" />
     <Compile Include="ViewModels\SongMenuItemViewModel.cs" />
     <Compile Include="ViewModels\SongViewModel.cs" />

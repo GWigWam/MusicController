@@ -1,4 +1,5 @@
-﻿using PlayerCore.Songs;
+﻿using PlayerCore.Settings;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,61 +11,9 @@ using System.Threading.Tasks;
 using System.Windows;
 
 namespace PlayerInterface.ViewModels {
-
     public class SongViewModel : NotifyPropertyChanged {
-        private bool playing = false;
-        public bool Playing {
-            get { return playing; }
-            set {
-                if(playing != value) {
-                    playing = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public Song Song {
-            get;
-        }
-
-        public string Path => $"{Song.FilePath}";
-
-        public string SubTitle => $"{Song.Artist} {(string.IsNullOrEmpty(Song.Album) ? string.Empty : $"({Song.Album})")}";
-        public string Title => $"{Song.Title}";
-
-        public string TrackLengthStr => $"[{FormatHelper.FormatTimeSpan(Song.File.TrackLength)}]";
-        public string BitRateStr => $"{Song.File.BitRate}kbps";
-        public string TrackNrStr => Song.File.TrackCount == 0 ? $"#{Song.File.Track}" : $"{Song.File.Track}/{Song.File.TrackCount}";
-        public string YearStr => Song.File.Year != 0 ? $"{Song.File.Year}" : "-";
-        public string PlayCountStr => $"{Song.Stats.PlayCount}x";
-
-        public enum DisplayType {
-            Front, Menu, DropUnderHint
-        }
-
-        private DisplayType curDisplay;
-
-        public DisplayType CurDisplay {
-            get { return curDisplay; }
-            set {
-                if(value != curDisplay) {
-                    curDisplay = value;
-                    RaisePropertiesChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
-                }
-            }
-        }
-
-        public Visibility FrontVisibility => CurDisplay == DisplayType.Front ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility MenuVisibility => CurDisplay == DisplayType.Menu ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility DropUnderHintVisibility => CurDisplay == DisplayType.DropUnderHint ? Visibility.Visible : Visibility.Collapsed;
-
-        public FullPlayerViewModel MainViewModel {
-            get;
-        }
 
         public static Dictionary<string, PropertyInfo> SortProperties;
-
-        public IEnumerable<SongMenuItemViewModel> MenuItems => GetMenuItems();
 
         static SongViewModel() {
             var songtype = typeof(Song);
@@ -85,15 +34,61 @@ namespace PlayerInterface.ViewModels {
             };
         }
 
+        public Song Song { get; }
+
+        private AppSettings Settings { get; }
+
+        public FullPlayerViewModel MainViewModel { get; }
+
+        private bool playing = false;
+        public bool Playing {
+            get { return playing; }
+            set {
+                if(playing != value) {
+                    playing = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string Path => $"{Song.FilePath}";
+
+        public string SubTitle => $"{Song.Artist} {(string.IsNullOrEmpty(Song.Album) ? string.Empty : $"({Song.Album})")}";
+        public string Title => $"{Song.Title}";
+
+        public string TrackLengthStr => $"[{FormatHelper.FormatTimeSpan(Song.File.TrackLength)}]";
+        public string BitRateStr => $"{Song.File.BitRate}kbps";
+        public string TrackNrStr => Song.File.TrackCount == 0 ? $"#{Song.File.Track}" : $"{Song.File.Track}/{Song.File.TrackCount}";
+        public string YearStr => Song.File.Year != 0 ? $"{Song.File.Year}" : "-";
+        public string PlayCountStr => $"{Song.Stats.PlayCount}x";
+
+        private DisplayType curDisplay;
+        public DisplayType CurDisplay {
+            get { return curDisplay; }
+            set {
+                if(value != curDisplay) {
+                    curDisplay = value;
+                    RaisePropertiesChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
+                }
+            }
+        }
+
+        public Visibility FrontVisibility => CurDisplay == DisplayType.Front ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility MenuVisibility => CurDisplay == DisplayType.Menu ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility DropUnderHintVisibility => CurDisplay == DisplayType.DropUnderHint ? Visibility.Visible : Visibility.Collapsed;
+
+        public IEnumerable<SongMenuItemViewModel> MenuItems => GetMenuItems();
+
         /// <summary>
         /// For testing purposes only
         /// </summary>
         public SongViewModel() {
         }
 
-        public SongViewModel(Song song, FullPlayerViewModel fpvm) {
+        public SongViewModel(Song song, AppSettings settings, FullPlayerViewModel fpvm) {
             curDisplay = DisplayType.Front;
             Song = song;
+            Settings = settings;
             MainViewModel = fpvm;
 
             Song.Stats.PropertyChanged += (s, a) => RaisePropertiesChanged(nameof(PlayCountStr));
@@ -112,7 +107,7 @@ namespace PlayerInterface.ViewModels {
 
             yield return new SongMenuItemViewModel("Open file location", OpenFileLocation);
 
-            var foundStartup = MainViewModel.Settings.StartupFolders.FirstOrDefault(path => Path.StartsWith(path));
+            var foundStartup = Settings.StartupFolders.FirstOrDefault(path => Path.StartsWith(path));
             if(foundStartup == null) {
                 yield return new SongMenuItemViewModel("Add to startup songs", AddToStartup);
             } else {
@@ -142,11 +137,15 @@ namespace PlayerInterface.ViewModels {
         }
 
         private void AddToStartup() {
-            MainViewModel.Settings.AddStartupFolder(Path);
+            Settings.AddStartupFolder(Path);
         }
 
         private void RemoveFromStartup() {
-            MainViewModel.Settings.RemoveStartupFolder(Path);
+            Settings.RemoveStartupFolder(Path);
+        }
+
+        public enum DisplayType {
+            Front, Menu, DropUnderHint
         }
     }
 }

@@ -16,15 +16,25 @@ using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
 
-    public class FullPlayerViewModel : SmallPlayerViewModel {
+    public class FullPlayerViewModel : NotifyPropertyChanged {
 
         public event EventHandler DisplayedSongsChanged;
+        
+        public SongPlayer SongPlayer { get; }
 
         public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
 
         public string StatusText => $"{SongPlayer?.CurrentSong?.Title} - {SongPlayer?.CurrentSong?.Artist}";
 
         public Visibility ShowDropHint => (Playlist?.Length ?? 0) > 0 ? Visibility.Collapsed : Visibility.Visible;
+
+        private AppSettings Settings { get; }
+
+        public Playlist Playlist { get; }
+        
+        public PlayingVm Playing { get; }
+
+        public NextPrevVm NextPrev { get; }
 
         private string _searchText;
 
@@ -82,15 +92,11 @@ namespace PlayerInterface.ViewModels {
 
         public ObservableCollection<SongViewModel> PlaylistItems { get; private set; }
 
-        public ObservableCollection<string> AboutSpeechCommands {
-            get; private set;
-        }
+        public ObservableCollection<string> AboutSpeechCommands { get; private set; }
 
         public string PlaylistStats => $"{Playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(Playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
 
-        public AppSettingsViewModel SettingsViewModel {
-            get;
-        }
+        public AppSettingsViewModel SettingsViewModel { get; }
 
         private bool _UIEnabled;
 
@@ -104,7 +110,13 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController, TransitionManager transitionMngr) : base(settings, player, playlist, transitionMngr) {
+        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController, TransitionManager transitionMngr, PlayingVm playingVm, NextPrevVm nextPrevVm) {
+            Settings = settings;
+            Playlist = playlist;
+            SongPlayer = player;
+            Playing = playingVm;
+            NextPrev = nextPrevVm;
+
             SetupCommands();
 
             SettingsViewModel = new AppSettingsViewModel(Settings);
@@ -281,7 +293,7 @@ namespace PlayerInterface.ViewModels {
                 if (curSvmIndex >= 0) {
                     AllPlaylistItems.Move(curSvmIndex, i);
                 } else {
-                    var newSvm = new SongViewModel(curMatch.song, this);
+                    var newSvm = new SongViewModel(curMatch.song, Settings, this);
                     AllPlaylistItems.Insert(i, newSvm);
                 }
             }
@@ -301,7 +313,7 @@ namespace PlayerInterface.ViewModels {
                 RaisePropertyChanged(nameof(CurrentFocusItem));
             }
 
-            RaisePropertiesChanged(nameof(TrackLengthStr), nameof(StatusText), nameof(EnableChangeElapsed));
+            RaisePropertiesChanged(nameof(TrackLengthStr), nameof(StatusText));
         }
     }
 }

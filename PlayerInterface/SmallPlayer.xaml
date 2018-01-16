@@ -24,8 +24,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <cc:ProgressControl Grid.Row="0"
-            ProgressFill="{Binding ElapsedColor, Mode=OneWay}"
-            Fraction="{Binding Path=ElapsedFraction, Mode=TwoWay}" />
+            ProgressFill="{Binding Playing.ElapsedColor, Mode=OneWay}"
+            Fraction="{Binding Path=Playing.ElapsedFraction, Mode=TwoWay}" />
         <Grid Grid.Row="1" Margin="5,0,5,5">
             <Grid.ColumnDefinitions>
                 <!-- Pause/Play -->
@@ -39,10 +39,10 @@
                 <!-- ShowFull -->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
-            <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
-            <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
-            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="3" Value="{Binding Volume}" ToolTip="{Binding Volume}"
+            <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding Playing.SwitchButtonImgSource}" Command="{Binding Playing.SwitchCommand}" />
+            <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
+            <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
+            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="3" Value="{Binding Playing.Volume}" ToolTip="{Binding Playing.Volume}"
                 VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                 Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01" />
             <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="4" Image="res/img/ShowFull.png" />

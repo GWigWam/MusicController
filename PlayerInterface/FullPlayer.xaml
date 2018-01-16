@@ -128,11 +128,11 @@
                         <ColumnDefinition Width="30" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}" />
-                    <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding PreviousCommand}" />
-                    <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextCommand}" />
+                    <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding Playing.SwitchButtonImgSource}" Command="{Binding Playing.SwitchCommand}" />
+                    <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
+                    <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
                     <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding ShuffleCommand}" />
-                    <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" Value="{Binding Volume}" ToolTip="{Binding Volume}"
+                    <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" Value="{Binding Playing.Volume}" ToolTip="{Binding Playing.Volume}"
                         VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                         Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01"/>
                 </Grid>
@@ -143,8 +143,8 @@
                             <ColumnDefinition Width="4*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <cc:ProgressControl x:Name="Pc_Elapsed" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding EnableChangeElapsed}" ProgressFill="{Binding ElapsedColor, Mode=OneWay}" Fraction="{Binding Path=ElapsedFraction, Mode=TwoWay}" ToolTip="Timestamp" />
-                        <Label x:Name="Lb_Elapsed" Grid.Column="0" Style="{StaticResource TimestampLabelStyle}" Content="{Binding ElapsedStr, FallbackValue=0:00}" />
+                        <cc:ProgressControl x:Name="Pc_Elapsed" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding Playing.EnableChangeElapsed}" ProgressFill="{Binding Playing.ElapsedColor, Mode=OneWay}" Fraction="{Binding Path=Playing.ElapsedFraction, Mode=TwoWay}" ToolTip="Timestamp" />
+                        <Label x:Name="Lb_Elapsed" Grid.Column="0" Style="{StaticResource TimestampLabelStyle}" Content="{Binding Playing.ElapsedStr, FallbackValue=0:00}" />
                         <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
