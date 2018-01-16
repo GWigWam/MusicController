@@ -12,8 +12,9 @@
         xmlns:th="clr-namespace:PlayerInterface.Themes"
         mc:Ignorable="d"
         Title="SpeechMusicController" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
-        PreviewKeyDown="Window_PreviewKeyDown" IsVisibleChanged="Window_IsVisibleChanged" MouseDown="Window_MouseDown"
+        PreviewKeyDown="Window_PreviewKeyDown" IsVisibleChanged="Window_IsVisibleChanged"
         AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}">
+
     <Window.Resources>
         <sys:String x:Key="ActiveTag">Active</sys:String>
         <Style x:Key="TabBorderStyle" TargetType="{x:Type Border}">
@@ -36,6 +37,7 @@
             <Setter Property="Foreground" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" />
         </Style>
     </Window.Resources>
+
     <Grid x:Name="Grid_Main">
         <Grid.RowDefinitions>
             <RowDefinition Height="34" />
