@@ -23,8 +23,9 @@ namespace PlayerInterface {
         public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl, TransitionManager transitionMngr) {
             var playVm = new PlayingVm(songPlayer, transitionMngr);
             var npVm = new NextPrevVm(songPlayer, playlist);
+
             var smallVm = new SmallPlayerViewModel(playVm, npVm);
-            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl, transitionMngr, playVm, npVm);
+            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl, playVm, npVm);
 
             CreateFullPlayer(!settings.StartMinimized, fullVm);
             CreateSmallPlayer(settings.StartMinimized, smallVm);

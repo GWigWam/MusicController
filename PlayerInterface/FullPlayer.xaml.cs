@@ -44,17 +44,14 @@ namespace PlayerInterface {
         public FullPlayer(FullPlayerViewModel fpvm) {
             InitializeComponent();
             DataContext = fpvm;
-
-            Action scrollIntoView = () => Application.Current.Dispatcher.BeginInvoke((Action)(() => ScrollCurrentSongIntoView()));
-
+            
             fpvm.PropertyChanged += (s, p) => {
-                if(p.PropertyName == nameof(FullPlayerViewModel.CurrentFocusItem)) {
-                    scrollIntoView();
-                } else if(p.PropertyName == nameof(FullPlayerViewModel.StatusText)) {
+                if(p.PropertyName == nameof(FullPlayerViewModel.StatusText)) {
                     UpdateStatusTextAnimation();
                 }
             };
-            fpvm.DisplayedSongsChanged += (s, a) => scrollIntoView();
+            fpvm.Playlist.DisplayedSongsChanged += (s, a) => Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
+            fpvm.SongPlayer.SongChanged += (s, a) => Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
 
             SizeChanged += (s, a) => UpdateStatusTextAnimation();
         }
@@ -65,9 +62,9 @@ namespace PlayerInterface {
         }
 
         private void ScrollCurrentSongIntoView() {
-            var item = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
-            if(item != null) {
-                Lb_Playlist.ScrollIntoView(item);
+            var playing = Lb_Playlist.Items.Cast<SongViewModel>().FirstOrDefault(svm => svm.Playing);
+            if(playing != null) {
+                Lb_Playlist.ScrollIntoView(playing);
             }
         }
 
@@ -96,12 +93,6 @@ namespace PlayerInterface {
                     sb.Begin(this, true);
                 }))
             );
-        }
-
-        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-            if((bool)e.NewValue == true) {
-                ScrollCurrentSongIntoView();
-            }
         }
 
         private void Btn_Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
@@ -141,7 +132,7 @@ namespace PlayerInterface {
                 foreach(var prop in SongViewModel.SortProperties) {
                     var mi = new MenuItem() {
                         Header = prop.Key,
-                        Command = Vm.SortByCommand,
+                        Command = Vm.Playlist.SortByCommand,
                         CommandParameter = prop.Value
                     };
                     cm.Items.Add(mi);
@@ -167,9 +158,9 @@ namespace PlayerInterface {
             var allSelected = Lb_Playlist.SelectedItems.Cast<SongViewModel>();
 
             if(e.Key == Key.Delete) {
-                if(Vm?.RemoveSongsCommand != null && allSelected.Count() > 0) {
-                    if(Vm.RemoveSongsCommand.CanExecute(allSelected)) {
-                        Vm.RemoveSongsCommand.Execute(allSelected);
+                if(allSelected.Count() > 0) {
+                    if(Vm.Playlist.RemoveSongsCommand.CanExecute(allSelected)) {
+                        Vm.Playlist.RemoveSongsCommand.Execute(allSelected);
                     }
                 }
             } else if(e.Key == Key.Enter) {
@@ -178,13 +169,6 @@ namespace PlayerInterface {
                         Vm.PlaySongCommand.Execute(singleSelected.Song);
                     }
                 }
-            }
-        }
-
-        private void Tb_Search_TextChanged(object sender, TextChangedEventArgs e) {
-            var input = (sender as TextBox)?.Text;
-            if(input != null && Vm?.SearchCommand != null && Vm.SearchCommand.CanExecute(input)) {
-                Vm.SearchCommand.Execute(input);
             }
         }
 
@@ -224,38 +208,35 @@ namespace PlayerInterface {
         }
 
         private void SongCard_DragEnter(object sender, DragEventArgs e) {
-            var svm = (sender as ListBoxItem)?.DataContext as SongViewModel;
-            if(svm != null) {
+            if (sender is ListBoxItem lbi && lbi.DataContext is SongViewModel svm) {
                 svm.CurDisplay = SongViewModel.DisplayType.DropUnderHint;
             }
         }
 
         private void SongCard_DragLeave(object sender, DragEventArgs e) {
-            var svm = (sender as ListBoxItem)?.DataContext as SongViewModel;
-            if(svm != null) {
+            if(sender is ListBoxItem lbi && lbi.DataContext is SongViewModel svm) {
                 svm.CurDisplay = SongViewModel.DisplayType.Front;
             }
         }
 
         private void SongCard_Drop(object sender, DragEventArgs e) {
-            var droppedOn = (sender as ListBoxItem)?.DataContext as SongViewModel;
-            if(droppedOn != null) {
+            if (sender is ListBoxItem lbi && lbi.DataContext is SongViewModel droppedOn) {
                 if(e.Data.GetDataPresent(typeof(SongViewModel[]))) {
                     var data = e.Data.GetData(typeof(SongViewModel[])) as SongViewModel[];
 
                     if(data != null && !data.Contains(droppedOn)) {
-                        var args = Tuple.Create(data, droppedOn);
-                        if(Vm?.MovePlaylistSongsCommand?.CanExecute(args) == true) {
-                            Vm.MovePlaylistSongsCommand.Execute(args);
+                        var args = (data, droppedOn);
+                        if (Vm.Playlist.MovePlaylistSongsCommand.CanExecute(args)) {
+                            Vm.Playlist.MovePlaylistSongsCommand.Execute(args);
                         }
                         e.Handled = true;
                     }
                 } else if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
-                    if(Vm?.AddFilesCommand != null) {
+                    if(Vm.Playlist.AddFilesCommand != null) {
                         var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
                         var args = new { Paths = paths, Position = droppedOn.Song };
-                        if(Vm.AddFilesCommand.CanExecute(args)) {
-                            Vm.AddFilesCommand.Execute(args);
+                        if(Vm.Playlist.AddFilesCommand.CanExecute(args)) {
+                            Vm.Playlist.AddFilesCommand.Execute(args);
                             e.Handled = true;
                         }
                     }
@@ -282,11 +263,11 @@ namespace PlayerInterface {
         }
 
         private void Lb_Playlist_Drop(object sender, DragEventArgs e) {
-            if(Vm?.AddFilesCommand != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 var paths = (string[])e.Data.GetData(DataFormats.FileDrop);
                 var args = new { Paths = paths, Position = (int?)null };
-                if(Vm.AddFilesCommand.CanExecute(args)) {
-                    Vm.AddFilesCommand.Execute(args);
+                if(Vm.Playlist.AddFilesCommand.CanExecute(args)) {
+                    Vm.Playlist.AddFilesCommand.Execute(args);
                 }
             }
         }
@@ -314,18 +295,16 @@ namespace PlayerInterface {
         }
 
         private void TreeView_LostFocus(object sender, RoutedEventArgs e) {
-            var tv = sender as TreeView;
+            var tv = (TreeView)sender;
             if(!tv.IsFocused && !tv.IsKeyboardFocusWithin) {
                 Vm.SettingsViewModel.TreeView_LostFocus(sender, e);
             }
         }
 
         private void Border_SongCard_Menu_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
-            var menuItem = ((sender as FrameworkElement)?.DataContext as SongMenuItemViewModel);
-            var svm = ((sender as FrameworkElement)?.Tag as SongViewModel);
-            if(menuItem != null && svm != null) {
+            if(sender is FrameworkElement fe && fe.DataContext is SongMenuItemViewModel smivm && fe.Tag is SongViewModel svm) {
                 svm.CurDisplay = SongViewModel.DisplayType.Front;
-                menuItem.Execute();
+                smivm.Execute();
             }
         }
 

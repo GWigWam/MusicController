@@ -12,7 +12,7 @@
         xmlns:th="clr-namespace:PlayerInterface.Themes"
         mc:Ignorable="d"
         Title="SpeechMusicController" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
-        PreviewKeyDown="Window_PreviewKeyDown" IsVisibleChanged="Window_IsVisibleChanged"
+        PreviewKeyDown="Window_PreviewKeyDown"
         AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}">
 
     <Window.Resources>
@@ -133,7 +133,7 @@
                     <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding Playing.SwitchButtonImgSource}" Command="{Binding Playing.SwitchCommand}" />
                     <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
                     <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
-                    <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding ShuffleCommand}" />
+                    <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding Playlist.ShuffleCommand}" />
                     <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" Value="{Binding Playing.Volume}" ToolTip="{Binding Playing.Volume}"
                         VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                         Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01"/>
@@ -150,7 +150,7 @@
                         <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
-                <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding PlaylistItems}" Margin="2,0" SelectionMode="Extended"
+                <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding Playlist.PlaylistItems}" Margin="2,0" SelectionMode="Extended"
                          HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
                     <ListBox.ItemContainerStyle>
@@ -266,9 +266,9 @@
                     <cc:ImageButton x:Name="Btn_Sort" Grid.Column="0" Image="res/img/Sort.png" MouseUp="Btn_Sort_MouseUp" Loaded="Btn_Sort_Loaded" ToolTip="Sort">
                         <cc:ImageButton.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Reverse" Command="{Binding ReverseSortCommand}" />
+                                <MenuItem Header="Reverse" Command="{Binding Playlist.ReverseSortCommand}" />
                                 <Separator />
-                                <MenuItem Header="Current search" Command="{Binding SortBySearchCommand}" />
+                                <MenuItem Header="Current search" Command="{Binding Playlist.SortBySearchCommand}" />
                             </ContextMenu>
                         </cc:ImageButton.ContextMenu>
                     </cc:ImageButton>
@@ -276,8 +276,8 @@
                         <Label Content="{Binding PlaylistStats, FallbackValue='[STATS]'}" />
                     </Viewbox>
                     <TextBox x:Name="Tb_Search" Margin="3" Grid.Column="2" ToolTip="RegEx Search"
-                        GotKeyboardFocus="Tb_Search_GotKeyboardFocus" TextChanged="Tb_Search_TextChanged"
-                        Text="{Binding Path=SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        GotKeyboardFocus="Tb_Search_GotKeyboardFocus"
+                        Text="{Binding Path=Playlist.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}"
                         Foreground="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" />
                 </Grid>

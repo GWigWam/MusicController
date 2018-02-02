@@ -37,9 +37,7 @@ namespace PlayerInterface.ViewModels {
         public Song Song { get; }
 
         private AppSettings Settings { get; }
-
-        public FullPlayerViewModel MainViewModel { get; }
-
+        
         private bool playing = false;
         public bool Playing {
             get { return playing; }
@@ -79,17 +77,26 @@ namespace PlayerInterface.ViewModels {
 
         public IEnumerable<SongMenuItemViewModel> MenuItems => GetMenuItems();
 
+        private readonly Predicate<Song> isCurrentSong;
+        private readonly Action<Song> playSong;
+        private readonly Action<Song> playNext;
+        private readonly Action<Song> removeSong;
+
         /// <summary>
         /// For testing purposes only
         /// </summary>
         public SongViewModel() {
         }
 
-        public SongViewModel(Song song, AppSettings settings, FullPlayerViewModel fpvm) {
+        public SongViewModel(Song song, AppSettings settings, Predicate<Song> ics, Action<Song> ps, Action<Song> pn, Action<Song> rs) {
             curDisplay = DisplayType.Front;
             Song = song;
             Settings = settings;
-            MainViewModel = fpvm;
+
+            isCurrentSong = ics;
+            playSong = ps;
+            playNext = pn;
+            removeSong = rs;
 
             Song.Stats.PropertyChanged += (s, a) => RaisePropertiesChanged(nameof(PlayCountStr));
         }
@@ -99,11 +106,11 @@ namespace PlayerInterface.ViewModels {
                 yield break;
             }
 
-            if(MainViewModel.SongPlayer.CurrentSong != Song) {
-                yield return new SongMenuItemViewModel("Play now", Play);
-                yield return new SongMenuItemViewModel("Play next", PlayNext);
+            if(!isCurrentSong(Song)) {
+                yield return new SongMenuItemViewModel("Play now", () => playSong(Song));
+                yield return new SongMenuItemViewModel("Play next", () => playNext(Song));
             }
-            yield return new SongMenuItemViewModel("Remove", Remove);
+            yield return new SongMenuItemViewModel("Remove", () => removeSong(Song));
 
             yield return new SongMenuItemViewModel("Open file location", OpenFileLocation);
 
@@ -120,22 +127,7 @@ namespace PlayerInterface.ViewModels {
                 System.Diagnostics.Process.Start("explorer.exe", $"/select, {Path}");
             }
         }
-
-        private void Play() {
-            if(MainViewModel.PlaySongCommand.CanExecute(Song)) {
-                MainViewModel.PlaySongCommand.Execute(Song);
-            }
-        }
-
-        private void PlayNext() => MainViewModel.Playlist.MoveTo(MainViewModel.Playlist.CurrentSong, Song);
-
-        private void Remove() {
-            var svmIEnum = new SongViewModel[] { this };
-            if(MainViewModel.RemoveSongsCommand.CanExecute(svmIEnum)) {
-                MainViewModel.RemoveSongsCommand.Execute(svmIEnum);
-            }
-        }
-
+        
         private void AddToStartup() {
             Settings.AddStartupFolder(Path);
         }
