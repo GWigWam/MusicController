@@ -52,6 +52,11 @@ namespace PlayerInterface {
             };
             fpvm.Playlist.DisplayedSongsChanged += (s, a) => Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
             fpvm.SongPlayer.SongChanged += (s, a) => Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
+            IsVisibleChanged += (s, a) => {
+                if (IsVisible) {
+                    Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
+                }
+            };
 
             SizeChanged += (s, a) => UpdateStatusTextAnimation();
         }
