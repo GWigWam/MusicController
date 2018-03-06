@@ -8,40 +8,20 @@ using System.Windows.Input;
 namespace PlayerInterface.Commands {
 
     public class RelayCommand : ICommand {
+        public event EventHandler CanExecuteChanged;
+
         private Action<object> execute;
 
         private Predicate<object> canExecute;
-
-        private event EventHandler CanExecuteChangedInternal;
-
+        
         public RelayCommand(Action<object> execute, Action<Exception> exeptionHandler = null)
             : this(execute, DefaultCanExecute, exeptionHandler) {
         }
 
         public RelayCommand(Action<object> execute, Predicate<object> canExecute, Action<Exception> exeptionHandler = null) {
-            if(execute == null) {
-                throw new ArgumentNullException("execute");
-            }
-
-            if(canExecute == null) {
-                throw new ArgumentNullException("canExecute");
-            }
-
-            this.execute = execute;
-            this.canExecute = canExecute;
+            this.execute = execute ?? throw new ArgumentNullException("execute");
+            this.canExecute = canExecute ?? throw new ArgumentNullException("canExecute");
             ExceptionHandler = exeptionHandler;
-        }
-
-        public event EventHandler CanExecuteChanged {
-            add {
-                CommandManager.RequerySuggested += value;
-                this.CanExecuteChangedInternal += value;
-            }
-
-            remove {
-                CommandManager.RequerySuggested -= value;
-                this.CanExecuteChangedInternal -= value;
-            }
         }
 
         public Action<Exception> ExceptionHandler;
@@ -55,14 +35,6 @@ namespace PlayerInterface.Commands {
                 execute(parameter);
             } catch(Exception e) {
                 ExceptionHandler?.Invoke(e);
-            }
-        }
-
-        public void OnCanExecuteChanged() {
-            EventHandler handler = this.CanExecuteChangedInternal;
-            if(handler != null) {
-                //DispatcherHelper.BeginInvokeOnUIThread(() => handler.Invoke(this, EventArgs.Empty));
-                handler.Invoke(this, EventArgs.Empty);
             }
         }
 

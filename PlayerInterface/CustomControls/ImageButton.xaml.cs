@@ -33,7 +33,7 @@ namespace PlayerInterface.CustomControls {
         }
 
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(ImageButton), new UIPropertyMetadata(null, (s, a) => (s as ImageButton)?.CommandChanged()));
+            DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(ImageButton), new UIPropertyMetadata(null, (s, a) => ((ImageButton)s)?.CommandChanged()));
 
         public object CommandParameter {
             get { return (object)GetValue(CommandParameterProperty); }
@@ -41,7 +41,7 @@ namespace PlayerInterface.CustomControls {
         }
         
         public static readonly DependencyProperty CommandParameterProperty =
-            DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(ImageButton), new UIPropertyMetadata(null, (s, a) => (s as ImageButton).RaiseCanExecuteChanged()));
+            DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(ImageButton), new UIPropertyMetadata(null, (s, a) => ((ImageButton)s).UpdateCanCommandExecute()));
         
         public Brush ButtonColor {
             get { return (Brush)GetValue(ButtonColorProperty); }
@@ -51,7 +51,16 @@ namespace PlayerInterface.CustomControls {
         public static readonly DependencyProperty ButtonColorProperty =
             DependencyProperty.Register(nameof(ButtonColor), typeof(Brush), typeof(ImageButton), new PropertyMetadata(Brushes.Red));
 
-        public bool CanCommandExecute => Command?.CanExecute(CommandParameter) ?? true;
+        private bool _canCommandExecute;
+        public bool CanCommandExecute {
+            get => _canCommandExecute;
+            set {
+                if (_canCommandExecute != value) {
+                    _canCommandExecute = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCommandExecute)));
+                }
+            }
+        }
 
         public ImageButton() {
             InitializeComponent();
@@ -65,11 +74,11 @@ namespace PlayerInterface.CustomControls {
 
         private void CommandChanged() {
             if (Command != null) {
-                Command.CanExecuteChanged += (s, a) => RaiseCanExecuteChanged();
+                Command.CanExecuteChanged += (s, a) => UpdateCanCommandExecute();
             }
-            RaiseCanExecuteChanged();
+            UpdateCanCommandExecute();
         }
 
-        private void RaiseCanExecuteChanged() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCommandExecute)));
+        private void UpdateCanCommandExecute() => CanCommandExecute = Command?.CanExecute(CommandParameter) ?? true;
     }
 }
