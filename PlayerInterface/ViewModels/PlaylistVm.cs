@@ -18,21 +18,21 @@ namespace PlayerInterface.ViewModels {
 
         public event EventHandler DisplayedSongsChanged;
 
-        public ICommand PlaySongCommand { get; }
+        public IBaseCommand PlaySongCommand { get; }
 
-        public ICommand SortByCommand { get; }
+        public IBaseCommand SortByCommand { get; }
 
-        public ICommand ReverseSortCommand { get; }
+        public IBaseCommand ReverseSortCommand { get; }
 
         public GenericRelayCommand<(SongViewModel[] move, SongViewModel to)> MovePlaylistSongsCommand { get; }
 
-        public ICommand ShuffleCommand { get; }
+        public IBaseCommand ShuffleCommand { get; }
 
-        public ICommand SortBySearchCommand { get; }
+        public IBaseCommand SortBySearchCommand { get; }
         
-        public ICommand AddFilesCommand { get; }
+        public IBaseCommand AddFilesCommand { get; }
 
-        public ICommand RemoveSongsCommand { get; }
+        public IBaseCommand RemoveSongsCommand { get; }
 
         private string _searchText = string.Empty;
         public string SearchText {
@@ -41,6 +41,7 @@ namespace PlayerInterface.ViewModels {
                 if (value != _searchText) {
                     _searchText = value;
                     HandleSearchChanged();
+                    RaisePropertiesChanged(nameof(SearchText));
                 }
             }
         }
@@ -65,24 +66,23 @@ namespace PlayerInterface.ViewModels {
             AllPlaylistItems = new ObservableCollection<SongViewModel>();
             PlaylistItems = AllPlaylistItems;
 
-            SortByCommand = new RelayCommand(
-                (o) => SortByProperty((PropertyInfo)o),
-                (o) => o is PropertyInfo pi
-            );
+            SortByCommand = new RelayCommand(pi => SortByProperty((PropertyInfo)pi));
 
-            ReverseSortCommand = new RelayCommand((o) => playlist.Reverse());
+            ReverseSortCommand = new RelayCommand(_ => playlist.Reverse());
 
             MovePlaylistSongsCommand = new GenericRelayCommand<(SongViewModel[] move, SongViewModel to)>(
                 inp => playlist.MoveTo(inp.to.Song, inp.move.Select(svm => svm.Song).ToArray()),
                 inp => (inp.move?.Length ?? 0) > 0 && inp.to?.Song != null
             );
 
-            ShuffleCommand = new RelayCommand((o) => playlist.Shuffle());
+            ShuffleCommand = new RelayCommand(_ => playlist.Shuffle());
 
-            SortBySearchCommand = new RelayCommand(
+            var sbsc = new RelayCommand(
                 _ => SortBySearch(),
                 _ => !string.IsNullOrEmpty(SearchText)
             );
+            sbsc.BindCanExecuteToProperty(h => PropertyChanged += h, nameof(SearchText));
+            SortBySearchCommand = sbsc;
 
             AddFilesCommand = new AsyncCommand(async (dyn) => {
                 dynamic input = dyn;
@@ -101,12 +101,10 @@ namespace PlayerInterface.ViewModels {
                 }
             });
 
-            RemoveSongsCommand = new RelayCommand((o) => {
-                playlist.Remove(((IEnumerable<SongViewModel>)o).Select(svm => svm.Song));
-            }, (o) => {
-                var songs = o as IEnumerable<SongViewModel>;
-                return songs != null && songs.Count() > 0;
-            });
+            RemoveSongsCommand = new RelayCommand(
+                execute: o => playlist.Remove(((IEnumerable<SongViewModel>)o).Select(svm => svm.Song)),
+                canExecute: o => o is IEnumerable<SongViewModel> songs && songs.Count() > 0
+            );
 
             sp.SongChanged += (_, a) => UpdateCurrentSong(a.Next);
 

@@ -79,6 +79,8 @@ namespace PlayerInterface.CustomControls {
             UpdateCanCommandExecute();
         }
 
-        private void UpdateCanCommandExecute() => CanCommandExecute = Command?.CanExecute(CommandParameter) ?? true;
+        private void UpdateCanCommandExecute() {
+            Dispatcher.Invoke(() => CanCommandExecute = Command?.CanExecute(CommandParameter) ?? true);
+        }
     }
 }

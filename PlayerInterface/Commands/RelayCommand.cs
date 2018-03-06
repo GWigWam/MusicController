@@ -7,13 +7,12 @@ using System.Windows.Input;
 
 namespace PlayerInterface.Commands {
 
-    public class RelayCommand : ICommand {
-        public event EventHandler CanExecuteChanged;
+    public class RelayCommand : BaseCommand {
 
-        private Action<object> execute;
+        private readonly Action<object> execute;
+        private readonly Predicate<object> canExecute;
+        private readonly Action<Exception> ExceptionHandler;
 
-        private Predicate<object> canExecute;
-        
         public RelayCommand(Action<object> execute, Action<Exception> exeptionHandler = null)
             : this(execute, DefaultCanExecute, exeptionHandler) {
         }
@@ -21,30 +20,21 @@ namespace PlayerInterface.Commands {
         public RelayCommand(Action<object> execute, Predicate<object> canExecute, Action<Exception> exeptionHandler = null) {
             this.execute = execute ?? throw new ArgumentNullException("execute");
             this.canExecute = canExecute ?? throw new ArgumentNullException("canExecute");
-            ExceptionHandler = exeptionHandler;
+            ExceptionHandler = exeptionHandler ?? DefaultExceptionHandler;
         }
 
-        public Action<Exception> ExceptionHandler;
+        public override bool CanExecute(object parameter) => canExecute(parameter);
 
-        public bool CanExecute(object parameter) {
-            return this.canExecute != null && this.canExecute(parameter);
-        }
-
-        public void Execute(object parameter) {
+        public override void Execute(object parameter) {
             try {
                 execute(parameter);
             } catch(Exception e) {
-                ExceptionHandler?.Invoke(e);
+                ExceptionHandler(e);
             }
         }
 
-        public void Destroy() {
-            this.canExecute = _ => false;
-            this.execute = _ => { return; };
-        }
+        private static bool DefaultCanExecute(object parameter) => true;
 
-        private static bool DefaultCanExecute(object parameter) {
-            return true;
-        }
+        private static void DefaultExceptionHandler(Exception e) => throw e;
     }
 }

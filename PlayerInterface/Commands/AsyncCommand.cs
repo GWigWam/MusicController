@@ -8,78 +8,47 @@ using System.Windows.Input;
 
 namespace PlayerInterface.Commands {
 
-    public class AsyncCommand : ICommand {
+    public class AsyncCommand : BaseCommand {
+
         private Func<object, Task> CommandExecute;
         private Predicate<object> CommandCanExecute;
         private Action<Task> ContinueWith;
 
         public bool IsExecuting { get; protected set; } = false;
 
-        public event EventHandler CanExecuteChanged;
-
-        public bool CanExecute(object parameter) => (!IsExecuting) && (CommandCanExecute?.Invoke(parameter) ?? false);
-
-        public void Execute(object parameter) {
-            IsExecuting = true;
-            RaiseCanExecuteChanged();
-            var task = CommandExecute(parameter);
-            if(task.Status == TaskStatus.Created) {
-                task.Start();
-            }
-            if(task.Status != TaskStatus.Canceled && task.Status != TaskStatus.Faulted && task.Status != TaskStatus.RanToCompletion) {
-                task.ContinueWith((t) => {
-                    ContinueWith(t);
-                    IsExecuting = false;
-                    RaiseCanExecuteChanged();
-                });
-            } else {
-                IsExecuting = false;
-                ContinueWith(task);
-            }
-            RaiseCanExecuteChanged();
-        }
-
-        public AsyncCommand(Action<object> execute, Action<Task> continueWith = null)
-            : this(async o => await new TaskFactory().StartNew(() => execute(o)), continueWith) {
-        }
-
         public AsyncCommand(Func<object, Task> execute, Action<Task> continueWith = null)
             : this(execute, DefaultCanExecute, continueWith) {
         }
 
-        public AsyncCommand(Action<object> execute, Predicate<object> canExecute, Action<Task> continueWith = null)
-            : this(async o => await new TaskFactory().StartNew(() => execute(o)), canExecute, continueWith) {
-        }
-
         public AsyncCommand(Func<object, Task> execute, Predicate<object> canExecute, Action<Task> continueWith = null) {
-            if(execute == null) {
-                throw new ArgumentNullException("execute");
-            }
-
-            if(canExecute == null) {
-                throw new ArgumentNullException("canExecute");
-            }
-
-            if(continueWith == null) {
-                continueWith = DefaultContinueWith;
-            }
-
-            CommandExecute = execute;
-            CommandCanExecute = canExecute;
-            ContinueWith = continueWith;
+            CommandExecute = execute ?? throw new ArgumentNullException("execute");
+            CommandCanExecute = canExecute ?? throw new ArgumentNullException("canExecute");
+            ContinueWith = continueWith ?? DefaultContinueWith;
         }
 
-        public void RaiseCanExecuteChanged(EventArgs args = null) {
-            Application.Current.Dispatcher.Invoke(() => {
-                CanExecuteChanged?.Invoke(this, args ?? new EventArgs());
+        public override bool CanExecute(object parameter) => (!IsExecuting) && (CommandCanExecute?.Invoke(parameter) ?? false);
+
+        public override void Execute(object parameter) {
+            IsExecuting = true;
+            RaiseCanExecuteChanged();
+            var task = CommandExecute(parameter);
+            task.ContinueWith((t) => {
+                try {
+                    ContinueWith(t);
+                } finally {
+                    IsExecuting = false;
+                    RaiseCanExecuteChanged();
+                }
             });
+            RaiseCanExecuteChanged();
         }
 
-        private static bool DefaultCanExecute(object parameter) {
-            return true;
-        }
+        private static bool DefaultCanExecute(object parameter) => true;
 
         private static void DefaultContinueWith(Task t) {
+            if (t.IsFaulted) {
+                throw t.Exception;
+            }
         }
     }
 }

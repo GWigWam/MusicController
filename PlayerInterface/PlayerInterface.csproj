@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\IBaseCommand.cs" />
     <Compile Include="SpeechMusicControllerApp.xaml.cs">
       <DependentUpon>SpeechMusicControllerApp.xaml</DependentUpon>
       <SubType>Code</SubType>

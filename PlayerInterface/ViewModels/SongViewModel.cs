@@ -108,7 +108,7 @@ namespace PlayerInterface.ViewModels {
 
             if(!isCurrentSong(Song)) {
                 yield return new SongMenuItemViewModel("Play now", () => playSong(Song));
-                yield return new SongMenuItemViewModel("Play next", () => enqueue(Song));
+                yield return new SongMenuItemViewModel("Enqueue", () => enqueue(Song));
             }
             yield return new SongMenuItemViewModel("Remove", () => removeSong(Song));
 

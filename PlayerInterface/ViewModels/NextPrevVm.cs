@@ -15,11 +15,11 @@ namespace PlayerInterface.ViewModels {
 
         public Playlist Playlist { get; }
 
-        public ICommand NextCommand {
+        public IBaseCommand NextCommand {
             get; private set;
         }
 
-        public ICommand PreviousCommand {
+        public IBaseCommand PreviousCommand {
             get; private set;
         }
 
@@ -27,17 +27,16 @@ namespace PlayerInterface.ViewModels {
             SongPlayer = player;
             Playlist = playlist;
 
-            NextCommand = new RelayCommand((o) => {
-                Playlist.Next(true);
-            }, (o) => Playlist.HasNext(true));
+            NextCommand = new RelayCommand(_ => Playlist.Next(true), _ => Playlist.HasNext(true));
+            Playlist.CurrentSongChanged += (s, a) => NextCommand.RaiseCanExecuteChanged();
 
-            PreviousCommand = new RelayCommand((o) => {
+            PreviousCommand = new RelayCommand(_ => {
                 if (SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs) {
                     SongPlayer.Elapsed = TimeSpan.FromMilliseconds(0);
                 } else {
                     Playlist.Previous(true);
                 }
-            }, (o) => Playlist.HasPrevious(true) || SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs);
+            });
         }
     }
 }

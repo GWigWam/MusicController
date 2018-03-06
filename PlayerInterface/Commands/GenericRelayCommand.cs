@@ -6,27 +6,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PlayerInterface.Commands {
-    public class GenericRelayCommand<T> : ICommand {
+    public class GenericRelayCommand<T> : BaseCommand {
 
         private Action<T> execute;
         private Predicate<T> canExecute;
-
-        private event EventHandler CanExecuteChangedInternal;
-        public event EventHandler CanExecuteChanged {
-            add {
-                CommandManager.RequerySuggested += value;
-                CanExecuteChangedInternal += value;
-            }
-
-            remove {
-                CommandManager.RequerySuggested -= value;
-                CanExecuteChangedInternal -= value;
-            }
-        }
-
+        
         public Action<Exception> ExceptionHandler;
 
-        public bool CanExecute(object parameter) => parameter is T tParam && canExecute(tParam);
+        public override bool CanExecute(object parameter) => parameter is T tParam && canExecute(tParam);
 
         public GenericRelayCommand(Action<T> execute, Action<Exception> exeptionHandler = null)
             : this(execute, DefaultCanExecute, exeptionHandler) { }
@@ -37,18 +24,20 @@ namespace PlayerInterface.Commands {
             ExceptionHandler = exeptionHandler;
         }
 
-        public void Execute(object parameter) {
+        public override void Execute(object parameter) {
             try {
-                execute((T)parameter);
+                if (parameter is T parm) {
+                    execute(parm);
+                } else {
+                    throw new InvalidOperationException($"Expected parameter of type '{typeof(T).FullName}'.");
+                }
             } catch(Exception e) {
                 ExceptionHandler?.Invoke(e);
             }
         }
 
         public void Execute(T parameter) => Execute(parameter as object);
-
-        public void OnCanExecuteChanged() => CanExecuteChangedInternal?.Invoke(this, EventArgs.Empty);
-
+        
         private static bool DefaultCanExecute(T parameter) => true;
     }
 }

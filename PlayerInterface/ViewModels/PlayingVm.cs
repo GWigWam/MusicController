@@ -23,7 +23,7 @@ namespace PlayerInterface.ViewModels {
 
         public TransitionManager TransitionMngr { get; }
 
-        public ICommand SwitchCommand { get; }
+        public IBaseCommand SwitchCommand { get; }
 
         public string SwitchButtonImgSource =>
             SongPlayer?.PlayerState == PlayerState.Playing || TransitionMngr.IsTransitioning ? ImgSourcePause : ImgSourcePlay;
@@ -71,16 +71,20 @@ namespace PlayerInterface.ViewModels {
             };
             UpdateTimer.Elapsed += (s, a) => RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
 
-            SwitchCommand = new RelayCommand((o) => {
-                if (TransitionMngr.IsTransitioning) {
-                    TransitionMngr.CancelTransition();
-                } else if (SongPlayer.PlayerState == PlayerState.Playing) {
-                    SongPlayer.PlayerState = PlayerState.Paused;
-                } else {
-                    SongPlayer.PlayerState = PlayerState.Playing;
-                }
-            },
-            (o) => SongPlayer.CurrentSong != null);
+            var sc = new RelayCommand(
+                execute: _ => {
+                    if (TransitionMngr.IsTransitioning) {
+                        TransitionMngr.CancelTransition();
+                    } else if (SongPlayer.PlayerState == PlayerState.Playing) {
+                        SongPlayer.PlayerState = PlayerState.Paused;
+                    } else {
+                        SongPlayer.PlayerState = PlayerState.Playing;
+                    }
+                },
+                canExecute: _ => SongPlayer.CurrentSong != null
+            );
+            SongPlayer.SongChanged += (s, a) => sc.RaiseCanExecuteChanged();
+            SwitchCommand = sc;
         }
     }
 }

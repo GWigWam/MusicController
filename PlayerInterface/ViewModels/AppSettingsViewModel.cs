@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -78,9 +79,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public ICommand SaveToDiskCommand {
-            get; private set;
-        }
+        public IBaseCommand SaveToDiskCommand { get; }
 
         public ICommand OpenFileLocationCommand {
             get; private set;
@@ -94,19 +93,21 @@ namespace PlayerInterface.ViewModels {
             InitLoadPaths();
 
             SaveToDiskCommand = new AsyncCommand(
-                (o) => Settings.WriteToDisc(),
-                (o) => Settings.HasUnsavedChanges,
-                (t) => {
-                    if(t.IsFaulted)
+                o => Task.Run(() => Settings.WriteToDisc()),
+                o => Settings.HasUnsavedChanges,
+                t => {
+                    if (t.IsFaulted) {
                         Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
-                });
+                    }
+                }
+            );
             Settings.Changed += (s, a) => {
-                ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
+                SaveToDiskCommand.RaiseCanExecuteChanged();
                 if(a.ChangedPropertyName == nameof(Settings.StartupFolders)) {
                     InitLoadPaths();
                 }
             };
-            Settings.Saved += (s, a) => ((AsyncCommand)SaveToDiskCommand).RaiseCanExecuteChanged();
+            Settings.Saved += (s, a) => SaveToDiskCommand.RaiseCanExecuteChanged();
 
             OpenFileLocationCommand = new RelayCommand(o => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
         }
