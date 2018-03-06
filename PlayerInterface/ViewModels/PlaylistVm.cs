@@ -174,10 +174,10 @@ namespace PlayerInterface.ViewModels {
                     AllPlaylistItems.Move(curSvmIndex, i);
                 } else {
                     bool IsCurrentSong(Song s) => playlist.CurrentSong == s;
-                    void PlayNext(Song s) => playlist.MoveTo(playlist.CurrentSong, s);
+                    void Enqueue(Song s) => playlist.Enqueue(s);
                     void RemoveSong(Song s) => playlist.Remove(s);
 
-                    var newSvm = new SongViewModel(curMatch.song, settings, IsCurrentSong, playSong, PlayNext, RemoveSong);
+                    var newSvm = new SongViewModel(curMatch.song, settings, IsCurrentSong, playSong, Enqueue, RemoveSong);
                     AllPlaylistItems.Insert(i, newSvm);
                 }
             }

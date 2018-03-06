@@ -55,11 +55,8 @@ namespace PlayerCore {
         }
 
         public void StartTransition(int delayMs) {
-            var curIndex = TrackList.CurrentSongIndex;
-            var nexIndex = TrackList.HasNext ? (curIndex + 1) : (Loop ? (0) : (curIndex));
-
-            if (nexIndex != curIndex) {
-                TrackList.CurrentSongIndex = nexIndex;
+            var moved = TrackList.Next(Loop);
+            if (moved) {
                 Player.PlayerState = PlayerState.Paused;
 
                 CancelSrc = new CancellationTokenSource();

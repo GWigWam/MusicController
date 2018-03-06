@@ -91,8 +91,11 @@ namespace SpeechControl {
                     Description = "Music + [Next / Previous]+ : Step through playlist",
                     Execute = (sentence) => {
                         var dir = sentence.ElementAt(1);
-                        int increment = (dir == "next") ? 1 : (dir == "previous") ? -1 : 0;
-                        speechController.Playlist.CurrentSongIndex += increment;
+                        if(dir == "next") {
+                            speechController.Playlist.Next(true);
+                        } else if(dir == "previous") {
+                            speechController.Playlist.Previous(false);
+                        }
                         return new string[] { "music" };
                     },
                     CanExecute = DefaultCanExecute(speechController)

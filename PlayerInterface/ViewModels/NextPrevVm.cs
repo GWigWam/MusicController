@@ -28,16 +28,16 @@ namespace PlayerInterface.ViewModels {
             Playlist = playlist;
 
             NextCommand = new RelayCommand((o) => {
-                Playlist.CurrentSongIndex++;
-            }, (o) => Playlist.HasNext);
+                Playlist.Next(true);
+            }, (o) => Playlist.HasNext(true));
 
             PreviousCommand = new RelayCommand((o) => {
                 if (SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs) {
                     SongPlayer.Elapsed = TimeSpan.FromMilliseconds(0);
                 } else {
-                    Playlist.CurrentSongIndex--;
+                    Playlist.Previous(true);
                 }
-            }, (o) => Playlist.HasPrevious || SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs);
+            }, (o) => Playlist.HasPrevious(true) || SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs);
         }
     }
 }

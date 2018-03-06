@@ -79,7 +79,7 @@ namespace PlayerInterface.ViewModels {
 
         private readonly Predicate<Song> isCurrentSong;
         private readonly Action<Song> playSong;
-        private readonly Action<Song> playNext;
+        private readonly Action<Song> enqueue;
         private readonly Action<Song> removeSong;
 
         /// <summary>
@@ -88,14 +88,14 @@ namespace PlayerInterface.ViewModels {
         public SongViewModel() {
         }
 
-        public SongViewModel(Song song, AppSettings settings, Predicate<Song> ics, Action<Song> ps, Action<Song> pn, Action<Song> rs) {
+        public SongViewModel(Song song, AppSettings settings, Predicate<Song> ics, Action<Song> ps, Action<Song> enqueue, Action<Song> rs) {
             curDisplay = DisplayType.Front;
             Song = song;
             Settings = settings;
 
             isCurrentSong = ics;
             playSong = ps;
-            playNext = pn;
+            this.enqueue = enqueue;
             removeSong = rs;
 
             Song.Stats.PropertyChanged += (s, a) => RaisePropertiesChanged(nameof(PlayCountStr));
@@ -108,7 +108,7 @@ namespace PlayerInterface.ViewModels {
 
             if(!isCurrentSong(Song)) {
                 yield return new SongMenuItemViewModel("Play now", () => playSong(Song));
-                yield return new SongMenuItemViewModel("Play next", () => playNext(Song));
+                yield return new SongMenuItemViewModel("Play next", () => enqueue(Song));
             }
             yield return new SongMenuItemViewModel("Remove", () => removeSong(Song));
 
