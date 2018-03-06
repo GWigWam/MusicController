@@ -68,13 +68,13 @@ namespace PlayerInterface.ViewModels {
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
             PlaySongCommand = new AsyncCommand(
-                execute: (inp) => {
+                execute: inp => {
                     if (inp is Song s) {
                         return StartPlayingAsync(s);
                     }
-                    return Task.FromResult(false); //TODO: Upgrade .Net framework version and use Task.CompletedTask
+                    return Task.CompletedTask;
                 },
-                canExecute: (s) => SongPlayer != null && s is Song
+                canExecute: s => SongPlayer != null && s is Song
             );
 
             playlist.ListContentChanged += (s, a) => {
