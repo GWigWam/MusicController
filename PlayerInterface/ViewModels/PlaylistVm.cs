@@ -62,6 +62,7 @@ namespace PlayerInterface.ViewModels {
 
             playlist.ListContentChanged += PlaylistChanged;
             playlist.ListOrderChanged += PlaylistChanged;
+            playlist.QueueChanged += QueueChanged;
 
             AllPlaylistItems = new ObservableCollection<SongViewModel>();
             PlaylistItems = AllPlaylistItems;
@@ -204,6 +205,13 @@ namespace PlayerInterface.ViewModels {
             var newPlaying = AllPlaylistItems.FirstOrDefault(svm => svm.Song == currentSong);
             if (newPlaying != null) {
                 newPlaying.Playing = true;
+            }
+        }
+
+        private void QueueChanged(object sender, EventArgs e) {
+            foreach (var svm in AllPlaylistItems) {
+                var i = playlist.Queue.IndexOf(svm.Song);
+                svm.QueueIndex = i >= 0 ? (i + 1) : (int?)null;
             }
         }
     }

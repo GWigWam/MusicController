@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace PlayerCore {
         public event EventHandler ListOrderChanged;
         public event EventHandler ListContentChanged;
         public event EventHandler CurrentSongChanged;
+        public event EventHandler QueueChanged;
 
         private Random random;
 
@@ -38,7 +40,8 @@ namespace PlayerCore {
             }
         }
 
-        private List<Song> Queue { get; set; }
+        private List<Song> _Queue { get; set; }
+        public ReadOnlyCollection<Song> Queue => _Queue.AsReadOnly();
 
         private int? _queueIndx;
         public int? QueueIndex {
@@ -54,7 +57,7 @@ namespace PlayerCore {
         public Song CurrentSong {
             get {
                 if (QueueIndex.HasValue) {
-                    return Queue[QueueIndex.Value];
+                    return _Queue[QueueIndex.Value];
                 } else if(CurrentIndex >= 0 && CurrentIndex < Length) {
                     return Songs.ElementAt(CurrentIndex);
                 } else {
@@ -70,7 +73,7 @@ namespace PlayerCore {
         public Playlist() {
             random = new Random();
             Songs = new List<Song>();
-            Queue = new List<Song>();
+            _Queue = new List<Song>();
         }
 
         public IEnumerable<Song> AddSong(IEnumerable<Song> songs) => AddSong(songs.ToArray());
@@ -87,12 +90,20 @@ namespace PlayerCore {
         }
 
         public void Enqueue(Song song) {
-            Queue.Add(song);
+            _Queue.Add(song);
+            RaiseQueueChanged();
         }
 
         public void Clear() {
-            Queue.Clear();
+            ClearQueue();
             ChangeList(true, true, Songs.Clear);
+        }
+
+        public void ClearQueue() {
+            if (_Queue.Count > 0) {
+                _Queue.Clear();
+                RaiseQueueChanged();
+            }
         }
 
         public void Shuffle() {
@@ -152,7 +163,9 @@ namespace PlayerCore {
         }
 
         public void Remove(Song song, bool handleInternally = true) {
-            Queue.Remove(song);
+            if (_Queue.Remove(song)) {
+                RaiseQueueChanged();
+            }
             if(handleInternally) {
                 ChangeList(false, true, () => {
                     Songs.Remove(song);
@@ -197,16 +210,16 @@ namespace PlayerCore {
             }
 
             if (QueueIndex.HasValue) {
-                if (QueueIndex + 1 < Queue.Count) {
+                if (QueueIndex + 1 < _Queue.Count) {
                     return () => QueueIndex++;
                 } else {
                     return () => {
                         QueueIndex = null;
-                        Queue.Clear();
+                        ClearQueue();
                     };
                 }
             } else {
-                if (Queue.Count == 0) {
+                if (_Queue.Count == 0) {
                     return GetUpdateCurrentIndexAction();
                 } else {
                     return () => {
@@ -269,27 +282,15 @@ namespace PlayerCore {
             CurrentIndex = newIndex;
 
             QueueIndex = null;
-            Queue.Clear();
+            ClearQueue();
         }
 
-        public void RaiseListContentChanged() {
-            ListContentChanged?.Invoke(this, new EventArgs());
-        }
+        private void RaiseListContentChanged() => ListContentChanged?.Invoke(this, EventArgs.Empty);
+        private void RaiseListOrderChanged() => ListOrderChanged?.Invoke(this, EventArgs.Empty);
+        private void RaiseCurrentSongChanged() => CurrentSongChanged?.Invoke(this, EventArgs.Empty);
+        private void RaiseQueueChanged() => QueueChanged?.Invoke(this, EventArgs.Empty);
 
-        public void RaiseListOrderChanged() {
-            ListOrderChanged?.Invoke(this, new EventArgs());
-        }
-
-        public void RaiseCurrentSongChanged() {
-            CurrentSongChanged?.Invoke(this, new EventArgs());
-        }
-
-        public IEnumerator<Song> GetEnumerator() {
-            return Songs.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
-        }
+        public IEnumerator<Song> GetEnumerator() => Songs.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

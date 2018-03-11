@@ -194,7 +194,24 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Lb_Title" Padding="2" Grid.Column="0" Content="{Binding Title}" ToolTip="{Binding Title}" FontWeight="Bold" />
+                                            <Label x:Name="Lb_Title" Padding="2" Grid.Column="0" ToolTip="{Binding Title}" FontWeight="Bold">
+                                                <TextBlock>
+                                                    <TextBlock>
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding QueueIndex}" Value="{x:Null}">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                        [<TextBlock Text="{Binding QueueIndex}" />]
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Title}" />
+                                                </TextBlock>
+                                            </Label>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <StackPanel.Style>
                                                     <Style TargetType="{x:Type StackPanel}">

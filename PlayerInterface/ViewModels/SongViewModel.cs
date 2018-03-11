@@ -60,6 +60,17 @@ namespace PlayerInterface.ViewModels {
         public string YearStr => Song.File.Year != 0 ? $"{Song.File.Year}" : "-";
         public string PlayCountStr => $"{Song.Stats.PlayCount}x";
 
+        private int? _QueueIndex = null;
+        public int? QueueIndex {
+            get => _QueueIndex;
+            set {
+                if (_QueueIndex != value) {
+                    _QueueIndex = value;
+                    RaisePropertyChanged(nameof(QueueIndex));
+                }
+            }
+        }
+
         private DisplayType curDisplay;
         public DisplayType CurDisplay {
             get { return curDisplay; }
