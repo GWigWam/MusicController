@@ -208,8 +208,7 @@
                                                             </Style>
                                                         </TextBlock.Style>
                                                         [<TextBlock Text="{Binding QueueIndex}" />]
-                                                    </TextBlock>
-                                                    <TextBlock Text="{Binding Title}" />
+                                                    </TextBlock><TextBlock Text="{Binding Title}" />
                                                 </TextBlock>
                                             </Label>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
