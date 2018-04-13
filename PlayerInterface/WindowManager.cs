@@ -16,6 +16,8 @@ namespace PlayerInterface {
         public SmallPlayer Small { get; protected set; }
         public ScreenOverlay Overlay { get; protected set; }
 
+        public Window CurrentWindow { get; private set; }
+
         public WindowManager(TaskbarIcon icon) {
             TrayIcon = icon;
         }
@@ -29,6 +31,7 @@ namespace PlayerInterface {
 
             CreateFullPlayer(!settings.StartMinimized, fullVm);
             CreateSmallPlayer(settings.StartMinimized, smallVm);
+            CurrentWindow = settings.StartMinimized ? Window.Small : Window.Full;
 
             SetupContextMenu(songPlayer);
 
@@ -89,7 +92,7 @@ namespace PlayerInterface {
             };
 
             player.SongChanged += (s, a) => {
-                if(player?.CurrentSong != null) {
+                if(player?.CurrentSong != null && CurrentWindow != Window.Full) {
                     Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
                 }
             };
@@ -110,6 +113,8 @@ namespace PlayerInterface {
             Small.Show();
             Small.Activate();
             Full.Hide();
+
+            CurrentWindow = Window.Small;
         }
 
         private void ShowFullWindow() {
@@ -119,6 +124,12 @@ namespace PlayerInterface {
             Full.Show();
             Full.Activate();
             Small.Hide();
+
+            CurrentWindow = Window.Full;
+        }
+
+        public enum Window {
+            Small, Full
         }
     }
 }
