@@ -84,6 +84,7 @@ namespace PlayerInterface {
             } else {
                 LoadStartupSongFiles();
             }
+            PersistentQueue.RestoreQueue(Playlist, ApplicationSettings);
 
             SpeechController = new SpeechController(SongPlayer, Playlist, ApplicationSettings);
             SpeechController.Init();
@@ -102,6 +103,7 @@ namespace PlayerInterface {
             windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController, TransitionMgr);
              
             Application.Exiting += (s, a) => {
+                PersistentQueue.SaveQueue(Playlist, ApplicationSettings);
                 ApplicationSettings.WriteToDisc();
             };
 

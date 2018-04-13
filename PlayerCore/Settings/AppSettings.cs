@@ -146,6 +146,16 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private string[] _Queued;
+        [JsonProperty]
+        public string[] QueuedSongs {
+            get => _Queued;
+            set {
+                _Queued = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueuedSongs)));
+            }
+        }
+
         [JsonIgnore]
         public IEnumerable<SongStats> SongStats => Statistics;
 
