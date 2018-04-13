@@ -156,6 +156,16 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private int? _QueueIndx;
+        [JsonProperty]
+        public int? QueueIndex {
+            get => _QueueIndx;
+            set {
+                _QueueIndx = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueueIndex)));
+            }
+        }
+
         [JsonIgnore]
         public IEnumerable<SongStats> SongStats => Statistics;
 

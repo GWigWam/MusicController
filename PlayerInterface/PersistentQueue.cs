@@ -11,6 +11,7 @@ namespace PlayerInterface {
 
         public static void SaveQueue(Playlist playlist, AppSettings settings) {
             settings.QueuedSongs = playlist.Queue.Select(s => s.FilePath).ToArray();
+            settings.QueueIndex = playlist.QueueIndex;
         }
 
         public static void RestoreQueue(Playlist playlist, AppSettings settings) {
@@ -25,11 +26,15 @@ namespace PlayerInterface {
                     }
                 }
             }
-            if (playlist.Queue.Count > 0 && (playlist.QueueIndex ?? 0) == 0) {
-                playlist.Next(true);
+
+            if (playlist.Queue.Count > 0 && settings.QueueIndex.HasValue) {
+                do {
+                    playlist.Next(true);
+                } while ((playlist.QueueIndex ?? 0) < settings.QueueIndex.Value);
             }
 
             settings.QueuedSongs = new string[0];
+            settings.QueueIndex = null;
         }
     }
 }
