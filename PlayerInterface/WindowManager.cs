@@ -36,21 +36,25 @@ namespace PlayerInterface {
             SetupContextMenu(songPlayer);
 
             SetupScreenOverlay(settings, speechControl, songPlayer);
+
+            HandleWindowStateChanges();
         }
 
         private void CreateSmallPlayer(bool show, SmallPlayerViewModel vm) {
             Small = new SmallPlayer(vm);
             Small.Btn_ShowFull.Command = new RelayCommand((o) => ShowFullWindow());
 
-            if(show)
+            if (show) {
                 Small.Show();
+            }
         }
 
         private void CreateFullPlayer(bool show, FullPlayerViewModel vm) {
             Full = new FullPlayer(vm);
             Full.MinimizedToTray += (s, a) => ShowSmallWindow();
-            if(show)
+            if (show) {
                 Full.Show();
+            }
         }
 
         private void SetupContextMenu(SongPlayer player) {
@@ -107,6 +111,21 @@ namespace PlayerInterface {
                 },
                 CanExecute = () => speech.Settings.EnableSpeech && player.CurrentSong != null
             });
+        }
+
+        private void HandleWindowStateChanges() {
+            Small.StateChanged += (s, a) => {
+                if (Small.WindowState == WindowState.Maximized) {
+                    Small.WindowState = WindowState.Normal;
+                }
+            };
+
+            Full.StateChanged += (s, a) => {
+                if (Full.WindowState == WindowState.Minimized) {
+                    Full.WindowState = WindowState.Normal;
+                    ShowSmallWindow();
+                }
+            };
         }
 
         private void ShowSmallWindow() {
