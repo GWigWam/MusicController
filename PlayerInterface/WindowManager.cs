@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace PlayerInterface {
     internal class WindowManager {
@@ -34,10 +35,9 @@ namespace PlayerInterface {
             CurrentWindow = settings.StartMinimized ? Window.Small : Window.Full;
 
             SetupContextMenu(songPlayer);
-
             SetupScreenOverlay(settings, speechControl, songPlayer);
-
             HandleWindowStateChanges();
+            AddMinMaxEvents();
         }
 
         private void CreateSmallPlayer(bool show, SmallPlayerViewModel vm) {
@@ -123,6 +123,19 @@ namespace PlayerInterface {
             Full.StateChanged += (s, a) => {
                 if (Full.WindowState == WindowState.Minimized) {
                     Full.WindowState = WindowState.Normal;
+                    ShowSmallWindow();
+                }
+            };
+        }
+
+        private void AddMinMaxEvents() {
+            Small.PreviewKeyDown += (s, a) => {
+                if ((a.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || a.KeyboardDevice.IsKeyDown(Key.RightCtrl)) && a.Key == Key.Up) {
+                    ShowFullWindow();
+                }
+            };
+            Full.PreviewKeyDown += (s, a) => {
+                if ((a.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || a.KeyboardDevice.IsKeyDown(Key.RightCtrl)) && a.Key == Key.Down) {
                     ShowSmallWindow();
                 }
             };
