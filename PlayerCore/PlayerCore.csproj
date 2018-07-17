@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LinkHelper.cs" />
+    <Compile Include="M3U\M3U.cs" />
     <Compile Include="PlayerEventArgs\PlayingStoppedEventArgs.cs" />
     <Compile Include="PlayerEventArgs\PlaybackStateChangedEventArgs.cs" />
     <Compile Include="PlayerEventArgs\SongChangedEventArgs.cs" />
