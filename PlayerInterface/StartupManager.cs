@@ -142,7 +142,7 @@ namespace PlayerInterface {
             var startupSongFiles = SongFileReader.ReadFilePaths(ApplicationSettings, ApplicationSettings.StartupFolders.ToArray());
             Playlist.AddSong(startupSongFiles);
 
-            if(ApplicationSettings.ShuffleOnStartup) {
+            if (ApplicationSettings.ShuffleOnStartup) {
                 Playlist.Shuffle();
             }
         }
