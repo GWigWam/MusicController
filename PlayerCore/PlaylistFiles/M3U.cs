@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore.M3U {
+namespace PlayerCore.PlaylistFiles {
     public sealed class M3U {
 
         public SongFile[] Files { get; }

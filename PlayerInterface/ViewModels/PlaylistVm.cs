@@ -1,5 +1,5 @@
 ﻿using PlayerCore;
-using PlayerCore.M3U;
+using PlayerCore.PlaylistFiles;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
