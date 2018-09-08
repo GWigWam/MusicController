@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace PlayerCore.Songs {
 
     [DebuggerDisplay("{Title}: {Path})")]
-    public class SongFile {
+    public class SongFile : IEqualityComparer<SongFile> {
         public string Album { get; private set; }
         public string Artist { get; private set; }
         public string Genre { get; private set; }
@@ -65,6 +65,17 @@ namespace PlayerCore.Songs {
             }
 
             return songFile;
+        }
+
+        public bool Equals(SongFile x, SongFile y) {
+            return
+                (x == null && y == null) ? true :
+                (x == null || y == null) ? false :
+                GetHashCode(x) == GetHashCode(y);
+        }
+
+        public int GetHashCode(SongFile obj) {
+            return obj?.Path.GetHashCode() ?? throw new ArgumentNullException(nameof(obj));
         }
     }
 }
