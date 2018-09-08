@@ -20,7 +20,7 @@ namespace PlayerInterface {
                 if (foundSong != null) {
                     playlist.Enqueue(foundSong);
                 } else {
-                    var loaded = PlayerCore.Songs.SongFileReader.ReadFilePaths(settings, new[] { songPath });
+                    var loaded = PlayerCore.Songs.SongFileReader.CreateSongs(settings, new[] { songPath });
                     if (loaded.Length == 1) {
                         playlist.Enqueue(loaded[0]);
                     }

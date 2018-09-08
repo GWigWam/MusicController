@@ -15,7 +15,7 @@ namespace PlayerCore.M3U {
             Files = files.ToArray();
         }
 
-        public static async Task<string[]> ReadAsync(string filePath) {
+        public static async Task<M3U> ReadAsync(string filePath) {
             string content;
             using (var fs = new FileStream(filePath, FileMode.Open))
             using (var sr = new StreamReader(fs)) {
@@ -31,7 +31,8 @@ namespace PlayerCore.M3U {
             }
 
             var lines = Parse(content).ToArray();
-            return lines;
+            var songFiles = lines.Select(s => SongFile.Create(s)).ToArray();
+            return new M3U(songFiles);
         }
 
         public async Task WriteAsync(string filePath, bool allowOverwrite) {
