@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace PlayerCore.Songs {
 
     [DebuggerDisplay("{Title}: {Path})")]
-    public class SongFile : IEqualityComparer<SongFile> {
+    public class SongFile : IEqualityComparer<SongFile>, IEquatable<SongFile> {
         public string Album { get; private set; }
         public string Artist { get; private set; }
         public string Genre { get; private set; }
@@ -35,7 +35,7 @@ namespace PlayerCore.Songs {
             if (file.Extension.Equals(".lnk", StringComparison.CurrentCultureIgnoreCase)) {
                 file = LinkHelper.GetLinkTarget(file);
             }
-
+            
             if (file == null || !SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
                 return null;
             }
@@ -67,6 +67,10 @@ namespace PlayerCore.Songs {
             return songFile;
         }
 
+        public override bool Equals(object obj) => obj is SongFile sf ? Equals(sf) : false;
+
+        public bool Equals(SongFile other) => Equals(this, other);
+
         public bool Equals(SongFile x, SongFile y) {
             return
                 (x == null && y == null) ? true :
@@ -74,8 +78,8 @@ namespace PlayerCore.Songs {
                 GetHashCode(x) == GetHashCode(y);
         }
 
-        public int GetHashCode(SongFile obj) {
-            return obj?.Path.GetHashCode() ?? throw new ArgumentNullException(nameof(obj));
-        }
+        public int GetHashCode(SongFile obj) => obj?.GetHashCode() ?? throw new ArgumentNullException(nameof(obj));
+       
+        public override int GetHashCode() => Path.ToLower().GetHashCode();
     }
 }
