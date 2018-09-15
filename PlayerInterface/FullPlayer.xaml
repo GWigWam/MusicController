@@ -307,7 +307,6 @@
                     <StackPanel x:Name="Sp_Settings" Orientation="Vertical" Margin="10">
                         <Label Content="General:" FontWeight="Bold" FontSize="16" Padding="0" />
                         <CheckBox x:Name="Cb_StartMinimized" Content="Start Minimized" IsChecked="{Binding SettingsViewModel.StartMinimized}" />
-                        <CheckBox x:Name="Cb_ShuffleOnStart" Content="Shuffle on Startup" IsChecked="{Binding SettingsViewModel.ShuffleOnStartup}" />
                         <CheckBox x:Name="Cb_EnableSpeech" Content="Enable Speech" IsChecked="{Binding SettingsViewModel.EnableSpeech}" />
 
                         <Separator />

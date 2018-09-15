@@ -37,19 +37,6 @@ namespace PlayerCore.Settings {
             }
         }
 
-        private bool shuffleOnStartup = true;
-
-        [JsonProperty]
-        public bool ShuffleOnStartup {
-            get { return shuffleOnStartup; }
-            set {
-                if(value != shuffleOnStartup) {
-                    shuffleOnStartup = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(SongTransitionDelayMs)));
-                }
-            }
-        }
-
         private bool enableSpeech = true;
 
         [JsonProperty]

@@ -101,7 +101,7 @@ namespace PlayerInterface {
 
             var windowMgr = new WindowManager((Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)Application.FindResource(TrayIconResourceName));
             windowMgr.Init(ApplicationSettings, SongPlayer, Playlist, SpeechController, TransitionMgr);
-             
+
             Application.Exiting += (s, a) => {
                 PersistentQueue.SaveQueue(Playlist, ApplicationSettings);
                 ApplicationSettings.WriteToDisc();
@@ -141,10 +141,7 @@ namespace PlayerInterface {
         private void LoadStartupSongFiles() {
             var startupSongFiles = SongFileReader.CreateSongs(ApplicationSettings, ApplicationSettings.StartupFolders.ToArray());
             Playlist.AddSong(startupSongFiles);
-
-            if (ApplicationSettings.ShuffleOnStartup) {
-                Playlist.Shuffle();
-            }
+            Playlist.Shuffle();
         }
     }
 }
