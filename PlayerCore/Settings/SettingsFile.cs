@@ -41,48 +41,59 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private Task WritingTask { get; set; }
+
         [JsonConstructor]
         protected SettingsFile() { }
 
         public static T ReadSettingFile<T>(string filePath) where T : SettingsFile {
+            var task = Task.Run(() => ReadSettingFileAsync<T>(filePath));
+            return task.Result;
+        }
+
+        public static async Task<T> ReadSettingFileAsync<T>(string filePath) where T : SettingsFile {
             try {
-                string fileContent = File.ReadAllText(filePath);
-                var read = JsonConvert.DeserializeObject<T>(fileContent, JSonSettings);
-                if(read != null) {
+                using(var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                using(var sr = new StreamReader(fs)) {
+                    var fileContent = await sr.ReadToEndAsync();
+                    var read = JsonConvert.DeserializeObject<T>(fileContent, JSonSettings);
                     read.FullFilePath = filePath;
-
                     read.AfterRead();
-
                     read.HasUnsavedChanges = false;
                     return read;
-                } else {
-                    throw new Exception($"Could not read {typeof(T).Name} from\n{filePath}\nFile is probably empty"); //TODO: Userfriendly exception
                 }
             } catch(JsonReaderException jre) {
-                throw new Exception($"Invalid json encountered while trying to create {typeof(T).Name} from:\n{filePath}\n{jre}"); //TODO: Userfriendly exception
+                throw new Exception($"Invalid json encountered while trying to create {typeof(T).Name} from:\n{filePath}\n{jre}", jre);
             } catch(FileNotFoundException) {
                 return null;
             }
         }
 
-        private static object WriteLock = new object();
-
         public void WriteToDisc() {
-            lock(WriteLock) {
-                if(HasUnsavedChanges) {
+            var task = Task.Run(WriteToDiscAsync);
+            task.Wait();
+        }
+
+        public async Task WriteToDiscAsync() {
+            if(HasUnsavedChanges) {
+                try {
+                    WritingTask = WritingTask ?? WriteToDiskInternalAsync();
+                    await WritingTask;
                     HasUnsavedChanges = false;
-                    WriteToDiskInternal();
+                } catch(Exception) {
+                } finally {
+                    WritingTask = null;
                 }
             }
             RaiseSaved();
         }
 
-        protected virtual void WriteToDiskInternal() {
+        protected virtual async Task WriteToDiskInternalAsync() {
             //Write to .writing file
             var writingPath = $"{FullFilePath}.writing";
             using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
                 string content = JsonConvert.SerializeObject(this, JSonSettings);
-                sw.Write(content);
+                await sw.WriteAsync(content);
             }
 
             //After writing is finished delete old file and remove .writing from the filename

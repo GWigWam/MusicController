@@ -169,11 +169,9 @@ namespace PlayerCore.Settings {
         [JsonConstructor]
         protected AppSettings() : base() { }
 
-        protected override void WriteToDiskInternal() {
-            base.WriteToDiskInternal();
-            var writeTask = Task.Run(WriteStartupSongsM3U);
-            writeTask.ConfigureAwait(false);
-            writeTask.Wait();
+        protected override async Task WriteToDiskInternalAsync() {
+            await base.WriteToDiskInternalAsync();
+            await WriteStartupSongsM3U();
         }
 
         protected override void AfterRead() {
