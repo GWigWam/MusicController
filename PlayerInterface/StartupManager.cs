@@ -139,7 +139,7 @@ namespace PlayerInterface {
         }
 
         private void LoadStartupSongFiles() {
-            var startupSongFiles = SongFileReader.CreateSongs(ApplicationSettings, ApplicationSettings.StartupFolders.ToArray());
+            var startupSongFiles = ApplicationSettings.StartupSongs.Select(sf => new Song(sf, ApplicationSettings));
             Playlist.AddSong(startupSongFiles);
             Playlist.Shuffle();
         }

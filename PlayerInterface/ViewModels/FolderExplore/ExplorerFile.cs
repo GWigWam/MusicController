@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,27 +9,34 @@ namespace PlayerInterface.ViewModels.FolderExplore {
 
     public class ExplorerFile : ExplorerItem {
 
-        public ExplorerFile(string path, string name, bool state = false) : base(path, name, state) {
-        }
-
         public override bool IsThreeState => false;
 
-        private bool checkedState;
-
+        private bool _checkState;
         public override bool? CheckedState {
-            get { return checkedState; }
+            get => _checkState;
             set {
-                if(checkedState != value) {
-                    checkedState = value ?? false;
+                if (value is bool isStartupSong && isStartupSong != CheckedState) {
+                    if (isStartupSong) {
+                        Settings.AddStartupSong(PlayerCore.Songs.SongFile.Create(Path));
+                    } else {
+                        Settings.RemoveStartupSong(Path);
+                    }
+                    _checkState = isStartupSong;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        public override IEnumerable<string> GetCheckedPaths() {
-            if(CheckedState == true) {
-                yield return Path;
-            }
+        public ExplorerFile(string path, string name, AppSettings settings) : base(path, name, settings) {
+            _checkState = Settings.IsStartupSong(Path);
+            settings.StartupSongsChanged += (s, a) => {
+                if (a.SongFile.Path.Equals(Path, StringComparison.CurrentCultureIgnoreCase)) {
+                    _checkState = a.IsStartupSong;
+                    RaisePropertyChanged(nameof(CheckedState));
+                }
+            };
         }
+
+        public void RaiseCheckStateChanged() => RaisePropertyChanged(nameof(CheckedState));
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,9 +10,15 @@ using System.Threading.Tasks;
 namespace PlayerCore.Settings {
 
     public class AppSettings : SettingsFile {
+        private const string M3UFileName = "StartupSongs.m3u";
+
+        public event StartupSongChangedHandler StartupSongsChanged;
+
         private bool startMinimized = true;
 
         private readonly string[] AllowedStartupFileExtensions = new string[] { ".mp3", ".flac", ".lnk" };
+
+        private string M3UFilePath => !string.IsNullOrEmpty(FullFilePath) ? Path.Combine(new FileInfo(FullFilePath).DirectoryName, M3UFileName) : null;
 
         [JsonProperty]
         public bool StartMinimized {
@@ -108,17 +115,12 @@ namespace PlayerCore.Settings {
         public string Theme {
             get { return theme; }
             set {
-                if (value != theme) {
+                if(value != theme) {
                     theme = value;
                     RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(Theme)));
                 }
             }
         }
-
-        [JsonProperty]
-        private HashSet<string> startupFolders {
-            get; set;
-        } = new HashSet<string>();
 
         private List<SongStats> statistics = new List<SongStats>();
 
@@ -127,8 +129,8 @@ namespace PlayerCore.Settings {
             get { return statistics; }
             set {
                 statistics = value.Where(ss => File.Exists(ss.Path)).ToList();
-                foreach(var s in statistics) {
-                    s.PropertyChanged += SongStat_PropertyChanged;
+                foreach(var stat in statistics) {
+                    stat.PropertyChanged += (s, a) => RaiseChanged(nameof(SongStats));
                 }
             }
         }
@@ -157,83 +159,100 @@ namespace PlayerCore.Settings {
         public IEnumerable<SongStats> SongStats => Statistics;
 
         [JsonIgnore]
-        public IEnumerable<string> StartupFolders => startupFolders;
+        private HashSet<SongFile> _StartupSongs { get; set; } = new HashSet<SongFile>();
 
-        public AppSettings(string filePath) : base(filePath) {
-            // ---
-        }
+        [JsonIgnore]
+        public IEnumerable<SongFile> StartupSongs => _StartupSongs;
+
+        public AppSettings(string filePath) : base(filePath) { }
 
         [JsonConstructor]
-        protected AppSettings() : base() {
+        protected AppSettings() : base() { }
+
+        protected override void WriteToDiskInternal() {
+            base.WriteToDiskInternal();
+            var writeTask = Task.Run(WriteStartupSongsM3U);
+            writeTask.ConfigureAwait(false);
+            writeTask.Wait();
         }
 
-        public void AddStartupFolder(string path) {
-            if(AddStartupPath(path)) {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
-            }
+        protected override void AfterRead() {
+            base.AfterRead();
+            var readTask = Task.Run(ReadStartupSongsM3U);
+            readTask.ConfigureAwait(false);
+            readTask.Wait();
         }
 
-        public void AddStartupFolders(IEnumerable<string> paths) {
-            bool change = false;
-            foreach(var path in paths) {
-                change |= AddStartupPath(path);
-            }
-            if(change) {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
-            }
+        private async Task WriteStartupSongsM3U() {
+            var writePath = $"{M3UFilePath}.writing";
+
+            var m3u = new PlaylistFiles.M3U(StartupSongs);
+            await m3u.WriteAsync(writePath, true);
+            File.Delete(M3UFilePath);
+            File.Move(writePath, M3UFilePath);
         }
 
-        public void RemoveStartupFolder(string path) {
-            if(RemoveStartupPath(path)) {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
+        private async Task ReadStartupSongsM3U() {
+            if(File.Exists(M3UFilePath)) {
+                var m3u = await PlaylistFiles.M3U.ReadAsync(M3UFilePath);
+                _StartupSongs = new HashSet<SongFile>(m3u.Files);
             }
-        }
-
-        public void ClearStarupFolders() {
-            startupFolders.Clear();
-            RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupFolders)));
         }
 
         public void AddSongStats(params SongStats[] stats) {
             Statistics.AddRange(stats);
-            foreach(var s in stats) {
-                s.PropertyChanged += SongStat_PropertyChanged;
+            foreach(var stat in stats) {
+                stat.PropertyChanged += (s, a) => RaiseChanged(nameof(SongStats));
             }
             RaiseChanged(nameof(SongStats));
         }
 
-        private void SongStat_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-            RaiseChanged(nameof(SongStats));
+        public bool IsStartupSong(string path) => _StartupSongs.Any(sf => sf.Path.Equals(path, StringComparison.CurrentCultureIgnoreCase));
+        public bool IsStartupSong(SongFile song) => _StartupSongs.Contains(song);
+
+        public void AddStartupSong(string path) => AddStartupSong(SongFile.Create(path));
+
+        public void AddStartupSong(SongFile song) {
+            if(TryAddStartupSong(song)) {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
+            }
         }
 
-        private bool AddStartupPath(string path) {
-            if(Directory.Exists(path) || (File.Exists(path) && AllowedStartupFileExtensions.Any(e => e.Equals(new FileInfo(path).Extension, StringComparison.CurrentCultureIgnoreCase)))) {
-                if(!IsStatupPath(path)) {
-                    startupFolders.Add(path);
+        public void AddStartupSongs(IEnumerable<SongFile> songs) {
+            bool change = false;
+            foreach(var song in songs) {
+                change |= TryAddStartupSong(song);
+            }
+            if(change) {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
+            }
+        }
+
+        public void RemoveStartupSong(string path) => RemoveStartupSong(_StartupSongs.FirstOrDefault(sf => path.Equals(sf.Path, StringComparison.CurrentCultureIgnoreCase)));
+
+        public void RemoveStartupSong(SongFile song) {
+            if(TryRemoveStartupSong(song)) {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
+            }
+        }
+
+        private bool TryAddStartupSong(SongFile song) {
+            if(song != null && !IsStartupSong(song)) {
+                _StartupSongs.Add(song);
+                StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(true, song));
+                return true;
+            }
+            return false;
+        }
+
+        private bool TryRemoveStartupSong(SongFile song) {
+            if(song != null) {
+                if(_StartupSongs.Remove(song)) {
+                    StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(false, song));
                     return true;
                 }
             }
             return false;
         }
-
-        private bool RemoveStartupPath(string path) {
-            if(IsStatupPath(path)) {
-                var containing = startupFolders.First(p => path.StartsWith(p));
-                if(containing == path) {
-                    startupFolders.Remove(path);
-                    return true;
-                } else {
-                    startupFolders.Remove(containing);
-                    foreach(var contained in new DirectoryInfo(containing).EnumerateFileSystemInfos()
-                        .Where(i => i.FullName != path)) {
-                        AddStartupPath(contained.FullName);
-                    }
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool IsStatupPath(string path) => startupFolders.Any(p => path.StartsWith(p));
     }
 }

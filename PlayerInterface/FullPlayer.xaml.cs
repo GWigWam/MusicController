@@ -299,13 +299,6 @@ namespace PlayerInterface {
             }
         }
 
-        private void TreeView_LostFocus(object sender, RoutedEventArgs e) {
-            var tv = (TreeView)sender;
-            if(!tv.IsFocused && !tv.IsKeyboardFocusWithin) {
-                Vm.SettingsViewModel.TreeView_LostFocus(sender, e);
-            }
-        }
-
         private void Border_SongCard_Menu_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
             if(sender is FrameworkElement fe && fe.DataContext is SongMenuItemViewModel smivm && fe.Tag is SongViewModel svm) {
                 svm.CurDisplay = SongViewModel.DisplayType.Front;

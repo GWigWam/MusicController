@@ -125,11 +125,10 @@ namespace PlayerInterface.ViewModels {
 
             yield return new SongMenuItemViewModel("Open file location", OpenFileLocation);
 
-            var foundStartup = Settings.StartupFolders.FirstOrDefault(path => Path.StartsWith(path));
-            if(foundStartup == null) {
-                yield return new SongMenuItemViewModel("Add to startup songs", AddToStartup);
-            } else {
+            if(Settings.IsStartupSong(Song.File)) {
                 yield return new SongMenuItemViewModel("Remove from startup songs", RemoveFromStartup);
+            } else {
+                yield return new SongMenuItemViewModel("Add to startup songs", AddToStartup);
             }
         }
 
@@ -140,11 +139,11 @@ namespace PlayerInterface.ViewModels {
         }
         
         private void AddToStartup() {
-            Settings.AddStartupFolder(Path);
+            Settings.AddStartupSong(Song.File);
         }
 
         private void RemoveFromStartup() {
-            Settings.RemoveStartupFolder(Path);
+            Settings.RemoveStartupSong(Song.File);
         }
 
         public enum DisplayType {

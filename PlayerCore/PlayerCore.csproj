@@ -74,6 +74,7 @@
     <Compile Include="Settings\SettingChangedEventArgs.cs" />
     <Compile Include="Settings\SettingsFile.cs" />
     <Compile Include="Settings\SongStats.cs" />
+    <Compile Include="Settings\StartupSongsChangedEvent.cs" />
     <Compile Include="SongPlayer.cs" />
     <Compile Include="Songs\Song.cs" />
     <Compile Include="Songs\SongFile.cs" />

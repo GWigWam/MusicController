@@ -42,8 +42,7 @@ namespace PlayerCore.Settings {
         }
 
         [JsonConstructor]
-        protected SettingsFile() {
-        }
+        protected SettingsFile() { }
 
         public static T ReadSettingFile<T>(string filePath) where T : SettingsFile {
             try {
@@ -72,21 +71,25 @@ namespace PlayerCore.Settings {
             lock(WriteLock) {
                 if(HasUnsavedChanges) {
                     HasUnsavedChanges = false;
-                    //Write to .writing file
-                    var writingPath = $"{FullFilePath}.writing";
-                    using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
-                        string content = JsonConvert.SerializeObject(this, JSonSettings);
-                        sw.Write(content);
-                    }
-
-                    //After writing is finished delete old file and remove .writing from the filename
-                    if(File.Exists(writingPath)) {
-                        File.Delete(FullFilePath);
-                        File.Move(writingPath, FullFilePath);
-                    }
+                    WriteToDiskInternal();
                 }
             }
             RaiseSaved();
+        }
+
+        protected virtual void WriteToDiskInternal() {
+            //Write to .writing file
+            var writingPath = $"{FullFilePath}.writing";
+            using(StreamWriter sw = new StreamWriter(new FileStream(writingPath, FileMode.Create))) {
+                string content = JsonConvert.SerializeObject(this, JSonSettings);
+                sw.Write(content);
+            }
+
+            //After writing is finished delete old file and remove .writing from the filename
+            if(File.Exists(writingPath)) {
+                File.Delete(FullFilePath);
+                File.Move(writingPath, FullFilePath);
+            }
         }
 
         protected void RaiseChanged(SettingChangedEventArgs args) {

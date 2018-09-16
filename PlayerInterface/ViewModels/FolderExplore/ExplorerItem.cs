@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Settings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,29 +9,19 @@ using System.Threading.Tasks;
 namespace PlayerInterface.ViewModels.FolderExplore {
 
     public abstract class ExplorerItem : NotifyPropertyChanged {
+        
+        public abstract bool? CheckedState { get; set; }
+        public abstract bool IsThreeState { get; }
 
-        public abstract bool? CheckedState {
-            get; set;
-        }
+        public string Path { get; }
+        public string Name { get; }
 
-        public abstract bool IsThreeState {
-            get;
-        }
+        protected AppSettings Settings { get; }
 
-        public string Path {
-            get;
-        }
-
-        public string Name {
-            get;
-        }
-
-        public ExplorerItem(string path, string name, bool? state = false) {
+        public ExplorerItem(string path, string name, AppSettings settings) {
             Path = path;
             Name = name;
-            CheckedState = state;
+            Settings = settings;
         }
-
-        public abstract IEnumerable<string> GetCheckedPaths();
     }
 }

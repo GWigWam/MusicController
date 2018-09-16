@@ -365,7 +365,7 @@
 
                         <Label Margin="0,3,0,0" Content="Load on startup:" FontWeight="Bold" FontSize="16" Padding="0" />
                         <TreeView x:Name="Tv_Settings_StartupLoad" Height="200" ItemsSource="{Binding SettingsViewModel.LoadPaths}"
-                            LostFocus="TreeView_LostFocus" Background="Transparent">
+                            Background="Transparent">
                             <TreeView.Resources>
                                 <HierarchicalDataTemplate DataType="{x:Type vme:ExplorerFolder}" ItemsSource="{Binding Children}">
                                     <StackPanel Orientation="Horizontal" Height="18" Margin="1">

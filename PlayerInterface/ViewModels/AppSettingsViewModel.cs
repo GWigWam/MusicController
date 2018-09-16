@@ -1,4 +1,5 @@
 ﻿using PlayerCore.Settings;
+using PlayerCore.Songs;
 using PlayerInterface.Commands;
 using PlayerInterface.ViewModels.FolderExplore;
 using System;
@@ -22,15 +23,6 @@ namespace PlayerInterface.ViewModels {
             }
             set {
                 Settings.StartMinimized = value;
-            }
-        }
-
-        public bool ShuffleOnStartup {
-            get {
-                return Settings.ShuffleOnStartup;
-            }
-            set {
-                Settings.ShuffleOnStartup = value;
             }
         }
 
@@ -79,7 +71,7 @@ namespace PlayerInterface.ViewModels {
             get; private set;
         }
 
-        public IBaseCommand SaveToDiskCommand { get; }
+        public IBaseCommand SaveToDiskCommand { get; private set; }
 
         public ICommand OpenFileLocationCommand {
             get; private set;
@@ -87,11 +79,18 @@ namespace PlayerInterface.ViewModels {
 
         public AppSettingsViewModel(AppSettings settings) {
             Settings = settings;
-            Settings.Changed += Settings_Changed;
-            LoadPaths = new ObservableCollection<ExplorerItem>();
+
+            Settings.Changed += (s, a) => {
+                RaisePropertyChanged(a.ChangedPropertyName);
+                SaveToDiskCommand?.RaiseCanExecuteChanged();
+            };
+            Settings.Saved += (s, a) => SaveToDiskCommand.RaiseCanExecuteChanged();
 
             InitLoadPaths();
+            SetupCommands();
+        }
 
+        private void SetupCommands() {
             SaveToDiskCommand = new AsyncCommand(
                 o => Task.Run(() => Settings.WriteToDisc()),
                 o => Settings.HasUnsavedChanges,
@@ -101,71 +100,52 @@ namespace PlayerInterface.ViewModels {
                     }
                 }
             );
-            Settings.Changed += (s, a) => {
-                SaveToDiskCommand.RaiseCanExecuteChanged();
-                if(a.ChangedPropertyName == nameof(Settings.StartupFolders)) {
-                    InitLoadPaths();
-                }
-            };
-            Settings.Saved += (s, a) => SaveToDiskCommand.RaiseCanExecuteChanged();
-
             OpenFileLocationCommand = new RelayCommand(o => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
         }
 
-        private void Settings_Changed(object sender, SettingChangedEventArgs e) {
-            RaisePropertyChanged(e.ChangedPropertyName);
-        }
-
         public void InitLoadPaths() {
-            LoadPaths.Clear();
+            LoadPaths = new ObservableCollection<ExplorerItem>();
 
             foreach(var drive in DriveInfo.GetDrives().Where(di => di.IsReady)) {
-                var folder = new ExplorerFolder(drive.Name, drive.Name);
+                var folder = new ExplorerFolder(drive.Name, drive.Name.TrimEnd('\\'), Settings);
                 LoadPaths.Add(folder);
             }
 
-            foreach(var path in Settings.StartupFolders) {
-                foreach(var drive in LoadPaths) {
-                    if(TryCheckPath(path.Split('\\', '/').Skip(1), drive)) {
-                        break;
-                    }
+            var paths = Settings.StartupSongs
+                .Distinct(ParentDirComparer.Default)
+                .Select(sf => sf.Path)
+                .Select(p => p.Split('\\', '/'));
+            CheckPathBoxes(paths, LoadPaths);
+        }
+
+        private void CheckPathBoxes(IEnumerable<IEnumerable<string>> paths, IEnumerable<ExplorerItem> items) {
+            var groups = paths
+                .GroupBy(t => t.First());
+
+            foreach (var group in groups) {
+                var match = items.FirstOrDefault(i => i.Name == group.Key);
+                if (match is ExplorerFile eFil) {
+                    eFil.RaiseCheckStateChanged();
+                } else if(match is ExplorerFolder eDir) {
+                    CheckPathBoxes(group.Select(g => g.Skip(1)), eDir.Children);
                 }
             }
         }
 
-        private bool TryCheckPath(IEnumerable<string> path, ExplorerItem item) {
-            var curPathLength = path.Count();
-            if(curPathLength == 1 && item is ExplorerFile) {
-                if(path.First() == item.Name) {
-                    item.CheckedState = true;
-                    return true;
-                } else {
-                    return false;
-                }
-            } else if(curPathLength >= 1 && item is ExplorerFolder) {
-                var found = (item as ExplorerFolder).Children.FirstOrDefault(i => i.Name == path.First());
-                if(found != null) {
-                    if(curPathLength == 1) {
-                        found.CheckedState = true;
-                        return true;
-                    } else {
-                        return TryCheckPath(path.Skip(1), found);
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
+        private class ParentDirComparer : IEqualityComparer<SongFile> {
+            public static ParentDirComparer Default = new ParentDirComparer();
 
-        internal void TreeView_LostFocus(object sender, RoutedEventArgs e) {
-            var newCol = new List<string>();
-            foreach(var item in LoadPaths) {
-                newCol.AddRange(item.GetCheckedPaths());
+            public bool Equals(SongFile x, SongFile y) =>
+                x == null && y == null ? true :
+                x == null || y == null ? false :
+                GetHashCode(x) == GetHashCode(y);
+
+            public int GetHashCode(SongFile obj) {
+                if (obj == null) {
+                    throw new ArgumentNullException(nameof(obj));
+                }
+                return new FileInfo(obj.Path).DirectoryName.ToLower().GetHashCode();
             }
-            Settings.ClearStarupFolders();
-            Settings.AddStartupFolders(newCol);
         }
     }
 }
