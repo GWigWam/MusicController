@@ -18,48 +18,28 @@ namespace PlayerInterface.ViewModels {
         public AppSettings Settings { get; }
 
         public bool StartMinimized {
-            get {
-                return Settings.StartMinimized;
-            }
-            set {
-                Settings.StartMinimized = value;
-            }
+            get => Settings.StartMinimized;
+            set => Settings.StartMinimized = value;
         }
 
         public bool EnableSpeech {
-            get {
-                return Settings.EnableSpeech;
-            }
-            set {
-                Settings.EnableSpeech = value;
-            }
+            get => Settings.EnableSpeech;
+            set => Settings.EnableSpeech = value;
         }
 
         public uint SongTransitionDelay {
-            get {
-                return Settings.SongTransitionDelayMs;
-            }
-            set {
-                Settings.SongTransitionDelayMs = value;
-            }
+            get => Settings.SongTransitionDelayMs;
+            set => Settings.SongTransitionDelayMs = value;
         }
 
         public uint ScreenOverlayShowTimeMs {
-            get {
-                return Settings.ScreenOverlayShowTimeMs;
-            }
-            set {
-                Settings.ScreenOverlayShowTimeMs = value;
-            }
+            get => Settings.ScreenOverlayShowTimeMs;
+            set => Settings.ScreenOverlayShowTimeMs = value;
         }
 
         public uint ResetSentenceTimeMs {
-            get {
-                return Settings.ResetSentenceTimeMs;
-            }
-            set {
-                Settings.ResetSentenceTimeMs = value;
-            }
+            get => Settings.ResetSentenceTimeMs;
+            set => Settings.ResetSentenceTimeMs = value;
         }
 
         public string Theme {
@@ -67,15 +47,11 @@ namespace PlayerInterface.ViewModels {
             set => Settings.Theme = value;
         }
 
-        public ObservableCollection<ExplorerItem> LoadPaths {
-            get; private set;
-        }
+        public ObservableCollection<ExplorerItem> LoadPaths { get; private set; }
 
         public IBaseCommand SaveToDiskCommand { get; private set; }
 
-        public ICommand OpenFileLocationCommand {
-            get; private set;
-        }
+        public ICommand OpenFileLocationCommand { get; private set; }
 
         public AppSettingsViewModel(AppSettings settings) {
             Settings = settings;
@@ -92,10 +68,10 @@ namespace PlayerInterface.ViewModels {
 
         private void SetupCommands() {
             SaveToDiskCommand = new AsyncCommand(
-                o => Task.Run(() => Settings.WriteToDisc()),
+                o => Settings.WriteToDiscAsync(),
                 o => Settings.HasUnsavedChanges,
                 t => {
-                    if (t.IsFaulted) {
+                    if(t.IsFaulted) {
                         Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
                     }
                 }
@@ -122,9 +98,9 @@ namespace PlayerInterface.ViewModels {
             var groups = paths
                 .GroupBy(t => t.First());
 
-            foreach (var group in groups) {
+            foreach(var group in groups) {
                 var match = items.FirstOrDefault(i => i.Name == group.Key);
-                if (match is ExplorerFile eFil) {
+                if(match is ExplorerFile eFil) {
                     eFil.RaiseCheckStateChanged();
                 } else if(match is ExplorerFolder eDir) {
                     CheckPathBoxes(group.Select(g => g.Skip(1)), eDir.Children);
@@ -141,7 +117,7 @@ namespace PlayerInterface.ViewModels {
                 GetHashCode(x) == GetHashCode(y);
 
             public int GetHashCode(SongFile obj) {
-                if (obj == null) {
+                if(obj == null) {
                     throw new ArgumentNullException(nameof(obj));
                 }
                 return new FileInfo(obj.Path).DirectoryName.ToLower().GetHashCode();
