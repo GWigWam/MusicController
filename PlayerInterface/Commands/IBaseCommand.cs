@@ -19,7 +19,7 @@ namespace PlayerInterface.Commands {
 
         public abstract void Execute(object parameter);
 
-        public void RaiseCanExecuteChanged(EventArgs args = null) => Application.Current.Dispatcher.Invoke(() => CanExecuteChanged?.Invoke(this, args ?? EventArgs.Empty));
+        public void RaiseCanExecuteChanged(EventArgs args = null) => Application.Current.Dispatcher.BeginInvoke((Action)(() => CanExecuteChanged?.Invoke(this, args ?? EventArgs.Empty)));
 
         public void BindCanExecuteToProperty(Action<PropertyChangedEventHandler> AttachHandler, string propertyName) {
             AttachHandler((s, a) => {
