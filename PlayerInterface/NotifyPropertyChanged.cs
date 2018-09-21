@@ -12,15 +12,15 @@ namespace PlayerInterface {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
-            if(propertyName != null) {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void RaisePropertyChanged(params string[] propertyNames) {
+            foreach(var propName in propertyNames) {
+                RaisePropertyChanged(propName);
             }
         }
 
-        protected void RaisePropertiesChanged(params string[] propertyNames) {
-            foreach(var propName in propertyNames) {
-                RaisePropertyChanged(propName);
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
+            if(propertyName != null) {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

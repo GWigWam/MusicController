@@ -44,7 +44,7 @@ namespace PlayerInterface.ViewModels {
                 if (value != _searchText) {
                     _searchText = value;
                     HandleSearchChanged();
-                    RaisePropertiesChanged(nameof(SearchText));
+                    RaisePropertyChanged();
                 }
             }
         }

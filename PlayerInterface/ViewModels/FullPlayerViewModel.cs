@@ -78,13 +78,13 @@ namespace PlayerInterface.ViewModels {
             );
 
             playlist.ListContentChanged += (s, a) => {
-                RaisePropertiesChanged(nameof(ShowDropHint), nameof(PlaylistStats));
+                RaisePropertyChanged(nameof(ShowDropHint), nameof(PlaylistStats));
             };
             
             SetupAboutSpeechCommands(speechController);
             
             SongPlayer.SongChanged += (s, a) => {
-                RaisePropertiesChanged(nameof(TrackLengthStr), nameof(StatusText));
+                RaisePropertyChanged(nameof(TrackLengthStr), nameof(StatusText));
                 Playlist.SearchText = string.Empty;
             };
 

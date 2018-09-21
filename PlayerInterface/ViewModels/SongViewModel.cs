@@ -66,7 +66,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if (_QueueIndex != value) {
                     _QueueIndex = value;
-                    RaisePropertyChanged(nameof(QueueIndex));
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(value != curDisplay) {
                     curDisplay = value;
-                    RaisePropertiesChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
+                    RaisePropertyChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace PlayerInterface.ViewModels {
             this.enqueue = enqueue;
             removeSong = rs;
 
-            Song.Stats.PropertyChanged += (s, a) => RaisePropertiesChanged(nameof(PlayCountStr));
+            Song.Stats.PropertyChanged += (s, a) => RaisePropertyChanged(nameof(PlayCountStr));
         }
 
         private IEnumerable<SongMenuItemViewModel> GetMenuItems() {

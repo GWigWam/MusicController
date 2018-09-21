@@ -58,18 +58,18 @@ namespace PlayerInterface.ViewModels {
             SongPlayer = player;
             TransitionMngr = transitionMngr;
 
-            SongPlayer.SongChanged += (s, a) => RaisePropertiesChanged(nameof(ElapsedFraction), nameof(ElapsedStr));
-            SongPlayer.PlayingStopped += (s, a) => RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
-            SongPlayer.PlaybackStateChanged += (s, a) => RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed), nameof(ElapsedColor));
+            SongPlayer.SongChanged += (s, a) => RaisePropertyChanged(nameof(ElapsedFraction), nameof(ElapsedStr));
+            SongPlayer.PlayingStopped += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
+            SongPlayer.PlaybackStateChanged += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed), nameof(ElapsedColor));
             SongPlayer.VolumeChanged += (s, a) => RaisePropertyChanged(nameof(Volume));
-            TransitionMngr.TransitionChanged += (s, a) => RaisePropertiesChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
+            TransitionMngr.TransitionChanged += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
 
             UpdateTimer = new Timer() {
                 AutoReset = true,
                 Enabled = true,
                 Interval = 500
             };
-            UpdateTimer.Elapsed += (s, a) => RaisePropertiesChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
+            UpdateTimer.Elapsed += (s, a) => RaisePropertyChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
 
             var sc = new RelayCommand(
                 execute: _ => {
