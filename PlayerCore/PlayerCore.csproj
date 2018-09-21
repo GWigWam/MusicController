@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -78,7 +79,8 @@
     <Compile Include="SongPlayer.cs" />
     <Compile Include="Songs\Song.cs" />
     <Compile Include="Songs\SongFile.cs" />
-    <Compile Include="Songs\SongFileReader.cs" />
+    <Compile Include="Songs\SongFileFactory.cs" />
+    <Compile Include="Songs\SongPathsHelper.cs" />
     <Compile Include="TransitionManager.cs" />
   </ItemGroup>
   <ItemGroup>

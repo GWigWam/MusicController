@@ -31,7 +31,14 @@ namespace PlayerCore.PlaylistFiles {
             }
 
             var lines = Parse(content).ToArray();
-            var songFiles = lines.Select(s => SongFile.Create(s)).ToArray();
+            var songFiles = lines
+                .Select(s => {
+                    var suc = SongFile.TryCreate(s, out var res);
+                    return (suc, res);
+                })
+                .Where(t => t.suc)
+                .Select(t => t.res)
+                .ToArray();
             return new M3U(songFiles);
         }
 

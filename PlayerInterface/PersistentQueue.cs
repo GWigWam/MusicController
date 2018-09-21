@@ -1,5 +1,6 @@
 ﻿using PlayerCore;
 using PlayerCore.Settings;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,9 @@ namespace PlayerInterface {
                 if (foundSong != null) {
                     playlist.Enqueue(foundSong);
                 } else {
-                    var loaded = PlayerCore.Songs.SongFileReader.CreateSongs(settings, new[] { songPath });
-                    if (loaded.Length == 1) {
-                        playlist.Enqueue(loaded[0]);
+                    if(SongFile.TryCreate(songPath, out var sf)) {
+                        var song = new Song(sf, settings);
+                        playlist.Enqueue(song);
                     }
                 }
             }

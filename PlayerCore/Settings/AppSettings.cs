@@ -15,9 +15,7 @@ namespace PlayerCore.Settings {
         public event StartupSongChangedHandler StartupSongsChanged;
 
         private bool startMinimized = true;
-
-        private readonly string[] AllowedStartupFileExtensions = new string[] { ".mp3", ".flac", ".lnk" };
-
+        
         private string M3UFilePath => !string.IsNullOrEmpty(FullFilePath) ? Path.Combine(new FileInfo(FullFilePath).DirectoryName, M3UFileName) : null;
 
         [JsonProperty]
@@ -207,8 +205,6 @@ namespace PlayerCore.Settings {
 
         public bool IsStartupSong(string path) => _StartupSongs.Any(sf => sf.Path.Equals(path, StringComparison.CurrentCultureIgnoreCase));
         public bool IsStartupSong(SongFile song) => _StartupSongs.Contains(song);
-
-        public void AddStartupSong(string path) => AddStartupSong(SongFile.Create(path));
 
         public void AddStartupSong(SongFile song) {
             if(TryAddStartupSong(song)) {

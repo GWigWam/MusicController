@@ -117,9 +117,7 @@ namespace PlayerCore.Settings {
             RaiseChanged(args);
         }
 
-        protected void RaiseSaved() {
-            Saved?.Invoke(this, EventArgs.Empty);
-        }
+        protected void RaiseSaved() => Saved?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
         /// Called after method ReadSettingFile has deserialized a file

@@ -11,61 +11,32 @@ namespace PlayerCore.Songs {
 
     [DebuggerDisplay("{Title}: {Path})")]
     public class SongFile : IEqualityComparer<SongFile>, IEquatable<SongFile> {
-        public string Album { get; private set; }
-        public string Artist { get; private set; }
-        public string Genre { get; private set; }
+        public string Album { get; }
+        public string Artist { get; }
+        public string Genre { get; }
+        public string Title { get; }
+        public uint Track { get; }
+        public uint TrackCount { get; }
+        public uint Year { get; }
+        public int BitRate { get; }
+        public TimeSpan TrackLength { get; }
+
         public string Path { get; }
-        public string Title { get; private set; }
-        public uint Track { get; private set; }
-        public uint TrackCount { get; private set; }
-        public uint Year { get; private set; }
-        public int BitRate { get; private set; }
-        public TimeSpan TrackLength { get; private set; }
 
-        private SongFile(string path) {
+        internal SongFile(string path, string title, string album, string artist, string genre, uint track, uint trackCount, uint year, int bitRate, TimeSpan trackLength) {
+            Album = album;
+            Artist = artist;
+            Genre = genre;
             Path = path;
+            Title = title;
+            Track = track;
+            TrackCount = trackCount;
+            Year = year;
+            BitRate = bitRate;
+            TrackLength = trackLength;
         }
 
-        public static SongFile Create(string filePath) {
-            return Create(new FileInfo(filePath));
-        }
-
-        public static SongFile Create(FileInfo file) {
-#warning TODO: Fix the .lnk mess
-            if (file.Extension.Equals(".lnk", StringComparison.CurrentCultureIgnoreCase)) {
-                file = LinkHelper.GetLinkTarget(file);
-            }
-            
-            if (file == null || !SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
-                return null;
-            }
-
-            TagLib.File fileInfo = null;
-            try {
-                fileInfo = TagLib.File.Create(file.FullName);
-            } catch { }
-
-            var title = fileInfo?.Tag?.Title ?? file.Name.Replace(file.Extension, "");
-            var artist = string.IsNullOrEmpty(fileInfo?.Tag?.FirstPerformer?.Trim()) ? null : fileInfo.Tag.FirstPerformer.Trim();
-            var album = string.IsNullOrEmpty(fileInfo?.Tag?.Album?.Trim()) ? null : fileInfo.Tag.Album.Trim();
-            
-            var songFile = new SongFile(file.FullName) {
-                Title = title,
-                Artist = artist,
-                Album = album,
-                Genre = fileInfo?.Tag?.FirstGenre,
-                Track = fileInfo?.Tag?.Track ?? 0,
-                TrackCount = fileInfo?.Tag?.TrackCount ?? 0,
-                Year = fileInfo?.Tag?.Year ?? 0
-            };
-
-            if (fileInfo?.Properties != null) {
-                songFile.BitRate = fileInfo.Properties.AudioBitrate;
-                songFile.TrackLength = fileInfo.Properties.Duration;
-            }
-
-            return songFile;
-        }
+        public static bool TryCreate(string filePath, out SongFile result) => SongFileFactory.TryGet(filePath, out result);
 
         public override bool Equals(object obj) => obj is SongFile sf ? Equals(sf) : false;
 
@@ -79,7 +50,7 @@ namespace PlayerCore.Songs {
         }
 
         public int GetHashCode(SongFile obj) => obj?.GetHashCode() ?? throw new ArgumentNullException(nameof(obj));
-       
+
         public override int GetHashCode() => Path.ToLower().GetHashCode();
     }
 }

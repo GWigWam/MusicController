@@ -1,4 +1,5 @@
 ﻿using PlayerCore.Settings;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,9 @@ namespace PlayerInterface.ViewModels.FolderExplore {
             set {
                 if (value is bool isStartupSong && isStartupSong != CheckedState) {
                     if (isStartupSong) {
-                        Settings.AddStartupSong(PlayerCore.Songs.SongFile.Create(Path));
+                        if(SongFile.TryCreate(Path, out var sf)) {
+                            Settings.AddStartupSong(sf);
+                        }
                     } else {
                         Settings.RemoveStartupSong(Path);
                     }
