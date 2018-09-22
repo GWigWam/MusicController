@@ -10,12 +10,11 @@ namespace PlayerCore.Songs {
 
     [DebuggerDisplay("{Title} - {Artist} ({Album})")]
     public class Song {
-        public SongFile File { get; }
 
+        public SongFile File { get; }
         public SongStats Stats { get; }
 
         private string title;
-
         public string Title {
             get {
                 return title ?? File.Title;
@@ -26,7 +25,6 @@ namespace PlayerCore.Songs {
         }
 
         private string artist;
-
         public string Artist {
             get {
                 return artist ?? File.Artist;
@@ -37,7 +35,6 @@ namespace PlayerCore.Songs {
         }
 
         private string album;
-
         public string Album {
             get {
                 return album ?? File.Album;
@@ -50,12 +47,9 @@ namespace PlayerCore.Songs {
         public string FilePath => File.Path;
 
         public Song(SongFile file, AppSettings settings) {
-            if(file == null || string.IsNullOrEmpty(file.Path)) {
-                throw new ArgumentException(nameof(file));
-            }
-            File = file;
+            File = file ?? throw new ArgumentNullException(nameof(file));
 
-            Stats = settings.SongStats.FirstOrDefault(ss => ss.Path == FilePath);
+            Stats = settings.SongStats.FirstOrDefault(ss => ss.Path.Equals(FilePath, StringComparison.CurrentCultureIgnoreCase));
             if(Stats == null) {
                 Stats = new SongStats(FilePath);
                 settings.AddSongStats(Stats);
