@@ -99,7 +99,7 @@ namespace PlayerInterface.ViewModels {
                 .GroupBy(t => t.First());
 
             foreach(var group in groups) {
-                var match = items.FirstOrDefault(i => i.Name == group.Key);
+                var match = items.FirstOrDefault(i => i.Name.Equals(group.Key, StringComparison.CurrentCultureIgnoreCase));
                 if(match is ExplorerFile eFil) {
                     eFil.RaiseCheckStateChanged();
                 } else if(match is ExplorerFolder eDir) {
