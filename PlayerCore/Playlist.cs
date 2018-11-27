@@ -282,7 +282,6 @@ namespace PlayerCore {
             CurrentIndex = newIndex;
 
             QueueIndex = null;
-            ClearQueue();
         }
 
         private void RaiseListContentChanged() => ListContentChanged?.Invoke(this, EventArgs.Empty);
