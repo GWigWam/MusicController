@@ -25,7 +25,7 @@ namespace PlayerInterface.ViewModels {
 
         public IBaseCommand ReverseSortCommand { get; }
 
-        public GenericRelayCommand<(SongViewModel[] move, SongViewModel to)> MovePlaylistSongsCommand { get; }
+        public RelayCommand<(SongViewModel[] move, SongViewModel to)> MovePlaylistSongsCommand { get; }
 
         public IBaseCommand ShuffleCommand { get; }
 
@@ -70,25 +70,25 @@ namespace PlayerInterface.ViewModels {
             AllPlaylistItems = new ObservableCollection<SongViewModel>();
             PlaylistItems = AllPlaylistItems;
 
-            SortByCommand = new RelayCommand(pi => SortByProperty((PropertyInfo)pi));
+            SortByCommand = new RelayCommand<PropertyInfo>(SortByProperty);
 
-            ReverseSortCommand = new RelayCommand(_ => _playlist.Reverse());
+            ReverseSortCommand = new RelayCommand(() => _playlist.Reverse());
 
-            MovePlaylistSongsCommand = new GenericRelayCommand<(SongViewModel[] move, SongViewModel to)>(
+            MovePlaylistSongsCommand = new RelayCommand<(SongViewModel[] move, SongViewModel to)>(
                 inp => _playlist.MoveTo(inp.to.Song, inp.move.Select(svm => svm.Song).ToArray()),
                 inp => (inp.move?.Length ?? 0) > 0 && inp.to?.Song != null
             );
 
-            ShuffleCommand = new RelayCommand(_ => _playlist.Shuffle());
+            ShuffleCommand = new RelayCommand(() => _playlist.Shuffle());
 
             var sbsc = new RelayCommand(
-                _ => SortBySearch(),
-                _ => !string.IsNullOrEmpty(SearchText)
+                SortBySearch,
+                () => !string.IsNullOrEmpty(SearchText)
             );
             sbsc.BindCanExecuteToProperty(h => PropertyChanged += h, nameof(SearchText));
             SortBySearchCommand = sbsc;
 
-            AddFilesCommand = new AsyncCommand(async (dyn) => {
+            AddFilesCommand = new AsyncCommand<dynamic>(async (dyn) => {
                 dynamic input = dyn;
                 setUiEnabled(false);
                 var paths = input.Paths as string[];
@@ -105,12 +105,12 @@ namespace PlayerInterface.ViewModels {
                 }
             });
 
-            RemoveSongsCommand = new RelayCommand(
-                execute: o => _playlist.Remove(((IEnumerable<SongViewModel>)o).Select(svm => svm.Song)),
-                canExecute: o => o is IEnumerable<SongViewModel> songs && songs.Count() > 0
+            RemoveSongsCommand = new RelayCommand<IEnumerable<SongViewModel>>(
+                execute: o => _playlist.Remove(o.Select(svm => svm.Song)),
+                canExecute: o => o?.Count() > 0
             );
 
-            ExportCommand = new AsyncCommand(_ => Export());
+            ExportCommand = new AsyncCommand(Export);
 
             songPlayer.SongChanged += (_, a) => UpdateCurrentSong(a.Next);
 

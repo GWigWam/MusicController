@@ -42,7 +42,7 @@ namespace PlayerInterface {
 
         private void CreateSmallPlayer(bool show, SmallPlayerViewModel vm) {
             Small = new SmallPlayer(vm);
-            Small.Btn_ShowFull.Command = new RelayCommand((o) => ShowFullWindow());
+            Small.Btn_ShowFull.Command = new RelayCommand(ShowFullWindow);
 
             if (show) {
                 Small.Show();
@@ -59,9 +59,9 @@ namespace PlayerInterface {
 
         private void SetupContextMenu(SongPlayer player) {
             var tivm = new TrayIconViewModel() {
-                SmallPlayer = new RelayCommand((o) => ShowSmallWindow()),
-                FullPlayer = new RelayCommand((o) => ShowFullWindow()),
-                Quit = new RelayCommand((o) => Application.Current.Shutdown())
+                SmallPlayer = new RelayCommand(ShowSmallWindow),
+                FullPlayer = new RelayCommand(ShowFullWindow),
+                Quit = new RelayCommand(Application.Current.Shutdown)
             };
 
             player.SongChanged += (s, a) => {

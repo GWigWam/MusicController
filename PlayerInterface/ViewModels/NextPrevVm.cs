@@ -27,10 +27,10 @@ namespace PlayerInterface.ViewModels {
             SongPlayer = player;
             Playlist = playlist;
 
-            NextCommand = new RelayCommand(_ => Playlist.Next(true), _ => Playlist.HasNext(true));
+            NextCommand = new RelayCommand(() => Playlist.Next(true), _ => Playlist.HasNext(true));
             Playlist.CurrentSongChanged += (s, a) => NextCommand.RaiseCanExecuteChanged();
 
-            PreviousCommand = new RelayCommand(_ => {
+            PreviousCommand = new RelayCommand(() => {
                 if (SongPlayer.Elapsed.TotalMilliseconds > PreviousRestartMinTimeMs) {
                     SongPlayer.Elapsed = TimeSpan.FromMilliseconds(0);
                 } else {

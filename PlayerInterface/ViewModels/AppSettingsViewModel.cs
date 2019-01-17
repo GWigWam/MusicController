@@ -68,15 +68,15 @@ namespace PlayerInterface.ViewModels {
 
         private void SetupCommands() {
             SaveToDiskCommand = new AsyncCommand(
-                o => Settings.WriteToDiscAsync(),
-                o => Settings.HasUnsavedChanges,
+                () => Settings.WriteToDiscAsync(),
+                () => Settings.HasUnsavedChanges,
                 t => {
                     if(t.IsFaulted) {
                         Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
                     }
                 }
             );
-            OpenFileLocationCommand = new RelayCommand(o => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
+            OpenFileLocationCommand = new RelayCommand(() => System.Diagnostics.Process.Start("explorer.exe", $"/select, {Settings.FullFilePath}"));
         }
 
         public void InitLoadPaths() {

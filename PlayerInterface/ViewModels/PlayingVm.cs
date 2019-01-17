@@ -72,7 +72,7 @@ namespace PlayerInterface.ViewModels {
             UpdateTimer.Elapsed += (s, a) => RaisePropertyChanged(nameof(ElapsedStr), nameof(ElapsedFraction));
 
             var sc = new RelayCommand(
-                execute: _ => {
+                execute: () => {
                     if (TransitionMngr.IsTransitioning) {
                         TransitionMngr.CancelTransition();
                     } else if (SongPlayer.PlayerState == PlayerState.Playing) {
@@ -81,7 +81,7 @@ namespace PlayerInterface.ViewModels {
                         SongPlayer.PlayerState = PlayerState.Playing;
                     }
                 },
-                canExecute: _ => SongPlayer.CurrentSong != null
+                canExecute: () => SongPlayer.CurrentSong != null
             );
             SongPlayer.SongChanged += (s, a) => sc.RaiseCanExecuteChanged();
             SwitchCommand = sc;
