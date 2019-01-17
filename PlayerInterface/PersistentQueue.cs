@@ -28,10 +28,14 @@ namespace PlayerInterface {
                 }
             }
 
-            if (playlist.Queue.Count > 0 && settings.QueueIndex.HasValue) {
-                do {
+            if (playlist.Queue.Count > 0) {
+                if(settings.QueueIndex.HasValue) {
+                    do {
+                        playlist.Next(true);
+                    } while((playlist.QueueIndex ?? 0) < settings.QueueIndex.Value);
+                } else {
                     playlist.Next(true);
-                } while ((playlist.QueueIndex ?? 0) < settings.QueueIndex.Value);
+                }
             }
 
             settings.QueuedSongs = new string[0];
