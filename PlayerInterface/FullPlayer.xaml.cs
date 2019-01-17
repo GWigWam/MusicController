@@ -90,7 +90,7 @@ namespace PlayerInterface {
 
         private void UpdateStatusTextAnimation() {
             // Delay to make sure the 'ActualWidht' property has updated
-            // Yes this is a hack, however both OnInitialize and OnLoaded are called before 'ActualWidht' is set so it's hard to act at the right moment
+            // Yes this is a hack, however both OnInitialize and OnLoaded are called before 'ActualWidth' is set so it's hard to act at the right moment
             Task.Delay(500).ContinueWith((t) =>
                 Dispatcher.BeginInvoke(new Action(() => {
                     var sb = Grid_StatusText.Resources["Sb_StatusText"] as Storyboard;

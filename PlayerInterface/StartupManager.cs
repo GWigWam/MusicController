@@ -58,7 +58,9 @@ namespace PlayerInterface {
         }
 
         public StartupManager() {
+#if !DEBUG
             IsSingleInstance = true;
+#endif
         }
 
         protected override bool OnStartup(StartupEventArgs eventArgs) {
