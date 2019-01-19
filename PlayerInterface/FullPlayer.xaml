@@ -152,7 +152,8 @@
                 </Border>
                 <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding Playlist.PlaylistItems}" Margin="2,0" SelectionMode="Extended"
                          HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop">
+                         MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop"
+                         SelectionChanged="Lb_Playlist_SelectionChanged" >
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="0" />

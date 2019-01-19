@@ -177,6 +177,15 @@ namespace PlayerInterface {
             }
         }
 
+        private void Lb_Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            foreach(var svm in e.AddedItems.OfType<SongViewModel>()) {
+                svm.IsSelected = true;
+            }
+            foreach(var svm in e.RemovedItems.OfType<SongViewModel>()) {
+                svm.IsSelected = false;
+            }
+        }
+
         private void Tb_Search_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
             ((TextBox)sender).SelectAll();
         }

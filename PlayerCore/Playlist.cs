@@ -106,16 +106,28 @@ namespace PlayerCore {
             }
         }
 
-        public void Shuffle() {
-            Order(s => random.NextDouble());
+        public void Shuffle(IEnumerable<Song> source = null) {
+            Order(s => random.NextDouble(), source);
             if(Length > 0) {
                 SetIndexForceUpdate(0);
             }
         }
 
-        public void Order<TKey>(Func<Song, TKey> orderBy) {
+        public void Order<TKey>(Func<Song, TKey> orderBy, IEnumerable<Song> source = null) {
             ChangeList(true, false, () => {
-                Songs = Songs.OrderBy(orderBy).ToList();
+                if(source == null) {
+                    Songs = Songs.OrderBy(orderBy).ToList();
+                } else {
+                    var sorted = source.OrderBy(orderBy).ToArray();
+                    var minIx = Songs.FindIndex(s => sorted.Contains(s));
+                    for(int i = 0; i < sorted.Length; i++) {
+                        var newIx = minIx + i;
+                        var oldIx = Songs.IndexOf(sorted[i]);
+                        Songs.RemoveAt(oldIx);
+                        newIx = newIx > oldIx ? newIx - 1 : newIx;
+                        Songs.Insert(newIx, sorted[i]);
+                    }
+                }
             });
         }
 

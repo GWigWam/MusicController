@@ -88,6 +88,17 @@ namespace PlayerInterface.ViewModels {
 
         public IEnumerable<SongMenuItemViewModel> MenuItems => GetMenuItems();
 
+        private bool _IsSelected;
+        public bool IsSelected {
+            get => _IsSelected;
+            set {
+                if(_IsSelected != value) {
+                    _IsSelected = value;
+                    RaisePropertyChanged(nameof(IsSelected));
+                }
+            }
+        }
+
         private readonly Predicate<Song> isCurrentSong;
         private readonly Action<Song> playSong;
         private readonly Action<Song> enqueue;

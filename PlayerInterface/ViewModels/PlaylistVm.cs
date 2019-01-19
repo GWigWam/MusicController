@@ -53,6 +53,8 @@ namespace PlayerInterface.ViewModels {
 
         public ObservableCollection<SongViewModel> PlaylistItems { get; private set; }
 
+        public IEnumerable<SongViewModel> SelectedPlaylistItems => AllPlaylistItems.Where(svm => svm.IsSelected);
+
         private readonly Playlist _playlist;
         private readonly AppSettings _settings;
 
@@ -79,7 +81,7 @@ namespace PlayerInterface.ViewModels {
                 inp => (inp.move?.Length ?? 0) > 0 && inp.to?.Song != null
             );
 
-            ShuffleCommand = new RelayCommand(() => _playlist.Shuffle());
+            ShuffleCommand = new RelayCommand(Shuffle);
 
             var sbsc = new RelayCommand(
                 SortBySearch,
@@ -119,17 +121,29 @@ namespace PlayerInterface.ViewModels {
             UpdateQueueDisplay();
         }
 
+        private void Shuffle() {
+            var selected = SelectedPlaylistItems.Select(svm => svm.Song).ToArray();
+            selected = selected.Length > 1 ? selected : null;
+            _playlist.Shuffle(selected);
+        }
+
         private void SortByProperty(PropertyInfo pi) {
+            var selected = SelectedPlaylistItems.Select(svm => svm.Song).ToArray();
+            selected = selected.Length > 1 ? selected : null;
+
             if (pi.DeclaringType == typeof(Song)) {
-                _playlist.Order((s) => pi.GetValue(s));
+                _playlist.Order((s) => pi.GetValue(s), selected);
             } else if (pi.DeclaringType == typeof(SongFile)) {
-                _playlist.Order((s) => pi.GetValue(s.File));
+                _playlist.Order((s) => pi.GetValue(s.File), selected);
             } else if (pi.DeclaringType == typeof(SongStats)) {
-                _playlist.Order((s) => pi.GetValue(s.Stats));
+                _playlist.Order((s) => pi.GetValue(s.Stats), selected);
             }
         }
 
         private void SortBySearch() {
+            var selected = SelectedPlaylistItems.Select(svm => svm.Song).ToArray();
+            selected = selected.Length > 1 ? selected : null;
+
             var reg = new Regex(SearchText, RegexOptions.IgnoreCase);
             SearchText = string.Empty;
             _playlist.Order(s => {
@@ -138,7 +152,7 @@ namespace PlayerInterface.ViewModels {
                 res += (reg.IsMatch(s.Artist ?? string.Empty) ? 0 : 2);
                 res += (reg.IsMatch(s.Album ?? string.Empty) ? 0 : 1);
                 return res;
-            });
+            }, selected);
         }
 
         private void HandleSearchChanged() {
