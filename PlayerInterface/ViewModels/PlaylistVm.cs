@@ -37,6 +37,8 @@ namespace PlayerInterface.ViewModels {
 
         public IBaseCommand ExportCommand { get; }
 
+        public IBaseCommand PlayTopResultCommand { get; set; }
+
         private string _searchText = string.Empty;
         public string SearchText {
             get => _searchText;
@@ -113,6 +115,13 @@ namespace PlayerInterface.ViewModels {
             );
 
             ExportCommand = new AsyncCommand(Export);
+
+            PlayTopResultCommand = new RelayCommand(() => {
+                var fst = PlaylistItems.First();
+                if(fst != null) {
+                    playSong(fst.Song);
+                }
+            });
 
             songPlayer.SongChanged += (_, a) => UpdateCurrentSong(a.Next);
 

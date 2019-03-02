@@ -319,5 +319,12 @@ namespace PlayerInterface {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        private void Tb_Search_KeyDown(object sender, KeyEventArgs e) {
+            if(e.Key == Key.Enter) {
+                Vm.Playlist.PlayTopResultCommand.Execute(null);
+                e.Handled = true;
+            }
+        }
     }
 }
