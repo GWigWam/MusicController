@@ -326,5 +326,29 @@ namespace PlayerInterface {
                 e.Handled = true;
             }
         }
+        
+        private void Lb_Playlist_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
+            ScrollViewer _getScroller(DependencyObject elem) {
+                if(elem is ScrollViewer sv) {
+                    return sv;
+                }
+                for(int i = 0; i < VisualTreeHelper.GetChildrenCount(elem); i++) {
+                    var ch = VisualTreeHelper.GetChild(elem, i);
+                    var r = _getScroller(ch);
+                    if(r != null) {
+                        return r;
+                    }
+                }
+                return null;
+            }
+
+            if(e.Delta != 0 && e.LeftButton == MouseButtonState.Released &&e.RightButton == MouseButtonState.Released && sender is ListBox lb) {
+                var sv = _getScroller(lb);
+                var curOff = sv.VerticalOffset;
+                var nextOff = e.Delta < 0 ? (curOff + 1) : (curOff > 0 ? curOff - 1 : 0);
+                sv.ScrollToVerticalOffset(nextOff);
+                e.Handled = true;
+            }
+        }
     }
 }
