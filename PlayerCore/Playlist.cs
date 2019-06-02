@@ -90,7 +90,17 @@ namespace PlayerCore {
         }
 
         public void Enqueue(Song song) {
-            _Queue.Add(song);
+            if(!Queue.Contains(song)) {
+                _Queue.Add(song);
+            } else {
+                if(_Queue.First() != song) {
+                    _Queue = _Queue
+                        .OrderBy(s => s != song)
+                        .ToList();
+                } else {
+                    _Queue.Remove(song);
+                }
+            }
             RaiseQueueChanged();
         }
 
