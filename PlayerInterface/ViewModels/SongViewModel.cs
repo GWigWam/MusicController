@@ -123,6 +123,8 @@ namespace PlayerInterface.ViewModels {
             Song.Stats.PropertyChanged += (s, a) => RaisePropertyChanged(nameof(PlayCountStr));
         }
 
+        public static implicit operator Song(SongViewModel svm) => svm.Song;
+
         private IEnumerable<SongMenuItemViewModel> GetMenuItems() {
             if(CurDisplay != DisplayType.Menu) {
                 yield break;

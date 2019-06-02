@@ -202,7 +202,6 @@ namespace PlayerInterface.ViewModels {
                     AllPlaylistItems.Move(curSvmIndex, i);
                 } else {
                     bool IsCurrentSong(Song s) => _playlist.CurrentSong == s;
-                    void Enqueue(Song s) => _playlist.Enqueue(s);
                     void RemoveSong(Song s) => _playlist.Remove(s);
 
                     var newSvm = new SongViewModel(curMatch.song, _settings, IsCurrentSong, _playSong, Enqueue, RemoveSong);
@@ -211,6 +210,10 @@ namespace PlayerInterface.ViewModels {
             }
 
             DisplayedSongsChanged?.Invoke(this, new EventArgs());
+        }
+
+        public void Enqueue(Song s) {
+            _playlist.Enqueue(s);
         }
 
         private IEnumerable<SongViewModel> GetSearchResult() {

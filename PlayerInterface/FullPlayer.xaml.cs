@@ -146,14 +146,23 @@ namespace PlayerInterface {
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
-            if(!Tb_Search.IsFocused && e.Key > Key.A && e.Key < Key.Z) {
-                Tb_Search.Focus();
-            } else if((!Tb_Search.IsFocused && e.Key == Key.Back) || e.Key == Key.Escape) {
-                Tb_Search.Text = string.Empty;
-            } else if(!Tb_Search.IsFocused && e.Key == Key.Space) {
-                var switchCmd = Vm?.Playing?.SwitchCommand;
-                if(switchCmd?.CanExecute(null) == true) {
-                    switchCmd.Execute(null);
+            if(e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
+                if(e.Key == Key.Q) {
+                    var fst = Vm.Playlist.SelectedPlaylistItems.FirstOrDefault();
+                    if(fst != null) {
+                        Vm.Playlist.Enqueue(fst);
+                    }
+                }
+            } else {
+                if(!Tb_Search.IsFocused && e.Key > Key.A && e.Key < Key.Z) {
+                    Tb_Search.Focus();
+                } else if((!Tb_Search.IsFocused && e.Key == Key.Back) || e.Key == Key.Escape) {
+                    Tb_Search.Text = string.Empty;
+                } else if(!Tb_Search.IsFocused && e.Key == Key.Space) {
+                    var switchCmd = Vm?.Playing?.SwitchCommand;
+                    if(switchCmd?.CanExecute(null) == true) {
+                        switchCmd.Execute(null);
+                    }
                 }
             }
         }
