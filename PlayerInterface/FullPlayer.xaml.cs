@@ -329,13 +329,18 @@ namespace PlayerInterface {
             e.Handled = true;
         }
 
-        private void Tb_Search_KeyDown(object sender, KeyEventArgs e) {
+        private void Tb_Search_PreviewKeyDown(object sender, KeyEventArgs e) {
             if(e.Key == Key.Enter) {
                 Vm.Playlist.PlayTopResultCommand.Execute(null);
                 e.Handled = true;
+            } else if(e.Key == Key.Space && Tb_Search.Text.Length == 0) {
+                if(Vm.Playing.SwitchCommand.CanExecute(null)) {
+                    Vm.Playing.SwitchCommand.Execute(null);
+                    e.Handled = true;
+                }
             }
         }
-        
+
         private void Lb_Playlist_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
             ScrollViewer _getScroller(DependencyObject elem) {
                 if(elem is ScrollViewer sv) {
