@@ -1,22 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeechMusicController", "Deprecated\SpeechMusicController\SpeechMusicController.csproj", "{800A28F1-B7E4-410C-87B4-42509D63C6D0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicPlayer", "Deprecated\MusicPlayer\MusicPlayer.csproj", "{B9BAD4EC-7748-4267-BDDA-7EEB72E91BB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerInterface", "PlayerInterface\PlayerInterface.csproj", "{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayerInterface", "PlayerInterface\PlayerInterface.csproj", "{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerCore", "PlayerCore\PlayerCore.csproj", "{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayerCore", "PlayerCore\PlayerCore.csproj", "{A44BC6CC-5073-4CB5-A59C-2C6DDF5D4C9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeechControl", "SpeechControl\SpeechControl.csproj", "{63715F30-9FA5-4C63-9517-E59A030BE13D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A332E1C-0179-44F3-9030-5266B8D4B506}"
-	ProjectSection(SolutionItems) = preProject
-		ToDo.md = ToDo.md
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpeechControl", "SpeechControl\SpeechControl.csproj", "{63715F30-9FA5-4C63-9517-E59A030BE13D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deprecated", "Deprecated", "{2C07822F-09C5-42F7-8589-4B9A6E5C9112}"
 EndProject
@@ -53,5 +48,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{800A28F1-B7E4-410C-87B4-42509D63C6D0} = {2C07822F-09C5-42F7-8589-4B9A6E5C9112}
 		{B9BAD4EC-7748-4267-BDDA-7EEB72E91BB1} = {2C07822F-09C5-42F7-8589-4B9A6E5C9112}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {51FC0268-1253-44CD-B4AD-19AA7BA2C045}
 	EndGlobalSection
 EndGlobal

@@ -1,221 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E8E3B36-0BF2-4BDB-B48F-C5C33C4BE93A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PlayerInterface</RootNamespace>
-    <AssemblyName>SpeechMusicController</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net47</TargetFramework>
+    <UseWPF>true</UseWPF>
     <ApplicationIcon>res\img\TrayIcon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>PlayerInterface.StartupManager</StartupObject>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\PlayerCore\PlayerCore.csproj" />
+    <ProjectReference Include="..\SpeechControl\SpeechControl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" version="1.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="SpeechMusicControllerApp.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Commands\AsyncCommand.cs" />
-    <Compile Include="Commands\IBaseCommand.cs" />
-    <Compile Include="PersistentQueue.cs" />
-    <Compile Include="SpeechMusicControllerApp.xaml.cs">
-      <DependentUpon>SpeechMusicControllerApp.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Commands\AsyncCommand{T}.cs" />
-    <Compile Include="Commands\RelayCommand{T}.cs" />
-    <Compile Include="CustomControls\ImageButton.xaml.cs">
-      <DependentUpon>ImageButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ExceptionWindow.xaml.cs">
-      <DependentUpon>ExceptionWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="FormatHelper.cs" />
-    <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="CustomControls\ScrollSlider.cs" />
-    <Compile Include="NotifyPropertyChanged.cs" />
-    <Compile Include="CustomControls\ProgressControl.xaml.cs">
-      <DependentUpon>ProgressControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ScreenOverlay.xaml.cs">
-      <DependentUpon>ScreenOverlay.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SmallPlayer.xaml.cs">
-      <DependentUpon>SmallPlayer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StartupManager.cs" />
-    <Compile Include="Themes\ThemeManager.cs" />
-    <Compile Include="ValueConverters\NegativeValueConverter.cs" />
-    <Compile Include="ViewModels\AppSettingsViewModel.cs" />
-    <Compile Include="ViewModels\FolderExplore\ExplorerFile.cs" />
-    <Compile Include="ViewModels\FolderExplore\ExplorerFolder.cs" />
-    <Compile Include="ViewModels\FolderExplore\ExplorerItem.cs" />
-    <Compile Include="ViewModels\FullPlayerViewModel.cs" />
-    <Compile Include="ViewModels\NextPrevVm.cs" />
-    <Compile Include="ViewModels\PlayingVm.cs" />
-    <Compile Include="ViewModels\PlaylistVm.cs" />
-    <Compile Include="ViewModels\SmallPlayerViewModel.cs" />
-    <Compile Include="ViewModels\SongMenuItemViewModel.cs" />
-    <Compile Include="ViewModels\SongViewModel.cs" />
-    <Compile Include="ViewModels\TrayIconViewModel.cs" />
-    <Compile Include="WindowManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="FullPlayer.xaml.cs">
-      <DependentUpon>FullPlayer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="ExceptionWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="FullPlayer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\ImageButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\ProgressControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ScreenOverlay.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SmallPlayer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Dark.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Default.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="TrayIcon.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\img\TrayIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\img\ShowFull.png" />
-  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="res\img\CloseWindow.png" />
+    <Resource Include="res\img\File.png" />
+    <Resource Include="res\img\Info.png" />
     <Resource Include="res\img\MinimizeWindow.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="res\img\MusicNote.png" />
     <Resource Include="res\img\Mute.png" />
     <Resource Include="res\img\Next.png" />
+    <Resource Include="res\img\Open.png" />
     <Resource Include="res\img\Pause.png" />
     <Resource Include="res\img\Play.png" />
     <Resource Include="res\img\Prev.png" />
+    <Resource Include="res\img\SettingsGear.png" />
+    <Resource Include="res\img\ShowFull.png" />
     <Resource Include="res\img\Shuffle.png" />
+    <Resource Include="res\img\Sort.png" />
+    <Resource Include="res\img\TrayIcon.ico" />
     <Resource Include="res\img\Volume.png" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PlayerCore\PlayerCore.csproj">
-      <Project>{a44bc6cc-5073-4cb5-a59c-2c6ddf5d4c9b}</Project>
-      <Name>PlayerCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SpeechControl\SpeechControl.csproj">
-      <Project>{63715f30-9fa5-4c63-9517-e59a030be13d}</Project>
-      <Name>SpeechControl</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\img\Open.png" />
-    <Resource Include="res\img\Sort.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\img\MusicNote.png" />
-    <Resource Include="res\img\SettingsGear.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\img\Info.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\img\File.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf">
-      <Version>1.0.8</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
