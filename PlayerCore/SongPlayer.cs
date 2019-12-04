@@ -91,35 +91,16 @@ namespace PlayerCore {
             }
         }
 
-        private bool legacyVolumeMode = false;
-
-        protected bool LegacyVolumeMode {
-            get { return legacyVolumeMode; }
-            set {
-                if(value != legacyVolumeMode) {
-                    if(AudioFileReader != null) {
-                        AudioFileReader.Volume = value ? 1 : Volume;
-                    }
-                    if(Player != null) {
-                        Player.Volume = value ? Volume : 1;
-                    }
-                }
-            }
-        }
-
-        private float volume;
-
+        private float _Volume;
         public float Volume {
-            get { return volume; }
+            get { return _Volume; }
             set {
-                if(volume != value && value >= 0) {
-                    if(!LegacyVolumeMode && AudioFileReader != null) {
-                        AudioFileReader.Volume = volume = value;
-                    } else if(Player != null && value <= 1) {
-                        Player.Volume = volume = value;
+                if(_Volume != value && value >= 0) {
+                    _Volume = value;
+                    if(AudioFileReader != null) {
+                        AudioFileReader.Volume = _Volume;
                     }
-
-                    VolumeChanged?.Invoke(this, volume);
+                    VolumeChanged?.Invoke(this, _Volume);
                 }
             }
         }
@@ -183,13 +164,7 @@ namespace PlayerCore {
                         File = null;
                     }
 
-                    if(song.FilePath.EndsWith("flac", StringComparison.CurrentCultureIgnoreCase)) {
-                        File = new NAudio.Flac.FlacReader(song.FilePath);
-                        LegacyVolumeMode = true;
-                    } else {
-                        File = new AudioFileReader(song.FilePath) { Volume = Volume };
-                        LegacyVolumeMode = false;
-                    }
+                    File = new AudioFileReader(song.FilePath) { Volume = Volume };
 
                     // 'WaveOutEvent' should be less bound to UI than 'WaveOut', they are interchangable (both IWavePlayer)
                     // High latency makes player unresponsive when changing 'Elapsed' time, and 'Elapsed' property is less accurate
@@ -197,8 +172,8 @@ namespace PlayerCore {
                     // Amount of music in mem = (Latency * NrOfBuffers) because latency == size per buffer
                     // See: https://github.com/naudio/NAudio/wiki/Understanding-Output-Devices
                     Player = new WaveOutEvent() {
-                        DesiredLatency = 150, // In ms, Default = 300
-                        NumberOfBuffers = 5, // Default = 2
+                        DesiredLatency = 200, // In ms, Default = 300
+                        NumberOfBuffers = 10, // Default = 2
                         DeviceNumber = -1 // 1- for default device, 0 for first device
                     };
 

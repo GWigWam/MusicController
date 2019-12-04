@@ -15,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NAudio" Version="1.8.0" />
-    <PackageReference Include="NAudio.Flac" version="1.0.5702.29018" />
+    <PackageReference Include="NAudio" Version="1.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
     <PackageReference Include="taglib" Version="2.1.0" />
   </ItemGroup>
