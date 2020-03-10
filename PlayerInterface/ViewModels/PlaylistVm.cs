@@ -20,24 +20,17 @@ namespace PlayerInterface.ViewModels {
         public event EventHandler DisplayedSongsChanged;
 
         public IBaseCommand PlaySongCommand { get; }
-
         public IBaseCommand SortByCommand { get; }
-
         public IBaseCommand ReverseSortCommand { get; }
+        public IBaseCommand ShuffleCommand { get; }
+        public IBaseCommand SortBySearchCommand { get; }        
+        public IBaseCommand AddFilesCommand { get; }
+        public IBaseCommand RemoveSongsCommand { get; }
+        public IBaseCommand ExportCommand { get; }
+        public IBaseCommand PlayTopResultCommand { get; }
+        public IBaseCommand QueueTopResultCommand { get; }
 
         public RelayCommand<(SongViewModel[] move, SongViewModel to)> MovePlaylistSongsCommand { get; }
-
-        public IBaseCommand ShuffleCommand { get; }
-
-        public IBaseCommand SortBySearchCommand { get; }
-        
-        public IBaseCommand AddFilesCommand { get; }
-
-        public IBaseCommand RemoveSongsCommand { get; }
-
-        public IBaseCommand ExportCommand { get; }
-
-        public IBaseCommand PlayTopResultCommand { get; set; }
 
         private string _searchText = string.Empty;
         public string SearchText {
@@ -117,9 +110,14 @@ namespace PlayerInterface.ViewModels {
             ExportCommand = new AsyncCommand(Export);
 
             PlayTopResultCommand = new RelayCommand(() => {
-                var fst = PlaylistItems.First();
-                if(fst != null) {
+                if(PlaylistItems.FirstOrDefault() is SongViewModel fst) {
                     playSong(fst.Song);
+                }
+            });
+
+            QueueTopResultCommand = new RelayCommand(() => {
+                if(PlaylistItems.FirstOrDefault() is SongViewModel fst) {
+                    Enqueue(fst);
                 }
             });
 

@@ -333,6 +333,9 @@ namespace PlayerInterface {
             if(e.Key == Key.Enter) {
                 Vm.Playlist.PlayTopResultCommand.Execute(null);
                 e.Handled = true;
+            } else if(e.Key == Key.Q && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
+                Vm.Playlist.QueueTopResultCommand.Execute(null);
+                e.Handled = true;
             } else if(e.Key == Key.Space && Tb_Search.Text.Length == 0) {
                 if(Vm.Playing.SwitchCommand.CanExecute(null)) {
                     Vm.Playing.SwitchCommand.Execute(null);
