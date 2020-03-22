@@ -93,12 +93,17 @@ namespace PlayerCore {
             if(!Queue.Contains(song)) {
                 _Queue.Add(song);
             } else {
-                if(_Queue.First() != song) {
-                    _Queue = _Queue
-                        .OrderBy(s => s != song)
-                        .ToList();
-                } else {
-                    _Queue.Remove(song);
+                if(_Queue.IndexOf(song) is int oldIx && (oldIx == -1 || oldIx > QueueIndex)) {
+                    var nxtIx = (QueueIndex ?? -1) + 1;
+                    var nxt = nxtIx < _Queue.Count ? _Queue[nxtIx] : null;
+                    if(nxt != song) {
+                        _Queue = _Queue.Select((c, ix) => (c, ix))
+                            .OrderBy(t => t.c == song ? 0 : t.ix < nxtIx ? -1 : 1)
+                            .Select(t => t.c)
+                            .ToList();
+                    } else {
+                        _Queue.Remove(song);
+                    }
                 }
             }
             RaiseQueueChanged();
