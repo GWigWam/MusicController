@@ -93,7 +93,7 @@ namespace PlayerCore {
             if(!Queue.Contains(song)) {
                 _Queue.Add(song);
             } else {
-                if(_Queue.IndexOf(song) is int oldIx && (oldIx == -1 || oldIx > QueueIndex)) {
+                if(_Queue.IndexOf(song) is int oldIx && (oldIx == -1 || oldIx > QueueIndex || QueueIndex == null)) {
                     var nxtIx = (QueueIndex ?? -1) + 1;
                     var nxt = nxtIx < _Queue.Count ? _Queue[nxtIx] : null;
                     if(nxt != song) {
