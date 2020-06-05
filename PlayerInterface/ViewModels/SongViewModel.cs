@@ -99,6 +99,8 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
+        public bool IsStartupSong => Settings.IsStartupSong(Song.File);
+
         private readonly Predicate<Song> isCurrentSong;
         private readonly Action<Song> playSong;
         private readonly Action<Song> enqueue;
@@ -138,7 +140,7 @@ namespace PlayerInterface.ViewModels {
 
             yield return new SongMenuItemViewModel("Open file location", OpenFileLocation);
 
-            if(Settings.IsStartupSong(Song.File)) {
+            if(IsStartupSong) {
                 yield return new SongMenuItemViewModel("Remove from startup songs", RemoveFromStartup);
             } else {
                 yield return new SongMenuItemViewModel("Add to startup songs", AddToStartup);
@@ -153,10 +155,12 @@ namespace PlayerInterface.ViewModels {
         
         private void AddToStartup() {
             Settings.AddStartupSong(Song.File);
+            RaisePropertyChanged(nameof(IsStartupSong));
         }
 
         private void RemoveFromStartup() {
             Settings.RemoveStartupSong(Song.File);
+            RaisePropertyChanged(nameof(IsStartupSong));
         }
 
         public enum DisplayType {
