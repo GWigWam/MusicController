@@ -1,4 +1,5 @@
-﻿using PlayerCore.Settings;
+﻿using PlayerCore.PlaylistFiles;
+using PlayerCore.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,21 @@ namespace PlayerCore.Songs {
                 }
             }
 
-            return CreateSongFiles(GetAllFilePaths(paths));
+            IEnumerable<SongFile> CreateFromM3Us(IEnumerable<string> m3uPaths) {
+                foreach(var m3u in m3uPaths) {
+                    if(File.Exists(m3u)) {
+                        var res = M3U.ReadAsync(m3u).Result; //TODO: Use async enumerables
+                        foreach(var songFile in res.Files) {
+                            yield return songFile;
+                        }
+                    }
+                }
+            }
+
+            var m3uSplit = paths.ToLookup(p => p.EndsWith(".m3u", StringComparison.OrdinalIgnoreCase));
+
+            return CreateSongFiles(GetAllFilePaths(m3uSplit[false]))
+                .Concat(CreateFromM3Us(m3uSplit[true]));
         }
     }
 }
