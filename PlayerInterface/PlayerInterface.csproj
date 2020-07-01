@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
 
   <ItemGroup>
