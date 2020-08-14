@@ -13,7 +13,7 @@ namespace PlayerCore {
     public class TransitionManager {
         private int SongDelayMs => (int)Settings.SongTransitionDelayMs;
 
-        private const bool Loop = true;
+        private const bool Loop = false;
 
         private CancellationTokenSource CancelSrc { get; set; }
 
