@@ -11,7 +11,7 @@
         xmlns:cnv="clr-namespace:PlayerInterface.ValueConverters"
         xmlns:th="clr-namespace:PlayerInterface.Themes"
         mc:Ignorable="d"
-        Title="SpeechMusicController" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
+        Title="{Binding StatusText}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
         PreviewKeyDown="Window_PreviewKeyDown"
         AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}">
 
