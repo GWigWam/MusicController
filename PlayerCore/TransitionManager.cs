@@ -3,6 +3,7 @@ using PlayerCore.Settings;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PlayerCore {
 
-    public class TransitionManager {
+    public class TransitionManager : INotifyPropertyChanged {
         private int SongDelayMs => (int)Settings.SongTransitionDelayMs;
 
         private const bool Loop = false;
@@ -18,6 +19,7 @@ namespace PlayerCore {
         private CancellationTokenSource CancelSrc { get; set; }
 
         public event EventHandler TransitionChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private AppSettings Settings {
             get;
@@ -42,6 +44,17 @@ namespace PlayerCore {
             }
         }
 
+        private bool _PauseAfterCurrent;
+        public bool PauseAfterCurrent {
+            get => _PauseAfterCurrent;
+            set {
+                if(_PauseAfterCurrent != value) {
+                    _PauseAfterCurrent = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PauseAfterCurrent)));
+                }
+            }
+        }
+
         public TransitionManager(SongPlayer player, Playlist trackList, AppSettings settings) {
             Player = player;
             TrackList = trackList;
@@ -54,10 +67,15 @@ namespace PlayerCore {
             Init();
         }
 
-        public void StartTransition(int delayMs) {
+        public void StartTransition() {
             var moved = TrackList.Next(Loop);
             if (moved) {
                 Player.PlayerState = PlayerState.Paused;
+
+                if(PauseAfterCurrent) {
+                    PauseAfterCurrent = false;
+                    return;
+                }
 
                 CancelSrc = new CancellationTokenSource();
                 Task.Run(async () => {
@@ -71,8 +89,6 @@ namespace PlayerCore {
                 }, CancelSrc.Token);
             }
         }
-
-        public void StartTransition() => StartTransition(SongDelayMs);
 
         public void CancelTransition() => CancelSrc?.Cancel();
 

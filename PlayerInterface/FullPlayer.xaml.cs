@@ -367,5 +367,9 @@ namespace PlayerInterface {
                 e.Handled = true;
             }
         }
+
+        private void Bt_PauseAfter_Change(object sender, RoutedEventArgs e) {
+            Btn_Switch.ContextMenu.IsOpen = false;
+        }
     }
 }

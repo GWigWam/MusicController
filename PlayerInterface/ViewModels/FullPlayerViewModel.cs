@@ -77,13 +77,15 @@ namespace PlayerInterface.ViewModels {
             };
             
             SetupAboutSpeechCommands(speechController);
-            
-            SongPlayer.SongChanged += (s, a) => {
-                RaisePropertyChanged(nameof(TrackLengthStr), nameof(StatusText));
-                Playlist.SearchText = string.Empty;
-            };
+
+            SongPlayer.SongChanged += SongPlayer_SongChanged;
 
             UIEnabled = true;
+        }
+
+        private void SongPlayer_SongChanged(object sender, PlayerCore.PlayerEventArgs.SongChangedEventArgs e) {
+            RaisePropertyChanged(nameof(TrackLengthStr), nameof(StatusText));
+            Playlist.SearchText = string.Empty;
         }
 
         private void StartPlaying(Song s) {
