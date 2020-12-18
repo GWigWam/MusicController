@@ -49,7 +49,7 @@ namespace PlayerCore.Songs {
         public Song(SongFile file, AppSettings settings) {
             File = file ?? throw new ArgumentNullException(nameof(file));
 
-            Stats = settings.SongStats.FirstOrDefault(ss => ss.Path.Equals(FilePath, StringComparison.CurrentCultureIgnoreCase));
+            Stats = settings.SongStats.FirstOrDefault(ss => ss.Path.Equals(FilePath, StringComparison.InvariantCultureIgnoreCase));
             if(Stats == null) {
                 Stats = new SongStats(FilePath);
                 settings.AddSongStats(Stats);

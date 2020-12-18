@@ -8,9 +8,6 @@ using System.Windows.Input;
 
 namespace PlayerInterface {
 
-    /// <summary>
-    /// Interaction logic for ScreenOverlay.xaml
-    /// </summary>
     public partial class ScreenOverlay : Window {
         private ScreenOverlayViewModel ViewModel => DataContext as ScreenOverlayViewModel;
 
