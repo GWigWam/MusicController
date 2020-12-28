@@ -420,12 +420,12 @@
                     <Label Content="About" FontWeight="Bold" FontSize="16" Padding="0" />
                     <TextBlock Text="By: GitHub.com/GWigWam" />
                     <TextBlock>
-                        <Hyperlink NavigateUri="http://www.GitHub.com/GWigWam/SpeechMusicController" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Hyperlink NavigateUri="http://www.GitHub.com/GWigWam/MusicController" RequestNavigate="Hyperlink_RequestNavigate">
                             GitHub repository
                         </Hyperlink>
                     </TextBlock>
                     <TextBlock>
-                        <Hyperlink NavigateUri="http://www.GitHub.com/GWigWam/SpeechMusicController/blob/master/README.md" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Hyperlink NavigateUri="http://www.GitHub.com/GWigWam/MusicController/blob/master/README.md" RequestNavigate="Hyperlink_RequestNavigate">
                             Readme
                         </Hyperlink>
                     </TextBlock>

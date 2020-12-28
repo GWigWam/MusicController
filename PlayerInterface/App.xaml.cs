@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace PlayerInterface {
 
-    public partial class SpeechMusicControllerApp : Application {
+    public partial class MusicControllerApp : Application {
 #if DEBUG
         public const bool IsDebug = true;
 #else

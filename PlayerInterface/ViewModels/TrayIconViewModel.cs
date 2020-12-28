@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace PlayerInterface.ViewModels {
     public class TrayIconViewModel : NotifyPropertyChanged {
-        private const string DefaultToolTipText = "SpeechMusicController";
+        private const string DefaultToolTipText = "MusicController";
         private string toolTipText = DefaultToolTipText;
 
         public string ToolTipText {

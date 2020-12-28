@@ -7,7 +7,7 @@
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         xmlns:th="clr-namespace:PlayerInterface.Themes"
         mc:Ignorable="d"
-        Title="SpeechMusicController"
+        Title="MusicController"
         Height="40" Width="220"
         WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize"
         Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackground]}"

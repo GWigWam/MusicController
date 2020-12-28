@@ -1,15 +1,16 @@
-# SpeechMusicController
-Controll a music player with voice commands.
+# MusicController
+Simple WPF music player build as a hobby project.
 
 #### Music player
 Simple no-nonsense interface for control over music and playlist. Minimizes to tray area where a mini-player provides play/pause, next/previous and volume control.
 
-#### Speech
-If a microphone is available music and playlist can also be controlled with speech. Play/pause, next/previous, shuffle, play song, play album, play artist, volume control and more can all be controlled by speaking.
+😎 Dark theme supported 😎
 
 #### Tech
 + Windows Presentation Foundation - Visuals
-+ System.Speech .Net library - Voice recognition
 + [Hardcodet.Net](http://www.hardcodet.net/wpf-notifyicon) - Taskbar notification icon
 + [NAudio](https://github.com/naudio/NAudio) - playing mp3
 + [Taglib](https://github.com/mono/taglib-sharp) - File tags
+
+##### *Speech*
+Used to support voice commands but that got removed because it is impractical. Program now really has no distinguishing features.
