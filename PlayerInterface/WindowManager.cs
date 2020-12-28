@@ -3,7 +3,6 @@ using PlayerCore;
 using PlayerCore.Settings;
 using PlayerInterface.Commands;
 using PlayerInterface.ViewModels;
-using SpeechControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,19 +22,19 @@ namespace PlayerInterface {
             TrayIcon = icon;
         }
 
-        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, SpeechController speechControl, TransitionManager transitionMngr) {
+        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, TransitionManager transitionMngr) {
             var playVm = new PlayingVm(songPlayer, transitionMngr);
             var npVm = new NextPrevVm(songPlayer, playlist);
 
             var smallVm = new SmallPlayerViewModel(playVm, npVm);
-            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, speechControl, playVm, npVm);
+            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, playVm, npVm);
 
             CreateFullPlayer(!settings.StartMinimized, fullVm);
             CreateSmallPlayer(settings.StartMinimized, smallVm);
             CurrentWindow = settings.StartMinimized ? Window.Small : Window.Full;
 
             SetupContextMenu(songPlayer);
-            SetupScreenOverlay(settings, speechControl, songPlayer);
+            SetupScreenOverlay(settings, songPlayer);
             HandleWindowStateChanges();
             AddMinMaxEvents();
         }
@@ -80,37 +79,14 @@ namespace PlayerInterface {
             };
         }
 
-        private void SetupScreenOverlay(AppSettings settings, SpeechController speech, SongPlayer player) {
+        private void SetupScreenOverlay(AppSettings settings, SongPlayer player) {
             Overlay = new ScreenOverlay(settings);
-
-            speech.PartialSentenceMatch += (s, a) => {
-                if(settings.EnableSpeech) {
-                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText(a.Sentence.Aggregate((acc, cur) => $"{acc} '{cur}'")));
-                }
-            };
-
-            speech.FullSentenceMatch += (s, a) => {
-                if(settings.EnableSpeech) {
-                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"- {a.Sentence.Aggregate((acc, cur) => $"{acc} {cur}")} -"));
-                }
-            };
 
             player.SongChanged += (s, a) => {
                 if(player?.CurrentSong != null && CurrentWindow != Window.Full) {
                     Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
                 }
             };
-
-            speech.Commands.Add(new SpeechCommand() {
-                KeyWords = new List<IEnumerable<string>>() { new string[] { "current song" } },
-                Description = "Current song : Display current song name",
-                Execute = (sentence) => {
-                    var s = player.CurrentSong;
-                    Overlay.DisplayText($"{s.Title} - {s.Artist} ({s.Album})", 5000);
-                    return new string[0];
-                },
-                CanExecute = () => speech.Settings.EnableSpeech && player.CurrentSong != null
-            });
         }
 
         private void HandleWindowStateChanges() {

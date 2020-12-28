@@ -3,7 +3,6 @@ using PlayerCore;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Themes;
-using SpeechControl;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -68,9 +67,6 @@ namespace PlayerInterface {
 
             PersistentQueue.RestoreQueue(playlist, settings);
 
-            var speechController = new SpeechController(player, playlist, settings);
-            speechController.Init();
-
             ThemeManager.Instance.SetTheme(settings.Theme);
             settings.Changed += (s, a) => {
                 if(a.ChangedPropertyName == nameof(AppSettings.Theme)) {
@@ -79,7 +75,7 @@ namespace PlayerInterface {
             };
 
             var windowMgr = new WindowManager((TaskbarIcon)FindResource(TrayIconResourceName));
-            windowMgr.Init(settings, player, playlist, speechController, transitionMngr);
+            windowMgr.Init(settings, player, playlist, transitionMngr);
 
             Exiting += (s, a) => {
                 PersistentQueue.SaveQueue(playlist, settings);

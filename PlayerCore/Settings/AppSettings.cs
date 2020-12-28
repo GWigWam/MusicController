@@ -42,19 +42,6 @@ namespace PlayerCore.Settings {
             }
         }
 
-        private bool enableSpeech = true;
-
-        [JsonProperty]
-        public bool EnableSpeech {
-            get { return enableSpeech; }
-            set {
-                if(value != enableSpeech) {
-                    enableSpeech = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(EnableSpeech)));
-                }
-            }
-        }
-
         private uint screenOverlayShowTimeMs = 1200;
 
         [JsonProperty]

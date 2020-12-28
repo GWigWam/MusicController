@@ -22,11 +22,6 @@ namespace PlayerInterface.ViewModels {
             set => Settings.StartMinimized = value;
         }
 
-        public bool EnableSpeech {
-            get => Settings.EnableSpeech;
-            set => Settings.EnableSpeech = value;
-        }
-
         public uint SongTransitionDelay {
             get => Settings.SongTransitionDelayMs;
             set => Settings.SongTransitionDelayMs = value;
@@ -35,11 +30,6 @@ namespace PlayerInterface.ViewModels {
         public uint ScreenOverlayShowTimeMs {
             get => Settings.ScreenOverlayShowTimeMs;
             set => Settings.ScreenOverlayShowTimeMs = value;
-        }
-
-        public uint ResetSentenceTimeMs {
-            get => Settings.ResetSentenceTimeMs;
-            set => Settings.ResetSentenceTimeMs = value;
         }
 
         public string Theme {

@@ -2,7 +2,6 @@
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
-using SpeechControl;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,8 +38,6 @@ namespace PlayerInterface.ViewModels {
 
         public ICommand PlaySongCommand { get; }
         
-        public ObservableCollection<string> AboutSpeechCommands { get; private set; }
-
         public string PlaylistStats => $"{playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
 
         public AppSettingsViewModel SettingsViewModel { get; }
@@ -57,7 +54,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, SpeechController speechController, PlayingVm playingVm, NextPrevVm nextPrevVm) {
+        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, PlayingVm playingVm, NextPrevVm nextPrevVm) {
             Settings = settings;
             this.playlist = playlist;
             SongPlayer = player;
@@ -76,8 +73,6 @@ namespace PlayerInterface.ViewModels {
                 RaisePropertyChanged(nameof(ShowDropHint), nameof(PlaylistStats));
             };
             
-            SetupAboutSpeechCommands(speechController);
-
             SongPlayer.SongChanged += SongPlayer_SongChanged;
 
             UIEnabled = true;
@@ -99,20 +94,6 @@ namespace PlayerInterface.ViewModels {
             UIEnabled = false;
             await Task.Run(() => StartPlaying(s));
             UIEnabled = true;
-        }
-
-        private void SetupAboutSpeechCommands(SpeechController speechController) {
-            AboutSpeechCommands = new ObservableCollection<string>();
-            LoadAboutSpeechCommands(speechController);
-            speechController.Commands.CollectionChanged += (s, a) => LoadAboutSpeechCommands(speechController);
-        }
-
-        private void LoadAboutSpeechCommands(SpeechController speechController) {
-            var commandDesc = speechController.Commands.Select(sc => sc.Description);
-            AboutSpeechCommands.Clear();
-            foreach(var desc in commandDesc) {
-                AboutSpeechCommands.Add(desc);
-            }
         }
     }
 }
