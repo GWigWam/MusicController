@@ -92,7 +92,12 @@ namespace PlayerInterface.ViewModels {
                 Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
                 if (paths != null) {
                     var addFiles = await Task.Run(() => SongPathsHelper.CreateSongs(_settings, paths).ToArray());
-                    var added = _playlist.AddSong(addFiles.OrderBy(s => s.Album).ThenBy(s => s.File.Track));
+                    var added = _playlist.AddSong(addFiles
+                        .OrderBy(s => s.Artist)
+                        .ThenBy(s => s.File.Year)
+                        .ThenBy(s => s.Album)
+                        .ThenBy(s => s.File.Disc)
+                        .ThenBy(s => s.File.Track));
                     _playlist.MoveTo(position, added.ToArray());
                 }
             }, (t) => {

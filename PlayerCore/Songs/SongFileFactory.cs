@@ -52,6 +52,8 @@ namespace PlayerCore.Songs {
                     genre: fileInfo?.Tag?.FirstGenre,
                     track: fileInfo?.Tag?.Track ?? 0,
                     trackCount: fileInfo?.Tag?.TrackCount ?? 0,
+                    disc: fileInfo?.Tag?.Disc ?? 0,
+                    discCount: fileInfo?.Tag?.DiscCount ?? 0,
                     year: fileInfo?.Tag?.Year ?? 0,
                     bitRate: fileInfo?.Properties?.AudioBitrate ?? -1,
                     trackLength: fileInfo?.Properties?.Duration ?? TimeSpan.Zero
