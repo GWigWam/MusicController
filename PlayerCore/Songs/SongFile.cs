@@ -15,17 +15,17 @@ namespace PlayerCore.Songs {
         public string Artist { get; }
         public string Genre { get; }
         public string Title { get; }
-        public uint Track { get; }
-        public uint TrackCount { get; }
-        public uint Disc { get; }
-        public uint DiscCount { get; }
-        public uint Year { get; }
+        public int Track { get; }
+        public int TrackCount { get; }
+        public int Disc { get; }
+        public int DiscCount { get; }
+        public int Year { get; }
         public int BitRate { get; }
         public TimeSpan TrackLength { get; }
 
         public string Path { get; }
 
-        internal SongFile(string path, string title, string album, string artist, string genre, uint track, uint trackCount, uint disc, uint discCount, uint year, int bitRate, TimeSpan trackLength) {
+        internal SongFile(string path, string title, string album, string artist, string genre, int track, int trackCount, int disc, int discCount, int year, int bitRate, TimeSpan trackLength) {
             Album = album;
             Artist = artist;
             Genre = genre;

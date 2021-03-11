@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace PlayerCore.Songs {
     internal static class SongFileFactory {
 
-        private static ConcurrentDictionary<string, SongFile> Cache = new ConcurrentDictionary<string, SongFile>();
+        private static readonly ConcurrentDictionary<string, SongFile> Cache = new ConcurrentDictionary<string, SongFile>();
 
         public static bool TryGet(string filePath, out SongFile result) {
             filePath = filePath.ToLower();
@@ -28,35 +28,31 @@ namespace PlayerCore.Songs {
         private static bool TryCreate(string filePath, out SongFile result) {
             result = null;
 
-            if(!File.Exists(filePath)) {
+            var file = new FileInfo(filePath);
+            if(!file.Exists) {
                 return false;
             }
-
-            var file = new FileInfo(filePath);
-            if(!SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
+            else if(!SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.CurrentCultureIgnoreCase))) {
                 return false;
             }
 
             try {
                 var fileInfo = TagLib.File.Create(file.FullName);
 
-                var title = fileInfo?.Tag?.Title ?? file.Name.Replace(file.Extension, "");
-                var artist = string.IsNullOrEmpty(fileInfo?.Tag?.FirstPerformer?.Trim()) ? null : fileInfo.Tag.FirstPerformer.Trim();
-                var album = string.IsNullOrEmpty(fileInfo?.Tag?.Album?.Trim()) ? null : fileInfo.Tag.Album.Trim();
-
+                var title = fileInfo.Tag.Title ?? file.Name.Replace(file.Extension, "");
                 result = new SongFile(
                     path: filePath,
                     title: title,
-                    artist: artist,
-                    album: album,
-                    genre: fileInfo?.Tag?.FirstGenre,
-                    track: fileInfo?.Tag?.Track ?? 0,
-                    trackCount: fileInfo?.Tag?.TrackCount ?? 0,
-                    disc: fileInfo?.Tag?.Disc ?? 0,
-                    discCount: fileInfo?.Tag?.DiscCount ?? 0,
-                    year: fileInfo?.Tag?.Year ?? 0,
-                    bitRate: fileInfo?.Properties?.AudioBitrate ?? -1,
-                    trackLength: fileInfo?.Properties?.Duration ?? TimeSpan.Zero
+                    artist: fileInfo.Tag.FirstPerformer,
+                    album: fileInfo.Tag.Album,
+                    genre: fileInfo.Tag.FirstGenre,
+                    track: (int)fileInfo.Tag.Track,
+                    trackCount: (int)fileInfo.Tag.TrackCount,
+                    disc: (int)fileInfo.Tag.Disc,
+                    discCount: (int)fileInfo.Tag.DiscCount,
+                    year: (int)fileInfo.Tag.Year,
+                    bitRate: fileInfo.Properties.AudioBitrate,
+                    trackLength: fileInfo.Properties?.Duration ?? TimeSpan.Zero
                 );
 
                 return true;
