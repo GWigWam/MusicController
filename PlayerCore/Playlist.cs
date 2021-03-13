@@ -76,13 +76,15 @@ namespace PlayerCore {
             _Queue = new List<Song>();
         }
 
-        public IEnumerable<Song> AddSong(IEnumerable<Song> songs) => AddSong(songs.ToArray());
-
-        public IEnumerable<Song> AddSong(params Song[] songs) {
+        public IEnumerable<Song> AddSongs(IEnumerable<Song> songs, Song after = null)
+        {
             var addedSongs = new List<Song>();
-            ChangeList(false, true, () => {
-                foreach(var song in songs.Except(Songs, CompareSongByPath.Instance)) {
-                    Songs.Add(song);
+            ChangeList(after != null, true, () => {
+                var ix = after != null ? Songs.IndexOf(after) : -1;
+                ix = ix != -1 ? ix + 1 : Songs.Count;
+                foreach(var song in songs.Except(Songs, CompareSongByPath.Instance))
+                {
+                    Songs.Insert(ix++, song);
                     addedSongs.Add(song);
                 }
             });

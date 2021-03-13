@@ -53,7 +53,7 @@ namespace PlayerInterface {
             if(e.Args.Length > 0) {
                 var songs = SongPathsHelper.CreateSongs(settings, e.Args).ToArray();
                 if(songs.Length > 0) {
-                    var added = playlist.AddSong(songs);
+                    var added = playlist.AddSongs(songs);
                     if(player.PlayerState != PlayerState.Playing) {
                         playlist.SelectFirstMatch(added.First());
                         player.PlayerState = PlayerState.Playing;
@@ -61,7 +61,7 @@ namespace PlayerInterface {
                 }
             } else {
                 var startupSongFiles = settings.StartupSongs.Select(sf => new Song(sf, settings));
-                playlist.AddSong(startupSongFiles);
+                playlist.AddSongs(startupSongFiles);
                 playlist.Shuffle();
             }
 
