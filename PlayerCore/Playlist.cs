@@ -128,12 +128,15 @@ namespace PlayerCore {
             }
         }
 
-        public void Order<TKey>(Func<Song, TKey> orderBy, IEnumerable<Song> source = null) {
+        public void Order(Func<Song, object> orderBy, IEnumerable<Song> source = null)
+            => Order(new[] { orderBy }, source);
+
+        public void Order(IEnumerable<Func<Song, object>> orderBys, IEnumerable<Song> source = null) {
             ChangeList(true, false, () => {
                 if(source == null) {
-                    Songs = Songs.OrderBy(orderBy).ToList();
+                    Songs = order(Songs).ToList();
                 } else {
-                    var sorted = source.OrderBy(orderBy).ToArray();
+                    var sorted = order(source).ToArray();
                     var minIx = Songs.FindIndex(s => sorted.Contains(s));
                     for(int i = 0; i < sorted.Length; i++) {
                         var newIx = minIx + i;
@@ -144,6 +147,23 @@ namespace PlayerCore {
                     }
                 }
             });
+
+            IEnumerable<Song> order(IEnumerable<Song> inp)
+            {
+                if(orderBys.Any())
+                {
+                    var ioi = inp.OrderBy(orderBys.First());
+                    foreach(var o in orderBys.Skip(1))
+                    {
+                        ioi = ioi.ThenBy(o);
+                    }
+                    return ioi;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Cannot call {nameof(Order)} with emtpy {nameof(orderBys)} argument.");
+                }
+            }
         }
 
         public void Reverse() => ChangeList(true, false, Songs.Reverse);

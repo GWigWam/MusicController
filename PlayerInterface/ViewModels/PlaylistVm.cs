@@ -158,13 +158,14 @@ namespace PlayerInterface.ViewModels {
 
             var reg = new Regex(SearchText, RegexOptions.IgnoreCase);
             SearchText = string.Empty;
-            _playlist.Order(s => {
-                var res = 0;
-                res += (reg.IsMatch(s.Title ?? string.Empty) ? 0 : 3);
-                res += (reg.IsMatch(s.Artist ?? string.Empty) ? 0 : 2);
-                res += (reg.IsMatch(s.Album ?? string.Empty) ? 0 : 1);
-                return res;
-            }, selected);
+            _playlist.Order(
+                orderBys: new Func<Song, object>[] {
+                    s => !reg.IsMatch(s.Title),
+                    s => !reg.IsMatch(s.Album),
+                    s => !reg.IsMatch(s.Artist),
+                },
+                source: selected
+            );
         }
 
         private void HandleSearchChanged() {
