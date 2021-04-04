@@ -6,6 +6,7 @@ using PlayerInterface.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -14,7 +15,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PlayerInterface.ViewModels {
+namespace PlayerInterface.ViewModels
+{
     public class PlaylistVm : NotifyPropertyChanged {
 
         public event EventHandler DisplayedSongsChanged;
@@ -60,11 +62,12 @@ namespace PlayerInterface.ViewModels {
             _settings = settings;
             _playSong = playSong;
 
-            _playlist.ListContentChanged += PlaylistChanged;
-            _playlist.ListOrderChanged += PlaylistChanged;
-            _playlist.QueueChanged += (_, __) => UpdateQueueDisplay();
+            _playlist.CollectionChanged += (s, a) => HandlePlaylistCollectionChanged(a);
+            _playlist.CollectionChanged += (_, _) => SearchText = string.Empty;
+            _playlist.QueueChanged += (_, _) => UpdateQueueDisplay();
 
             AllPlaylistItems = new ObservableCollection<SongViewModel>();
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlaylistItems, this);
             PlaylistItems = AllPlaylistItems;
 
             SortByCommand = new RelayCommand<PropertyInfo>(SortByProperty);
@@ -128,7 +131,7 @@ namespace PlayerInterface.ViewModels {
 
             songPlayer.SongChanged += (_, a) => UpdateCurrentSong(a.Next);
 
-            FillPlaylist();
+            HandlePlaylistCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             UpdateCurrentSong(songPlayer.CurrentSong);
             UpdateQueueDisplay();
         }
@@ -180,39 +183,36 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        private void PlaylistChanged(object sender, EventArgs e) {
-            SearchText = string.Empty;
-            FillPlaylist();
-        }
+        private void HandlePlaylistCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            bool IsCurrentSong(Song s) => _playlist.CurrentSong == s;
+            void RemoveSong(Song s) => _playlist.Remove(s);
+            SongViewModel toSvm(Song song) => new SongViewModel(song, _settings, IsCurrentSong, _playSong, Enqueue, RemoveSong);
+            SongViewModel findSvm(Song song) => AllPlaylistItems.First(i => i.Song == song);
 
-        private void FillPlaylist() {
-            foreach (var removed in AllPlaylistItems.Where(svm => !_playlist.Any(s => s.FilePath == svm.Path)).ToArray()) {
-                AllPlaylistItems.Remove(removed);
+            if(e.Action == NotifyCollectionChangedAction.Add)
+            {
+                AllPlaylistItems.AddRange(e.NewItems.OfType<Song>().Select(toSvm));
             }
-
-            IEnumerable<(Song song, SongViewModel svm)> Match() {
-                for (int i = 0; i < _playlist.Length; i++) {
-                    var s = _playlist[i];
-                    var vm = AllPlaylistItems.FirstOrDefault(svm => svm.Path == s.FilePath);
-                    yield return (s, vm);
-                }
+            else if(e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                AllPlaylistItems.RemoveRange(e.OldItems.OfType<Song>().Select(findSvm));
             }
-            var matched = Match().ToArray();
-
-            for (int i = 0; i < matched.Length; i++) {
-                var curMatch = matched[i];
-                var curSvmIndex = AllPlaylistItems.IndexOf(curMatch.svm);
-                if (curSvmIndex >= 0) {
-                    AllPlaylistItems.Move(curSvmIndex, i);
-                } else {
-                    bool IsCurrentSong(Song s) => _playlist.CurrentSong == s;
-                    void RemoveSong(Song s) => _playlist.Remove(s);
-
-                    var newSvm = new SongViewModel(curMatch.song, _settings, IsCurrentSong, _playSong, Enqueue, RemoveSong);
-                    AllPlaylistItems.Insert(i, newSvm);
-                }
+            else if(e.Action == NotifyCollectionChangedAction.Move)
+            {
+                var moved = e.NewItems.OfType<Song>().Select(findSvm).First();
+                AllPlaylistItems.RemoveAt(e.OldStartingIndex);
+                AllPlaylistItems.Insert(e.NewStartingIndex, moved);
             }
-
+            else if(e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                AllPlaylistItems.Clear();
+                AllPlaylistItems.AddRange(_playlist.Select(toSvm));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
             DisplayedSongsChanged?.Invoke(this, new EventArgs());
         }
 

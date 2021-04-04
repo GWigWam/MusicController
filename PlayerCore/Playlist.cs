@@ -3,107 +3,118 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore {
-
+#nullable enable
+namespace PlayerCore
+{
     [DebuggerDisplay("{Length} Songs, current #{CurrentSongIndex})")]
-    public class Playlist : IEnumerable<Song> {
+    public class Playlist : IEnumerable<Song>, INotifyCollectionChanged, INotifyPropertyChanged
+    {
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event EventHandler ListOrderChanged;
-        public event EventHandler ListContentChanged;
-        public event EventHandler CurrentSongChanged;
-        public event EventHandler QueueChanged;
+        public event EventHandler? CurrentSongChanged;
+        public event EventHandler? QueueChanged;
 
-        private Random random;
+        private readonly Random Random = new();
 
         private List<Song> Songs { get; set; }
 
-        private int _curIndx = -1;
+        private int _CurrentIndex = -1;
         /// <summary>
         /// CurrentSong is the song at CurrentSongIndex in the Playlist.
         /// If index is set to a DIFFERENT value the CurrentSongChanged event will be raised
         /// Set to -1 for no song
         /// </summary>
         private int CurrentIndex {
-            get { return _curIndx; }
+            get => _CurrentIndex;
             set {
-                if(value >= -1 && value < Length) {
-                    if(_curIndx != value) {
-                        _curIndx = value;
+                if(value >= -1 && value < Length)
+                {
+                    if(_CurrentIndex != value)
+                    {
+                        _CurrentIndex = value;
                         RaiseCurrentSongChanged();
                     }
                 }
             }
         }
 
-        private List<Song> _Queue { get; set; }
+        private List<Song> _Queue;
         public ReadOnlyCollection<Song> Queue => _Queue.AsReadOnly();
 
-        private int? _queueIndx;
+        private int? _QueueIndex;
         public int? QueueIndex {
-            get => _queueIndx;
+            get => _QueueIndex;
             set {
-                if (_queueIndx != value) {
-                    _queueIndx = value;
+                if(_QueueIndex != value)
+                {
+                    _QueueIndex = value;
                     RaiseCurrentSongChanged();
                 }
             }
         }
 
-        public Song CurrentSong {
-            get {
-                if (QueueIndex.HasValue) {
-                    return _Queue[QueueIndex.Value];
-                } else if(CurrentIndex >= 0 && CurrentIndex < Length) {
-                    return Songs.ElementAt(CurrentIndex);
-                } else {
-                    return null;
-                }
-            }
-        }
+        public Song? CurrentSong =>
+            QueueIndex is int qi ? Queue[qi] :
+            CurrentIndex >= 0 && CurrentIndex < Length ? Songs[CurrentIndex] :
+                null;
 
         public Song this[int index] => Songs[index];
 
-        public int Length => Songs?.Count ?? 0;
+        public int Length => Songs.Count;
 
-        public Playlist() {
-            random = new Random();
+        public Playlist()
+        {
             Songs = new List<Song>();
             _Queue = new List<Song>();
         }
 
-        public IEnumerable<Song> AddSongs(IEnumerable<Song> songs, Song after = null)
+        public IEnumerable<Song> AddSongs(IEnumerable<Song> songs, Song? after = null)
         {
+            var ix = after != null ? Songs.IndexOf(after) : -1;
+            ix = ix != -1 ? ix + 1 : Songs.Count;
+
             var addedSongs = new List<Song>();
-            ChangeList(after != null, true, () => {
-                var ix = after != null ? Songs.IndexOf(after) : -1;
-                ix = ix != -1 ? ix + 1 : Songs.Count;
+            ChangeList(() => {
+                var cIx = ix;
                 foreach(var song in songs.Except(Songs, CompareSongByPath.Instance))
                 {
-                    Songs.Insert(ix++, song);
+                    Songs.Insert(cIx++, song);
                     addedSongs.Add(song);
                 }
             });
+            RaiseCollectionChanged(new(NotifyCollectionChangedAction.Add, addedSongs, ix));
             return addedSongs;
         }
 
-        public void Enqueue(Song song) {
-            if(!Queue.Contains(song)) {
+        public void Enqueue(Song song)
+        {
+            if(!Queue.Contains(song))
+            {
                 _Queue.Add(song);
-            } else {
-                if(_Queue.IndexOf(song) is int oldIx && (oldIx == -1 || oldIx > QueueIndex || QueueIndex == null)) {
+            }
+            else
+            {
+                if(_Queue.IndexOf(song) is var oldIx && (oldIx == -1 || oldIx > QueueIndex || QueueIndex == null))
+                {
                     var nxtIx = (QueueIndex ?? -1) + 1;
                     var nxt = nxtIx < _Queue.Count ? _Queue[nxtIx] : null;
-                    if(nxt != song) {
+                    if(nxt != song)
+                    {
                         _Queue = _Queue.Select((c, ix) => (c, ix))
                             .OrderBy(t => t.c == song ? 0 : t.ix < nxtIx ? -1 : 1)
                             .Select(t => t.c)
                             .ToList();
-                    } else {
+                    }
+                    else
+                    {
                         _Queue.Remove(song);
                     }
                 }
@@ -111,36 +122,40 @@ namespace PlayerCore {
             RaiseQueueChanged();
         }
 
-        public void Clear() {
-            ClearQueue();
-            ChangeList(true, true, Songs.Clear);
-        }
-
-        public void ClearQueue() {
-            if (_Queue.Count > 0) {
+        public void ClearQueue()
+        {
+            if(_Queue.Count > 0)
+            {
                 _Queue.Clear();
                 RaiseQueueChanged();
             }
         }
 
-        public void Shuffle(IEnumerable<Song> source = null) {
-            Order(s => random.NextDouble(), source);
-            if(Length > 0) {
+        public void Shuffle(IEnumerable<Song>? source = null)
+        {
+            Order(s => Random.NextDouble(), source);
+            if(Length > 0)
+            {
                 SetIndexForceUpdate(0);
             }
         }
 
-        public void Order(Func<Song, object> orderBy, IEnumerable<Song> source = null)
+        public void Order(Func<Song, object> orderBy, IEnumerable<Song>? source = null)
             => Order(new[] { orderBy }, source);
 
-        public void Order(IEnumerable<Func<Song, object>> orderBys, IEnumerable<Song> source = null) {
-            ChangeList(true, false, () => {
-                if(source == null) {
+        public void Order(IEnumerable<Func<Song, object>> orderBys, IEnumerable<Song>? source = null)
+        {
+            ChangeList(() => {
+                if(source is null)
+                {
                     Songs = order(Songs).ToList();
-                } else {
+                }
+                else
+                {
                     var sorted = order(source).ToArray();
                     var minIx = Songs.FindIndex(s => sorted.Contains(s));
-                    for(int i = 0; i < sorted.Length; i++) {
+                    for(int i = 0; i < sorted.Length; i++)
+                    {
                         var newIx = minIx + i;
                         var oldIx = Songs.IndexOf(sorted[i]);
                         Songs.RemoveAt(oldIx);
@@ -149,6 +164,7 @@ namespace PlayerCore {
                     }
                 }
             });
+            RaiseCollectionChanged(new(NotifyCollectionChangedAction.Reset));
 
             IEnumerable<Song> order(IEnumerable<Song> inp)
             {
@@ -168,109 +184,139 @@ namespace PlayerCore {
             }
         }
 
-        public void Reverse() => ChangeList(true, false, Songs.Reverse);
+        public void Reverse()
+        {
+            ChangeList(Songs.Reverse);
+            RaiseCollectionChanged(new(NotifyCollectionChangedAction.Reset));
+        }
 
         public void SelectFirstMatch(Song song) => SelectFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
 
-        public void SelectFirstMatch(Predicate<Song> filter) {
+        public void SelectFirstMatch(Predicate<Song> filter)
+        {
             var index = Songs.FindIndex(filter);
-            if(index >= 0) {
+            if(index >= 0)
+            {
                 SetIndexForceUpdate(index);
             }
         }
 
-        public void SelectAllMatches(Predicate<Song> filter) {
-            if(Songs.Any(s => filter(s))) {
-                var before = Songs.Take(CurrentIndex + 1).Where(s => !filter(s));
-                var after = Songs.Skip(CurrentIndex + 1).Where(s => !filter(s));
-                var match = Songs.Where(s => filter(s));
-                Songs = new List<Song>(before.Concat(match).Concat(after));
-                SetIndexForceUpdate(before.Count());
-                RaiseListOrderChanged();
-            }
-        }
-
-        public void MoveTo(Song destination, params Song[] source) {
-            var index = destination == null ? 0 : Songs.IndexOf(destination);
+        public void MoveTo(Song destination, params Song[] source)
+        {
+            var index = destination == null ? 0 : Songs.IndexOf(destination) + 1;
             MoveToIndex(index, source);
         }
 
-        public void MoveToIndex(int index, params Song[] source) {
-            ChangeList(true, false, () => {
-                var before = Songs.Take(index + 1).Except(source);
-                var after = Songs.Skip(index + 1).Except(source);
-                Songs = new List<Song>(before.Concat(source).Concat(after));
-            });
-        }
-
-        public void Remove(IEnumerable<Song> songs) {
-            ChangeList(false, true, () => {
-                foreach(var song in songs) {
-                    Remove(song, false);
+        public void MoveToIndex(int index, params Song[] source)
+        {
+            ChangeList(() => {
+                for(int i = source.Length - 1; i >= 0; i--)
+                {
+                    var move = source[i];
+                    var orgIx = Songs.IndexOf(move);
+                    var newIx = index;
+                    if(newIx > orgIx) {
+                        newIx--;
+                        index--;
+                    }
+                    Songs.RemoveAt(orgIx);
+                    Songs.Insert(newIx, move);
+                    RaiseCollectionChanged(new(NotifyCollectionChangedAction.Move, move, newIx, orgIx));
                 }
             });
         }
 
-        public void Remove(Song song, bool handleInternally = true) {
-            if (_Queue.Remove(song)) {
-                RaiseQueueChanged();
-            }
-            if(handleInternally) {
-                ChangeList(false, true, () => {
-                    Songs.Remove(song);
-                });
-            } else {
-                Songs.Remove(song);
+        public void Remove(IEnumerable<Song> songs)
+        {
+            foreach(var song in songs.ToArray())
+            {
+                Remove(song);
             }
         }
 
+        public void Remove(Song song)
+        {
+            if(_Queue.Remove(song))
+            {
+                RaiseQueueChanged();
+            }
+
+            ChangeList(() => {
+                Songs.Remove(song);
+            });
+            RaiseCollectionChanged(new(NotifyCollectionChangedAction.Remove, song));
+        }
+
         public bool HasNext(bool loop) => GetDoNext(loop) != null;
-        public bool Next(bool loop) {
+        public bool Next(bool loop)
+        {
             var doNext = GetDoNext(loop);
-            if (doNext != null) {
+            if(doNext != null)
+            {
                 doNext();
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
 
         public bool HasPrevious(bool loop) => GetDoPrevious(loop) != null;
-        public bool Previous(bool loop) {
+        public bool Previous(bool loop)
+        {
             var doPrev = GetDoPrevious(loop);
-            if (doPrev != null) {
+            if(doPrev != null)
+            {
                 doPrev();
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
 
-        private Action GetDoNext(bool loop) {
-            Action GetUpdateCurrentIndexAction() {
-                if (Songs.Count > 1) {
-                    if (CurrentIndex + 1 < Songs.Count) {
+        private Action? GetDoNext(bool loop)
+        {
+            Action? GetUpdateCurrentIndexAction()
+            {
+                if(Songs.Count > 1)
+                {
+                    if(CurrentIndex + 1 < Songs.Count)
+                    {
                         return () => CurrentIndex++;
-                    } else if (loop && CurrentIndex + 1 == Songs.Count) {
+                    }
+                    else if(loop && CurrentIndex + 1 == Songs.Count)
+                    {
                         return () => CurrentIndex = 0;
                     }
                 }
                 return null;
             }
 
-            if (QueueIndex.HasValue) {
-                if (QueueIndex + 1 < _Queue.Count) {
+            if(QueueIndex.HasValue)
+            {
+                if(QueueIndex + 1 < _Queue.Count)
+                {
                     return () => QueueIndex++;
-                } else {
+                }
+                else
+                {
                     return () => {
                         QueueIndex = null;
                         ClearQueue();
                     };
                 }
-            } else {
-                if (_Queue.Count == 0) {
+            }
+            else
+            {
+                if(_Queue.Count == 0)
+                {
                     return GetUpdateCurrentIndexAction();
-                } else {
+                }
+                else
+                {
                     return () => {
                         GetUpdateCurrentIndexAction()?.Invoke();
                         QueueIndex = 0;
@@ -279,18 +325,29 @@ namespace PlayerCore {
             }
         }
 
-        private Action GetDoPrevious(bool loop) {
-            if (QueueIndex.HasValue) {
-                if (QueueIndex > 0) {
+        private Action? GetDoPrevious(bool loop)
+        {
+            if(QueueIndex.HasValue)
+            {
+                if(QueueIndex > 0)
+                {
                     return () => QueueIndex--;
-                } else {
+                }
+                else
+                {
                     return () => QueueIndex = null;
                 }
-            } else {
-                if (Songs.Count > 1) {
-                    if (CurrentIndex > 0) {
+            }
+            else
+            {
+                if(Songs.Count > 1)
+                {
+                    if(CurrentIndex > 0)
+                    {
                         return () => CurrentIndex--;
-                    } else if (loop && CurrentIndex == 0) {
+                    }
+                    else if(loop && CurrentIndex == 0)
+                    {
                         return () => CurrentIndex = Songs.Count - 1;
                     }
                 }
@@ -298,26 +355,23 @@ namespace PlayerCore {
             return null;
         }
 
-        private void ChangeList(bool orderChanging, bool contentChanging, Action change) {
+        private void ChangeList(Action change)
+        {
             var orgIndex = CurrentIndex;
             var orgLenght = Length;
             var orgSong = CurrentSong;
             change();
 
             var foundIndex = orgSong != null ? Songs.FindIndex((s) => s == orgSong) : -1;
-            if(foundIndex > -1) {
-                _curIndx = foundIndex;
-            } else {
+            if(foundIndex > -1)
+            {
+                _CurrentIndex = foundIndex;
+            }
+            else
+            {
                 var newIndex = (orgIndex - (orgLenght - Length)) + 1;
                 newIndex = newIndex < Length ? newIndex : (Length > 0 ? Length - 1 : -1);
                 SetIndexForceUpdate(newIndex);
-            }
-
-            if(orderChanging) {
-                RaiseListOrderChanged();
-            }
-            if(contentChanging) {
-                RaiseListContentChanged();
             }
         }
 
@@ -326,17 +380,19 @@ namespace PlayerCore {
         /// This is usefull when the list has changed since the last time the index was set and a new song is at the current index.
         /// </summary>
         /// <param name="newIndex">Nr to set CurrentSongIndex to, -1 for no song.</param>
-        private void SetIndexForceUpdate(int newIndex) {
-            _curIndx = (_curIndx == -1) ? -2 : -1;
+        private void SetIndexForceUpdate(int newIndex)
+        {
+            _CurrentIndex = (_CurrentIndex == -1) ? -2 : -1;
             CurrentIndex = newIndex;
 
             QueueIndex = null;
         }
 
-        private void RaiseListContentChanged() => ListContentChanged?.Invoke(this, EventArgs.Empty);
-        private void RaiseListOrderChanged() => ListOrderChanged?.Invoke(this, EventArgs.Empty);
         private void RaiseCurrentSongChanged() => CurrentSongChanged?.Invoke(this, EventArgs.Empty);
         private void RaiseQueueChanged() => QueueChanged?.Invoke(this, EventArgs.Empty);
+
+        private void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args) => CollectionChanged?.Invoke(this, args);
+        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         public IEnumerator<Song> GetEnumerator() => Songs.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

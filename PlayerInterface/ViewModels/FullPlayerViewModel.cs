@@ -5,6 +5,7 @@ using PlayerInterface.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -69,8 +70,11 @@ namespace PlayerInterface.ViewModels {
                 canExecute: s => SongPlayer != null && s != null
             );
 
-            playlist.ListContentChanged += (s, a) => {
-                RaisePropertyChanged(nameof(ShowDropHint), nameof(PlaylistStats));
+            playlist.CollectionChanged += (s, a) => {
+                if(a.Action == NotifyCollectionChangedAction.Add || a.Action == NotifyCollectionChangedAction.Remove || a.Action == NotifyCollectionChangedAction.Reset)
+                {
+                    RaisePropertyChanged(nameof(ShowDropHint), nameof(PlaylistStats));
+                }
             };
             
             SongPlayer.SongChanged += SongPlayer_SongChanged;
