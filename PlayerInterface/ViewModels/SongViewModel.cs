@@ -18,7 +18,7 @@ namespace PlayerInterface.ViewModels {
         static SongViewModel() {
             var songtype = typeof(Song);
             var filetype = typeof(SongFile);
-            var statType = typeof(PlayerCore.Settings.SongStats);
+            var statType = typeof(SongStats);
             SortProperties = new Dictionary<string, PropertyInfo>() {
                 //Song:
                 ["Title"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Title)),
@@ -58,7 +58,20 @@ namespace PlayerInterface.ViewModels {
         public string BitRateStr => $"{Song.File.BitRate}kbps";
         public string TrackNrStr => Song.File.TrackCount == 0 ? $"#{Song.File.Track}" : $"{Song.File.Track}/{Song.File.TrackCount}";
         public string YearStr => Song.File.Year != 0 ? $"{Song.File.Year}" : "-";
-        public string PlayCountStr => $"{Song.Stats.PlayCount}x";
+
+        private int _PlayCount;
+        public int PlayCount {
+            get => _PlayCount;
+            set {
+                if(value != _PlayCount)
+                {
+                    _PlayCount = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(PlayCountStr));
+                }
+            }
+        }
+        public string PlayCountStr => $"{PlayCount}x";
 
         private int? _QueueIndex = null;
         public int? QueueIndex {
@@ -122,7 +135,9 @@ namespace PlayerInterface.ViewModels {
             this.enqueue = enqueue;
             removeSong = rs;
 
-            Song.Stats.PropertyChanged += (s, a) => RaisePropertyChanged(nameof(PlayCountStr));
+            var stats = settings.GetSongStats(song.File);
+            PlayCount = stats.PlayCount;
+            stats.PropertyChanged += (s, a) => PlayCount = ((SongStats)s).PlayCount;
         }
 
         public static implicit operator Song(SongViewModel svm) => svm.Song;

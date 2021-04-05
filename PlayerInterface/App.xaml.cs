@@ -60,7 +60,7 @@ namespace PlayerInterface {
                     }
                 }
             } else {
-                var startupSongFiles = settings.StartupSongs.Select(sf => new Song(sf, settings));
+                var startupSongFiles = settings.StartupSongs.Select(sf => new Song(sf));
                 playlist.AddSongs(startupSongFiles);
                 playlist.Shuffle();
             }

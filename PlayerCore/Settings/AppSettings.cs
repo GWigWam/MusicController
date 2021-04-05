@@ -111,11 +111,11 @@ namespace PlayerCore.Settings {
 
         [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         protected List<SongStats> Statistics {
-            get { return statistics; }
+            get => statistics;
             set {
                 statistics = value.Where(ss => File.Exists(ss.Path)).ToList();
                 foreach(var stat in statistics) {
-                    stat.PropertyChanged += (s, a) => RaiseChanged(nameof(SongStats));
+                    stat.PropertyChanged += (s, a) => RaiseChanged(nameof(Statistics));
                 }
             }
         }
@@ -139,9 +139,6 @@ namespace PlayerCore.Settings {
                 RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueueIndex)));
             }
         }
-
-        [JsonIgnore]
-        public IEnumerable<SongStats> SongStats => Statistics;
 
         [JsonIgnore]
         private HashSet<SongFile> _StartupSongs { get; set; } = new HashSet<SongFile>();
@@ -182,12 +179,19 @@ namespace PlayerCore.Settings {
             }
         }
 
-        public void AddSongStats(params SongStats[] stats) {
-            Statistics.AddRange(stats);
-            foreach(var stat in stats) {
-                stat.PropertyChanged += (s, a) => RaiseChanged(nameof(SongStats));
+        public SongStats GetSongStats(SongFile songFile)
+        {
+            return Statistics.FirstOrDefault(ss => ss.Path.Equals(songFile.Path, StringComparison.OrdinalIgnoreCase)) ??
+                createSongStats();
+
+            SongStats createSongStats()
+            {
+                var @new = new SongStats(songFile.Path);
+                Statistics.Add(@new);
+                @new.PropertyChanged += (s, a) => RaiseChanged(nameof(Statistics));
+                RaiseChanged(nameof(Statistics));
+                return @new;
             }
-            RaiseChanged(nameof(SongStats));
         }
 
         public bool IsStartupSong(string path) => _StartupSongs.Any(sf => sf.Path.Equals(path, StringComparison.CurrentCultureIgnoreCase));

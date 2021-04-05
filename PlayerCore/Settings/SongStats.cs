@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Songs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -43,15 +44,17 @@ namespace PlayerCore.Settings {
             player.SongChanged += (_, args) => {
                 const float defVolume = 0.5f;
 
-                if(args.Previous != null) {
-                    var songStats = args.Previous.Stats;
-                    if(songStats.Volume != player.Volume) {
-                        songStats.Volume = player.Volume;
-                    }
+                if(args.Previous is Song prev)
+                {
+                    var prevStats = settings.GetSongStats(prev.File);
+                    prevStats.Volume = player.Volume;
                 }
 
-                if(args.Next != null) {
-                    var nextVolume = args.Next.Stats.Volume;
+                if(args.Next is Song next)
+                {
+                    var nextStats = settings.GetSongStats(next.File);
+                    var nextVolume = nextStats.Volume;
+
                     if(nextVolume.HasValue) {
                         player.Volume = nextVolume.Value;
                     } else {
@@ -62,7 +65,7 @@ namespace PlayerCore.Settings {
 
             player.PlayingStopped += (_, a) => {
                 if(a.PlayedToEnd && player.CurrentSong != null) {
-                    player.CurrentSong.Stats.PlayCount++;
+                    settings.GetSongStats(player.CurrentSong.File).PlayCount++;
                 }
             };
         }

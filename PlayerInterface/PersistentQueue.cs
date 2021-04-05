@@ -22,7 +22,7 @@ namespace PlayerInterface {
                     playlist.Enqueue(foundSong);
                 } else {
                     if(SongFile.TryCreate(songPath, out var sf)) {
-                        var song = new Song(sf, settings);
+                        var song = new Song(sf);
                         playlist.Enqueue(song);
                     }
                 }

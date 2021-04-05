@@ -12,7 +12,6 @@ namespace PlayerCore.Songs {
     public class Song {
 
         public SongFile File { get; }
-        public SongStats Stats { get; }
 
         private string title;
         public string Title {
@@ -46,14 +45,8 @@ namespace PlayerCore.Songs {
 
         public string FilePath => File.Path;
 
-        public Song(SongFile file, AppSettings settings) {
+        public Song(SongFile file) {
             File = file ?? throw new ArgumentNullException(nameof(file));
-
-            Stats = settings.SongStats.FirstOrDefault(ss => ss.Path.Equals(FilePath, StringComparison.InvariantCultureIgnoreCase));
-            if(Stats == null) {
-                Stats = new SongStats(FilePath);
-                settings.AddSongStats(Stats);
-            }
         }
     }
 

@@ -109,7 +109,7 @@ namespace PlayerCore.Settings {
         }
 
         protected void RaiseChanged(string propertyName) {
-            var prop = typeof(AppSettings).GetProperty(propertyName);
+            var prop = typeof(AppSettings).GetProperty(propertyName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
             if(prop == null) {
                 throw new ArgumentException("Invalid property name");
             }

@@ -14,7 +14,7 @@ namespace PlayerCore.Songs {
 
         public static IEnumerable<Song> CreateSongs(AppSettings settings, params string[] paths) {
             var sfs = GetSongFiles(paths);
-            return sfs.Select(sf => new Song(sf, settings));
+            return sfs.Select(sf => new Song(sf));
         }
 
         private static IEnumerable<SongFile> GetSongFiles(params string[] paths) {
