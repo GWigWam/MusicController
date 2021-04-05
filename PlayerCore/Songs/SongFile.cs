@@ -21,11 +21,14 @@ namespace PlayerCore.Songs {
         public int DiscCount { get; }
         public int Year { get; }
         public int BitRate { get; }
+        public double? AlbumGain { get; }
+        public double? TrackGain { get; }
         public TimeSpan TrackLength { get; }
 
         public string Path { get; }
 
-        internal SongFile(string path, string title, string album, string artist, string genre, int track, int trackCount, int disc, int discCount, int year, int bitRate, TimeSpan trackLength) {
+        internal SongFile(string path, string title, string album, string artist, string genre, int track, int trackCount, int disc, int discCount, int year, int bitRate, double? albumGain, double? trackGain, TimeSpan trackLength)
+        {
             Album = album;
             Artist = artist;
             Genre = genre;
@@ -37,6 +40,8 @@ namespace PlayerCore.Songs {
             DiscCount = discCount;
             Year = year;
             BitRate = bitRate;
+            AlbumGain = albumGain;
+            TrackGain = trackGain;
             TrackLength = trackLength;
         }
 

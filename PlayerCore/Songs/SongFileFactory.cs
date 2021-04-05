@@ -52,6 +52,8 @@ namespace PlayerCore.Songs {
                     discCount: (int)fileInfo.Tag.DiscCount,
                     year: (int)fileInfo.Tag.Year,
                     bitRate: fileInfo.Properties.AudioBitrate,
+                    albumGain: fileInfo.Tag.ReplayGainAlbumGain is var ag and not double.NaN ? ag : null,
+                    trackGain: fileInfo.Tag.ReplayGainTrackGain is var tg and not double.NaN ? tg : null,
                     trackLength: fileInfo.Properties?.Duration ?? TimeSpan.Zero
                 );
 
