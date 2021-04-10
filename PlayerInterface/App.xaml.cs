@@ -51,7 +51,7 @@ namespace PlayerInterface {
             var transitionMngr = new TransitionManager(player, playlist, settings);
 
             if(e.Args.Length > 0) {
-                var songs = SongPathsHelper.CreateSongs(settings, e.Args).ToArray();
+                var songs = SongPathsHelper.CreateSongs(e.Args).ToArray();
                 if(songs.Length > 0) {
                     var added = playlist.AddSongs(songs);
                     if(player.PlayerState != PlayerState.Playing) {
@@ -60,8 +60,7 @@ namespace PlayerInterface {
                     }
                 }
             } else {
-                var startupSongFiles = settings.StartupSongs.Select(sf => new Song(sf));
-                playlist.AddSongs(startupSongFiles);
+                playlist.AddSongs(settings.StartupSongs);
                 playlist.Shuffle();
             }
 

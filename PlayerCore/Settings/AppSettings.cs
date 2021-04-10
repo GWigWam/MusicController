@@ -141,10 +141,10 @@ namespace PlayerCore.Settings {
         }
 
         [JsonIgnore]
-        private HashSet<SongFile> _StartupSongs { get; set; } = new HashSet<SongFile>();
+        private HashSet<Song> _StartupSongs { get; set; } = new HashSet<Song>();
 
         [JsonIgnore]
-        public IEnumerable<SongFile> StartupSongs => _StartupSongs;
+        public IEnumerable<Song> StartupSongs => _StartupSongs;
 
         public AppSettings(string filePath) : base(filePath) { }
 
@@ -175,18 +175,18 @@ namespace PlayerCore.Settings {
         private async Task ReadStartupSongsM3U() {
             if(File.Exists(M3UFilePath)) {
                 var m3u = await PlaylistFiles.M3U.ReadAsync(M3UFilePath);
-                _StartupSongs = new HashSet<SongFile>(m3u.Files);
+                _StartupSongs = new HashSet<Song>(m3u.Files);
             }
         }
 
-        public SongStats GetSongStats(SongFile songFile)
+        public SongStats GetSongStats(Song song)
         {
-            return Statistics.FirstOrDefault(ss => ss.Path.Equals(songFile.Path, StringComparison.OrdinalIgnoreCase)) ??
+            return Statistics.FirstOrDefault(ss => ss.Path.Equals(song.Path, StringComparison.OrdinalIgnoreCase)) ??
                 createSongStats();
 
             SongStats createSongStats()
             {
-                var @new = new SongStats(songFile.Path);
+                var @new = new SongStats(song.Path);
                 Statistics.Add(@new);
                 @new.PropertyChanged += (s, a) => RaiseChanged(nameof(Statistics));
                 RaiseChanged(nameof(Statistics));
@@ -195,15 +195,15 @@ namespace PlayerCore.Settings {
         }
 
         public bool IsStartupSong(string path) => _StartupSongs.Any(sf => sf.Path.Equals(path, StringComparison.CurrentCultureIgnoreCase));
-        public bool IsStartupSong(SongFile song) => _StartupSongs.Contains(song);
+        public bool IsStartupSong(Song song) => _StartupSongs.Contains(song);
 
-        public void AddStartupSong(SongFile song) {
+        public void AddStartupSong(Song song) {
             if(TryAddStartupSong(song)) {
                 RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
             }
         }
 
-        public void AddStartupSongs(IEnumerable<SongFile> songs) {
+        public void AddStartupSongs(IEnumerable<Song> songs) {
             bool change = false;
             foreach(var song in songs) {
                 change |= TryAddStartupSong(song);
@@ -215,13 +215,13 @@ namespace PlayerCore.Settings {
 
         public void RemoveStartupSong(string path) => RemoveStartupSong(_StartupSongs.FirstOrDefault(sf => path.Equals(sf.Path, StringComparison.CurrentCultureIgnoreCase)));
 
-        public void RemoveStartupSong(SongFile song) {
+        public void RemoveStartupSong(Song song) {
             if(TryRemoveStartupSong(song)) {
                 RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
             }
         }
 
-        private bool TryAddStartupSong(SongFile song) {
+        private bool TryAddStartupSong(Song song) {
             if(song != null && !IsStartupSong(song)) {
                 _StartupSongs.Add(song);
                 StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(true, song));
@@ -230,7 +230,7 @@ namespace PlayerCore.Settings {
             return false;
         }
 
-        private bool TryRemoveStartupSong(SongFile song) {
+        private bool TryRemoveStartupSong(Song song) {
             if(song != null) {
                 if(_StartupSongs.Remove(song)) {
                     StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(false, song));

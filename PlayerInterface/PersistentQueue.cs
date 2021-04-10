@@ -11,18 +11,17 @@ namespace PlayerInterface {
     public static class PersistentQueue {
 
         public static void SaveQueue(Playlist playlist, AppSettings settings) {
-            settings.QueuedSongs = playlist.Queue.Select(s => s.FilePath).ToArray();
+            settings.QueuedSongs = playlist.Queue.Select(s => s.Path).ToArray();
             settings.QueueIndex = playlist.QueueIndex;
         }
 
         public static void RestoreQueue(Playlist playlist, AppSettings settings) {
             foreach (var songPath in settings.QueuedSongs ?? new string[0]) {
-                var foundSong = playlist.FirstOrDefault(s => s.FilePath == songPath);
+                var foundSong = playlist.FirstOrDefault(s => s.Path == songPath);
                 if (foundSong != null) {
                     playlist.Enqueue(foundSong);
                 } else {
-                    if(SongFile.TryCreate(songPath, out var sf)) {
-                        var song = new Song(sf);
+                    if(Song.TryCreate(songPath, out var song)) {
                         playlist.Enqueue(song);
                     }
                 }

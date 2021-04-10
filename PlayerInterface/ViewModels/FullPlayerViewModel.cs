@@ -39,7 +39,7 @@ namespace PlayerInterface.ViewModels {
 
         public ICommand PlaySongCommand { get; }
         
-        public string PlaylistStats => $"{playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist?.Sum(s => s.File.TrackLength.Ticks) ?? 0))}";
+        public string PlaylistStats => $"{playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist?.Sum(s => s.TrackLength.Ticks) ?? 0))}";
 
         public AppSettingsViewModel SettingsViewModel { get; }
 

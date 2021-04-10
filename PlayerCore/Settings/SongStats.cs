@@ -46,13 +46,13 @@ namespace PlayerCore.Settings {
 
                 if(args.Previous is Song prev)
                 {
-                    var prevStats = settings.GetSongStats(prev.File);
+                    var prevStats = settings.GetSongStats(prev);
                     prevStats.Volume = player.Volume;
                 }
 
                 if(args.Next is Song next)
                 {
-                    var nextStats = settings.GetSongStats(next.File);
+                    var nextStats = settings.GetSongStats(next);
                     var nextVolume = nextStats.Volume;
 
                     if(nextVolume.HasValue) {
@@ -65,7 +65,7 @@ namespace PlayerCore.Settings {
 
             player.PlayingStopped += (_, a) => {
                 if(a.PlayedToEnd && player.CurrentSong != null) {
-                    settings.GetSongStats(player.CurrentSong.File).PlayCount++;
+                    settings.GetSongStats(player.CurrentSong).PlayCount++;
                 }
             };
         }

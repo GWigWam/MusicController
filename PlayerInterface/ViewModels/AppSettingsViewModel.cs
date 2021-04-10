@@ -98,20 +98,16 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        private class ParentDirComparer : IEqualityComparer<SongFile> {
-            public static ParentDirComparer Default = new ParentDirComparer();
+#nullable enable
+        private class ParentDirComparer : IEqualityComparer<Song>
+        {
+            public static readonly ParentDirComparer Default = new();
 
-            public bool Equals(SongFile x, SongFile y) =>
-                x == null && y == null ? true :
-                x == null || y == null ? false :
-                GetHashCode(x) == GetHashCode(y);
+            public bool Equals(Song? s1, Song? s2) => GetHashCode(s1) == GetHashCode(s2);
 
-            public int GetHashCode(SongFile obj) {
-                if(obj == null) {
-                    throw new ArgumentNullException(nameof(obj));
-                }
-                return new FileInfo(obj.Path).DirectoryName.ToLower().GetHashCode();
-            }
+            public int GetHashCode(Song? obj)
+                => obj is not null ? new FileInfo(obj.Path).DirectoryName?.ToLower().GetHashCode() ?? -1 : 0;
         }
     }
+#nullable restore
 }

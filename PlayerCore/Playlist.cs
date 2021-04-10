@@ -84,7 +84,7 @@ namespace PlayerCore
             var addedSongs = new List<Song>();
             ChangeList(() => {
                 var cIx = ix;
-                foreach(var song in songs.Except(Songs, CompareSongByPath.Instance))
+                foreach(var song in songs.Except(Songs))
                 {
                     Songs.Insert(cIx++, song);
                     addedSongs.Add(song);
@@ -190,7 +190,7 @@ namespace PlayerCore
             RaiseCollectionChanged(new(NotifyCollectionChangedAction.Reset));
         }
 
-        public void SelectFirstMatch(Song song) => SelectFirstMatch((comp) => CompareSongByPath.Instance.Equals(comp, song));
+        public void SelectFirstMatch(Song song) => SelectFirstMatch((comp) => comp == song);
 
         public void SelectFirstMatch(Predicate<Song> filter)
         {

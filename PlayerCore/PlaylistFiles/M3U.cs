@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace PlayerCore.PlaylistFiles {
     public sealed class M3U {
 
-        public SongFile[] Files { get; }
+        public Song[] Files { get; }
 
-        public M3U(IEnumerable<SongFile> files) {
+        public M3U(IEnumerable<Song> files) {
             Files = files.ToArray();
         }
 
@@ -33,7 +33,7 @@ namespace PlayerCore.PlaylistFiles {
             var lines = Parse(content).ToArray();
             var songFiles = lines
                 .Select(s => {
-                    var suc = SongFile.TryCreate(s, out var res);
+                    var suc = Song.TryCreate(s, out var res);
                     return (suc, res);
                 })
                 .Where(t => t.suc)

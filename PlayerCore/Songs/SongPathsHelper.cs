@@ -8,19 +8,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace PlayerCore.Songs {
-
-    public static class SongPathsHelper {
-
-        public static IEnumerable<Song> CreateSongs(AppSettings settings, params string[] paths) {
-            var sfs = GetSongFiles(paths);
-            return sfs.Select(sf => new Song(sf));
-        }
-
-        private static IEnumerable<SongFile> GetSongFiles(params string[] paths) {
-            IEnumerable<SongFile> CreateSongFiles(IEnumerable<string> filePaths) {
+namespace PlayerCore.Songs
+{
+    public static class SongPathsHelper
+    {
+        public static IEnumerable<Song> CreateSongs(params string[] paths)
+        {
+            IEnumerable<Song> CreateSongFiles(IEnumerable<string> filePaths) {
                 foreach(var filePath in filePaths) {
-                    if(SongFile.TryCreate(filePath, out var res)) {
+                    if(Song.TryCreate(filePath, out var res)) {
                         yield return res;
                     }
                 }
@@ -38,7 +34,7 @@ namespace PlayerCore.Songs {
                 }
             }
 
-            IEnumerable<SongFile> CreateFromM3Us(IEnumerable<string> m3uPaths) {
+            IEnumerable<Song> CreateFromM3Us(IEnumerable<string> m3uPaths) {
                 foreach(var m3u in m3uPaths) {
                     if(File.Exists(m3u)) {
                         var res = M3U.ReadAsync(m3u).Result; //TODO: Use async enumerables

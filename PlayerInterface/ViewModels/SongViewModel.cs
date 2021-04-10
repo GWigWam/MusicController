@@ -13,22 +13,20 @@ using System.Windows;
 namespace PlayerInterface.ViewModels {
     public class SongViewModel : NotifyPropertyChanged {
 
-        public static Dictionary<string, PropertyInfo> SortProperties;
+        public static readonly Dictionary<string, PropertyInfo> SortProperties;
 
         static SongViewModel() {
             var songtype = typeof(Song);
-            var filetype = typeof(SongFile);
             var statType = typeof(SongStats);
             SortProperties = new Dictionary<string, PropertyInfo>() {
                 //Song:
                 ["Title"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Title)),
                 ["Album"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Album)),
                 ["Artist"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Artist)),
-                //SongFile:
-                ["Genre"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Genre)),
-                ["Length"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.TrackLength)),
-                ["Year"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Year)),
-                ["Track #"] = filetype.GetProperty(nameof(PlayerCore.Songs.SongFile.Track)),
+                ["Genre"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Genre)),
+                ["Length"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.TrackLength)),
+                ["Year"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Year)),
+                ["Track #"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Track)),
                 //Stats
                 ["Play Count"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount))
             };
@@ -49,15 +47,20 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public string Path => $"{Song.FilePath}";
+        public string Path => Song.Path;
 
-        public string SubTitle => $"{Song.Artist} {(string.IsNullOrEmpty(Song.Album) ? string.Empty : $"({Song.Album})")}";
-        public string Title => $"{Song.Title}";
+        public string SubTitle => $"{Song.Artist} {(Song.Album is string a ? $"({a})" : null)}";
+        public string Title => Song.Title;
 
-        public string TrackLengthStr => $"[{FormatHelper.FormatTimeSpan(Song.File.TrackLength)}]";
-        public string BitRateStr => $"{Song.File.BitRate}kbps";
-        public string TrackNrStr => Song.File.TrackCount == 0 ? $"#{Song.File.Track}" : $"{Song.File.Track}/{Song.File.TrackCount}";
-        public string YearStr => Song.File.Year != 0 ? $"{Song.File.Year}" : "-";
+        public string TrackLengthStr => $"[{FormatHelper.FormatTimeSpan(Song.TrackLength)}]";
+        public string BitRateStr => $"{Song.BitRate}kbps";
+        public string TrackNrStr =>
+            Song.Track is int t ?
+                Song.TrackCount is int tc ? $"{t}/{tc}" :
+                $"#{t}" :
+            string.Empty;
+
+        public string YearStr => Song.Year is int y ? $"{y}" : string.Empty;
 
         private int _PlayCount;
         public int PlayCount {
@@ -112,7 +115,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public bool IsStartupSong => Settings.IsStartupSong(Song.File);
+        public bool IsStartupSong => Settings.IsStartupSong(Song);
 
         private readonly Predicate<Song> isCurrentSong;
         private readonly Action<Song> playSong;
@@ -135,7 +138,7 @@ namespace PlayerInterface.ViewModels {
             this.enqueue = enqueue;
             removeSong = rs;
 
-            var stats = settings.GetSongStats(song.File);
+            var stats = settings.GetSongStats(song);
             PlayCount = stats.PlayCount;
             stats.PropertyChanged += (s, a) => PlayCount = ((SongStats)s).PlayCount;
         }
@@ -169,12 +172,12 @@ namespace PlayerInterface.ViewModels {
         }
         
         private void AddToStartup() {
-            Settings.AddStartupSong(Song.File);
+            Settings.AddStartupSong(Song);
             RaisePropertyChanged(nameof(IsStartupSong));
         }
 
         private void RemoveFromStartup() {
-            Settings.RemoveStartupSong(Song.File);
+            Settings.RemoveStartupSong(Song);
             RaisePropertyChanged(nameof(IsStartupSong));
         }
 

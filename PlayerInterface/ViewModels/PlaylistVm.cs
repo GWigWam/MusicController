@@ -94,13 +94,13 @@ namespace PlayerInterface.ViewModels
                 var paths = input.Paths as string[];
                 Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
                 if (paths != null) {
-                    var addFiles = await Task.Run(() => SongPathsHelper.CreateSongs(_settings, paths).ToArray());
+                    var addFiles = await Task.Run(() => SongPathsHelper.CreateSongs(paths).ToArray());
                     var added = _playlist.AddSongs(addFiles
                         .OrderBy(s => s.Artist)
-                        .ThenBy(s => s.File.Year)
+                        .ThenBy(s => s.Year)
                         .ThenBy(s => s.Album)
-                        .ThenBy(s => s.File.Disc)
-                        .ThenBy(s => s.File.Track));
+                        .ThenBy(s => s.Disc)
+                        .ThenBy(s => s.Track));
                     _playlist.MoveTo(position, added.ToArray());
                 }
             }, (t) => {
@@ -148,10 +148,8 @@ namespace PlayerInterface.ViewModels
 
             if (pi.DeclaringType == typeof(Song)) {
                 _playlist.Order((s) => pi.GetValue(s), selected);
-            } else if (pi.DeclaringType == typeof(SongFile)) {
-                _playlist.Order((s) => pi.GetValue(s.File), selected);
             } else if (pi.DeclaringType == typeof(SongStats)) {
-                _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s.File)), selected);
+                _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s)), selected);
             }
         }
 
@@ -258,7 +256,7 @@ namespace PlayerInterface.ViewModels
             sfd.Filter = "Playlist (.m3u)|*.m3u";
 
             if (sfd.ShowDialog() == true) {
-                var m3u = new M3U(_playlist.Select(s => s.File));
+                var m3u = new M3U(_playlist);
                 await m3u.WriteAsync(sfd.FileName, true);
             }
         }

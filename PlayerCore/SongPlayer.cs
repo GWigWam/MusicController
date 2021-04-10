@@ -164,7 +164,7 @@ namespace PlayerCore {
                         File = null;
                     }
 
-                    File = new AudioFileReader(song.FilePath) { Volume = Volume };
+                    File = new AudioFileReader(song.Path) { Volume = Volume };
 
                     // 'WaveOutEvent' should be less bound to UI than 'WaveOut', they are interchangable (both IWavePlayer)
                     // High latency makes player unresponsive when changing 'Elapsed' time, and 'Elapsed' property is less accurate
@@ -186,7 +186,7 @@ namespace PlayerCore {
                     if(e is FileNotFoundException || e is InvalidDataException) {
                         throw new SongLoadFailedException(song, e);
                     } else {
-                        throw e;
+                        throw;
                     }
                 }
             }
