@@ -226,25 +226,25 @@ namespace PlayerCore
             });
         }
 
+        public void Remove(Song song)
+            => Remove(new[] { song });
+
         public void Remove(IEnumerable<Song> songs)
         {
-            foreach(var song in songs.ToArray())
-            {
-                Remove(song);
-            }
-        }
+            var queueChanged = false;
+            ChangeList(() => {
+                foreach(var song in songs.ToArray())
+                {
+                    queueChanged |= _Queue.Remove(song);
+                    Songs.Remove(song);
+                }
+            });
 
-        public void Remove(Song song)
-        {
-            if(_Queue.Remove(song))
+            if(queueChanged)
             {
                 RaiseQueueChanged();
             }
-
-            ChangeList(() => {
-                Songs.Remove(song);
-            });
-            RaiseCollectionChanged(new(NotifyCollectionChangedAction.Remove, song));
+            RaiseCollectionChanged(new(NotifyCollectionChangedAction.Remove, songs.ToList()));
         }
 
         public bool HasNext(bool loop) => GetDoNext(loop) != null;
