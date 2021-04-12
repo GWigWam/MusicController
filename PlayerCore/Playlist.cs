@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 #nullable enable
 namespace PlayerCore
 {
-    [DebuggerDisplay("{Length} Songs, current #{CurrentSongIndex})")]
+    [DebuggerDisplay("{Length} Songs, current #{CurrentIndex})")]
     public class Playlist : IEnumerable<Song>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
@@ -75,6 +75,10 @@ namespace PlayerCore
             Songs = new List<Song>();
             _Queue = new List<Song>();
         }
+
+        public Song? AddSong(Song song, Song? after = null)
+            => AddSongs(new[] { song }, after)
+                .FirstOrDefault();
 
         public IEnumerable<Song> AddSongs(IEnumerable<Song> songs, Song? after = null)
         {
@@ -190,7 +194,7 @@ namespace PlayerCore
             RaiseCollectionChanged(new(NotifyCollectionChangedAction.Reset));
         }
 
-        public void SelectFirstMatch(Song song) => SelectFirstMatch((comp) => comp == song);
+        public void SelectFirstMatch(Song? song) => SelectFirstMatch((comp) => comp == song);
 
         public void SelectFirstMatch(Predicate<Song> filter)
         {
