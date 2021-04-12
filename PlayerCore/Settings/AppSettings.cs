@@ -141,10 +141,10 @@ namespace PlayerCore.Settings {
         }
 
         [JsonIgnore]
-        private HashSet<Song> _StartupSongs { get; set; } = new HashSet<Song>();
+        private List<string> _StartupSongs { get; set; } = new List<string>();
 
         [JsonIgnore]
-        public IEnumerable<Song> StartupSongs => _StartupSongs;
+        public IEnumerable<string> StartupSongPaths => _StartupSongs;
 
         public AppSettings(string filePath) : base(filePath) { }
 
@@ -166,7 +166,7 @@ namespace PlayerCore.Settings {
         private async Task WriteStartupSongsM3U() {
             var writePath = $"{M3UFilePath}.writing";
 
-            var m3u = new PlaylistFiles.M3U(StartupSongs);
+            var m3u = new PlaylistFiles.M3U(StartupSongPaths);
             await m3u.WriteAsync(writePath, true);
             File.Delete(M3UFilePath);
             File.Move(writePath, M3UFilePath);
@@ -175,7 +175,7 @@ namespace PlayerCore.Settings {
         private async Task ReadStartupSongsM3U() {
             if(File.Exists(M3UFilePath)) {
                 var m3u = await PlaylistFiles.M3U.ReadAsync(M3UFilePath);
-                _StartupSongs = new HashSet<Song>(m3u.Files);
+                _StartupSongs = new List<string>(m3u.Paths.Distinct(StringComparer.OrdinalIgnoreCase));
             }
         }
 
@@ -194,48 +194,56 @@ namespace PlayerCore.Settings {
             }
         }
 
-        public bool IsStartupSong(string path) => _StartupSongs.Any(sf => sf.Path.Equals(path, StringComparison.CurrentCultureIgnoreCase));
-        public bool IsStartupSong(Song song) => _StartupSongs.Contains(song);
+        public bool IsStartupSong(Song song) => IsStartupSong(song.Path);
+        public bool IsStartupSong(string path) => _StartupSongs.Any(ss => ss.Equals(path, StringComparison.OrdinalIgnoreCase));
 
-        public void AddStartupSong(Song song) {
-            if(TryAddStartupSong(song)) {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
+        public void AddStartupSong(string songPath)
+        {
+            if(TryAddStartupSong(songPath))
+            {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
             }
         }
 
-        public void AddStartupSongs(IEnumerable<Song> songs) {
+        public void AddStartupSongs(IEnumerable<string> songPaths)
+        {
             bool change = false;
-            foreach(var song in songs) {
-                change |= TryAddStartupSong(song);
+            foreach(var path in songPaths)
+            {
+                change |= TryAddStartupSong(path);
             }
-            if(change) {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
-            }
-        }
-
-        public void RemoveStartupSong(string path) => RemoveStartupSong(_StartupSongs.FirstOrDefault(sf => path.Equals(sf.Path, StringComparison.CurrentCultureIgnoreCase)));
-
-        public void RemoveStartupSong(Song song) {
-            if(TryRemoveStartupSong(song)) {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongs)));
+            if(change)
+            {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
             }
         }
 
-        private bool TryAddStartupSong(Song song) {
-            if(song != null && !IsStartupSong(song)) {
-                _StartupSongs.Add(song);
-                StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(true, song));
+        public void RemoveStartupSong(string songPath)
+        {
+            if(TryRemoveStartupSong(songPath))
+            {
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
+            }
+        }
+
+        private bool TryAddStartupSong(string songPath)
+        {
+            if(!IsStartupSong(songPath))
+            {
+                _StartupSongs.Add(songPath);
+                StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(true, songPath));
                 return true;
             }
             return false;
         }
 
-        private bool TryRemoveStartupSong(Song song) {
-            if(song != null) {
-                if(_StartupSongs.Remove(song)) {
-                    StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(false, song));
-                    return true;
-                }
+        private bool TryRemoveStartupSong(string songPath)
+        {
+            if(_StartupSongs.FindIndex(ss => ss.Equals(songPath, StringComparison.OrdinalIgnoreCase)) is not -1 and var ix)
+            {
+                _StartupSongs.RemoveAt(ix);
+                StartupSongsChanged?.Invoke(this, new StartupSongsChangedArgs(false, songPath));
+                return true;
             }
             return false;
         }

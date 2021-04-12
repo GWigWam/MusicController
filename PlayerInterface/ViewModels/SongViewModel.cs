@@ -172,12 +172,12 @@ namespace PlayerInterface.ViewModels {
         }
         
         private void AddToStartup() {
-            Settings.AddStartupSong(Song);
+            Settings.AddStartupSong(Song.Path);
             RaisePropertyChanged(nameof(IsStartupSong));
         }
 
         private void RemoveFromStartup() {
-            Settings.RemoveStartupSong(Song);
+            Settings.RemoveStartupSong(Song.Path);
             RaisePropertyChanged(nameof(IsStartupSong));
         }
 

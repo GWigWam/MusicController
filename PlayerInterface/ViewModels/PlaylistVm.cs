@@ -256,7 +256,7 @@ namespace PlayerInterface.ViewModels
             sfd.Filter = "Playlist (.m3u)|*.m3u";
 
             if (sfd.ShowDialog() == true) {
-                var m3u = new M3U(_playlist);
+                var m3u = new M3U(_playlist.Select(s => s.Path));
                 await m3u.WriteAsync(sfd.FileName, true);
             }
         }

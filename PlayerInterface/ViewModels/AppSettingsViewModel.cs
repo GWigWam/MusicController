@@ -77,9 +77,7 @@ namespace PlayerInterface.ViewModels {
                 LoadPaths.Add(folder);
             }
 
-            var paths = Settings.StartupSongs
-                .Distinct(ParentDirComparer.Default)
-                .Select(sf => sf.Path)
+            var paths = Settings.StartupSongPaths
                 .Select(p => p.Split('\\', '/'));
             CheckPathBoxes(paths, LoadPaths);
         }
@@ -97,17 +95,5 @@ namespace PlayerInterface.ViewModels {
                 }
             }
         }
-
-#nullable enable
-        private class ParentDirComparer : IEqualityComparer<Song>
-        {
-            public static readonly ParentDirComparer Default = new();
-
-            public bool Equals(Song? s1, Song? s2) => GetHashCode(s1) == GetHashCode(s2);
-
-            public int GetHashCode(Song? obj)
-                => obj is not null ? new FileInfo(obj.Path).DirectoryName?.ToLower().GetHashCode() ?? -1 : 0;
-        }
     }
-#nullable restore
 }

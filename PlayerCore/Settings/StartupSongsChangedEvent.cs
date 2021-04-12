@@ -13,11 +13,11 @@ namespace PlayerCore.Settings
     public class StartupSongsChangedArgs
     {
         public bool IsStartupSong { get; }
-        public Song Song { get; }
+        public string SongPath { get; }
 
-        public StartupSongsChangedArgs(bool isStartupSong, Song song) {
+        public StartupSongsChangedArgs(bool isStartupSong, string songPath) {
             IsStartupSong = isStartupSong;
-            Song = song;
+            SongPath = songPath;
         }
     }
 }

@@ -18,9 +18,7 @@ namespace PlayerInterface.ViewModels.FolderExplore {
             set {
                 if (value is bool isStartupSong && isStartupSong != CheckedState) {
                     if (isStartupSong) {
-                        if(Song.TryCreate(Path, out var sf)) {
-                            Settings.AddStartupSong(sf);
-                        }
+                        Settings.AddStartupSong(Path);
                     } else {
                         Settings.RemoveStartupSong(Path);
                     }
@@ -33,7 +31,7 @@ namespace PlayerInterface.ViewModels.FolderExplore {
         public ExplorerFile(string path, string name, AppSettings settings) : base(path, name, settings) {
             _checkState = Settings.IsStartupSong(Path);
             settings.StartupSongsChanged += (s, a) => {
-                if (a.Song.Path.Equals(Path, StringComparison.OrdinalIgnoreCase)) {
+                if (a.SongPath.Equals(Path, StringComparison.OrdinalIgnoreCase)) {
                     _checkState = a.IsStartupSong;
                     RaisePropertyChanged(nameof(CheckedState));
                 }

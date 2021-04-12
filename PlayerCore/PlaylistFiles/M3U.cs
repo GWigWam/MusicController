@@ -6,51 +6,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore.PlaylistFiles {
-    public sealed class M3U {
+#nullable enable
+namespace PlayerCore.PlaylistFiles
+{
+    public sealed class M3U
+    {
+        public string[] Paths { get; }
 
-        public Song[] Files { get; }
-
-        public M3U(IEnumerable<Song> files) {
-            Files = files.ToArray();
+        public M3U(IEnumerable<string> paths)
+        {
+            Paths = paths.ToArray();
         }
 
-        public static async Task<M3U> ReadAsync(string filePath) {
-            string content;
-            using (var fs = new FileStream(filePath, FileMode.Open))
-            using (var sr = new StreamReader(fs)) {
-                content = await sr.ReadToEndAsync().ConfigureAwait(false);
-            }
+        public static async Task<M3U> ReadAsync(string filePath)
+        {
+            using var fs = new FileStream(filePath, FileMode.Open);
+            using var sr = new StreamReader(fs);
+            var content = await sr.ReadToEndAsync().ConfigureAwait(false);
 
-            IEnumerable<string> Parse(string s) {
-                foreach (var line in s.Split('\n')
+            static IEnumerable<string> parse(string fileContent)
+            {
+                var lines = fileContent.Split('\n')
                     .Select(t => t.Trim())
-                    .Where(t => !string.IsNullOrEmpty(t) && !t.StartsWith("#"))) {
+                    .Where(t => !string.IsNullOrEmpty(t) && !t.StartsWith("#"));
+                foreach(var line in lines)
+                {
                     yield return line;
                 }
             }
 
-            var lines = Parse(content).ToArray();
-            var songFiles = lines
-                .Select(s => {
-                    var suc = Song.TryCreate(s, out var res);
-                    return (suc, res);
-                })
-                .Where(t => t.suc)
-                .Select(t => t.res)
-                .ToArray();
-            return new M3U(songFiles);
+            var lines = parse(content);
+            return new M3U(lines);
         }
 
-        public async Task WriteAsync(string filePath, bool allowOverwrite) {
-            using (var fs = new FileStream(filePath, allowOverwrite ? FileMode.Create : FileMode.CreateNew))
-            using (var sr = new StreamWriter(fs)) {
-                await sr.WriteLineAsync("#EXTM3U"); // File header
+        public async Task WriteAsync(string filePath, bool allowOverwrite)
+        {
+            using var fs = new FileStream(filePath, allowOverwrite ? FileMode.Create : FileMode.CreateNew);
+            using var sr = new StreamWriter(fs);
 
-                foreach (var sf in Files) {
-                    await sr.WriteLineAsync($"#EXTINF:{(int)sf.TrackLength.TotalSeconds},{sf.Artist} - {sf.Title}"); // Info line
-                    await sr.WriteLineAsync(sf.Path); // Data line
-                }
+            await sr.WriteLineAsync("#EXTM3U"); // File header
+
+            foreach(var path in Paths)
+            {
+                //await sr.WriteLineAsync($"#EXTINF:{(int)path.TrackLength.TotalSeconds},{path.Artist} - {path.Title}"); // Info line
+                await sr.WriteLineAsync(path); // Data line
             }
         }
     }
