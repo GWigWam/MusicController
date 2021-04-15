@@ -12,43 +12,43 @@ namespace PlayerCore.Songs
 {
     public static class SongPathsHelper
     {
-        public static IEnumerable<Song> CreateSongs(params string[] paths)
+        public static IAsyncEnumerable<Song> CreateSongs(IEnumerable<string> paths)
         {
-            IEnumerable<Song> CreateSongFiles(IEnumerable<string> filePaths) {
-                foreach(var filePath in filePaths) {
-                    if(Song.TryCreate(filePath, out var res)) {
-                        yield return res;
-                    }
-                }
+            IAsyncEnumerable<Song> CreateSongFiles(IEnumerable<string> filePaths)
+            {
+                return filePaths.ToAsyncEnumerable().SelectAwait(async p => await Song.CreateAsync(p)).Where(s => s != null);
             }
 
-            IEnumerable<string> GetAllFilePaths(IEnumerable<string> fullPaths) {
-                foreach(var fullPath in fullPaths) {
-                    if(File.Exists(fullPath)) {
+            IEnumerable<string> GetAllFilePaths(IEnumerable<string> fullPaths)
+            {
+                foreach(var fullPath in fullPaths)
+                {
+                    if(File.Exists(fullPath))
+                    {
                         yield return fullPath;
-                    } else if(Directory.Exists(fullPath)) {
-                        foreach(var innerPath in Directory.EnumerateFiles(fullPath, "*", SearchOption.AllDirectories)) {
+                    }
+                    else if(Directory.Exists(fullPath))
+                    {
+                        foreach(var innerPath in Directory.EnumerateFiles(fullPath, "*", SearchOption.AllDirectories))
+                        {
                             yield return innerPath;
                         }
                     }
                 }
             }
 
-            IEnumerable<Song> CreateFromM3Us(IEnumerable<string> m3uPaths) {
-                foreach(var m3u in m3uPaths) {
-                    if(File.Exists(m3u)) {
-                        var res = M3U.ReadAsync(m3u).Result; //TODO: Use async enumerables
-                        foreach(var songFile in res.Files) {
-                            yield return songFile;
-                        }
-                    }
-                }
+            IAsyncEnumerable<Song> CreateFromM3Us(IEnumerable<string> m3uPaths)
+            {
+                return m3uPaths.ToAsyncEnumerable()
+                    .SelectAwait(async m3uPath => await M3U.ReadAsync(m3uPath))
+                    .SelectMany(m3u => CreateSongFiles(m3u.Paths));
             }
 
             var m3uSplit = paths.ToLookup(p => p.EndsWith(".m3u", StringComparison.OrdinalIgnoreCase));
 
             return CreateSongFiles(GetAllFilePaths(m3uSplit[false]))
-                .Concat(CreateFromM3Us(m3uSplit[true]));
+                .Concat(CreateFromM3Us(m3uSplit[true]))
+                .Distinct();
         }
     }
 }

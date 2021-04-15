@@ -88,27 +88,26 @@ namespace PlayerInterface.ViewModels
             sbsc.BindCanExecuteToProperty(h => PropertyChanged += h, nameof(SearchText));
             SortBySearchCommand = sbsc;
 
-            AddFilesCommand = new AsyncCommand<dynamic>(async (dyn) => {
-                dynamic input = dyn;
-                setUiEnabled(false);
-                var paths = input.Paths as string[];
-                Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
-                if (paths != null) {
-                    var addFiles = await Task.Run(() => SongPathsHelper.CreateSongs(paths).ToArray());
-                    var added = _playlist.AddSongs(addFiles
-                        .OrderBy(s => s.Artist)
-                        .ThenBy(s => s.Year)
-                        .ThenBy(s => s.Album)
-                        .ThenBy(s => s.Disc)
-                        .ThenBy(s => s.Track));
-                    _playlist.MoveTo(position, added.ToArray());
-                }
-            }, (t) => {
-                setUiEnabled(true);
-                if (t.IsFaulted) {
-                    Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
-                }
-            });
+            AddFilesCommand = new AsyncCommand<dynamic>(
+                async input => {
+                    Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
+                    if(input.Paths is string[] paths)
+                    {
+                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths), position, new Func<Song, object>[] {
+                            s => s.Artist,
+                            s => s.Year,
+                            s => s.Album,
+                            s => s.Disc,
+                            s => s.Track
+                        });
+                    }
+                },
+                t => {
+                    if(t.IsFaulted)
+                    {
+                        Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(t.Exception).Show());
+                    }
+                });
 
             RemoveSongsCommand = new RelayCommand<IEnumerable<SongViewModel>>(
                 execute: o => _playlist.Remove(o.Select(svm => svm.Song)),

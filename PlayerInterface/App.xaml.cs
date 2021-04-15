@@ -50,22 +50,6 @@ namespace PlayerInterface {
             var playlist = new Playlist();
             var transitionMngr = new TransitionManager(player, playlist, settings);
 
-            if(e.Args.Length > 0) {
-                var songs = SongPathsHelper.CreateSongs(e.Args).ToArray();
-                if(songs.Length > 0) {
-                    var added = playlist.AddSongs(songs);
-                    if(player.PlayerState != PlayerState.Playing) {
-                        playlist.SelectFirstMatch(added.First());
-                        player.PlayerState = PlayerState.Playing;
-                    }
-                }
-            } else {
-                playlist.AddSongs(settings.StartupSongs);
-                playlist.Shuffle();
-            }
-
-            PersistentQueue.RestoreQueue(playlist, settings);
-
             ThemeManager.Instance.SetTheme(settings.Theme);
             settings.Changed += (s, a) => {
                 if(a.ChangedPropertyName == nameof(AppSettings.Theme)) {
@@ -76,6 +60,8 @@ namespace PlayerInterface {
             var windowMgr = new WindowManager((TaskbarIcon)FindResource(TrayIconResourceName));
             windowMgr.Init(settings, player, playlist, transitionMngr);
 
+            LoadSongsBackground(e.Args, playlist, player, settings);
+
             Exiting += (s, a) => {
                 PersistentQueue.SaveQueue(playlist, settings);
                 settings.WriteToDisc();
@@ -83,6 +69,33 @@ namespace PlayerInterface {
 
             windowMgr.Overlay.DisplayText("SMC Running...", 2000);
         }
+
+        private static void LoadSongsBackground(string[] appArgs, Playlist playlist, SongPlayer player, AppSettings settings) => Task.Run(async () =>
+        {
+            var loadSpecific = appArgs.Length > 0;
+            var paths = loadSpecific ? appArgs : getStartupSongsShuffled();
+            if(paths.Any())
+            {
+                var fst = await Song.CreateAsync(paths.First());
+                if(fst != null)
+                {
+                    var added = playlist.AddSong(fst);
+                    playlist.SelectFirstMatch(added);
+                    if(loadSpecific)
+                    {
+                        player.PlayerState = PlayerState.Playing;
+                    }
+                }
+                await playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths.Skip(1)));
+                await PersistentQueue.RestoreQueue(playlist, settings);
+            }
+
+            string[] getStartupSongsShuffled()
+            {
+                var r = new Random();
+                return settings.StartupSongPaths.OrderBy(_ => r.NextDouble()).ToArray();
+            }
+        });
 
         private AppSettings InitSettings() {
             if(!File.Exists(AppSettingsFileName)) {

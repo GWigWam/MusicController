@@ -7,33 +7,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerInterface {
-    public static class PersistentQueue {
+#nullable enable
+namespace PlayerInterface
+{
+    public static class PersistentQueue
+    {
 
-        public static void SaveQueue(Playlist playlist, AppSettings settings) {
+        public static void SaveQueue(Playlist playlist, AppSettings settings)
+        {
             settings.QueuedSongs = playlist.Queue.Select(s => s.Path).ToArray();
             settings.QueueIndex = playlist.QueueIndex;
         }
 
-        public static void RestoreQueue(Playlist playlist, AppSettings settings) {
-            foreach (var songPath in settings.QueuedSongs ?? new string[0]) {
-                var foundSong = playlist.FirstOrDefault(s => s.Path == songPath);
-                if (foundSong != null) {
-                    playlist.Enqueue(foundSong);
-                } else {
-                    if(Song.TryCreate(songPath, out var song)) {
-                        playlist.Enqueue(song);
+        public static async Task RestoreQueue(Playlist playlist, AppSettings settings)
+        {
+            if(settings.QueuedSongs.Length > 0)
+            {
+                var queuedSongs = SongPathsHelper.CreateSongs(settings.QueuedSongs);
+                await playlist.AddSongsAsync(queuedSongs);
+
+                foreach(var qp in settings.QueuedSongs)
+                {
+                    if(playlist.FirstOrDefault(s => s.Path.Equals(qp, StringComparison.OrdinalIgnoreCase)) is Song q)
+                    {
+                        playlist.Enqueue(q);
                     }
                 }
-            }
 
-            if (playlist.Queue.Count > 0) {
-                if(settings.QueueIndex.HasValue) {
-                    do {
+                if(playlist.Queue.Count > 0)
+                {
+                    if(settings.QueueIndex.HasValue)
+                    {
+                        do
+                        {
+                            playlist.Next(true);
+                        }
+                        while((playlist.QueueIndex ?? 0) < settings.QueueIndex.Value);
+                    }
+                    else
+                    {
                         playlist.Next(true);
-                    } while((playlist.QueueIndex ?? 0) < settings.QueueIndex.Value);
-                } else {
-                    playlist.Next(true);
+                    }
                 }
             }
 
