@@ -43,18 +43,6 @@ namespace PlayerInterface.ViewModels {
 
         public AppSettingsViewModel SettingsViewModel { get; }
 
-        private bool _UIEnabled;
-
-        public bool UIEnabled {
-            get { return _UIEnabled; }
-            set {
-                if(_UIEnabled != value) {
-                    _UIEnabled = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, PlayingVm playingVm, NextPrevVm nextPrevVm) {
             Settings = settings;
             this.playlist = playlist;
@@ -62,7 +50,7 @@ namespace PlayerInterface.ViewModels {
             Playing = playingVm;
             NextPrev = nextPrevVm;
 
-            Playlist = new PlaylistVm(Settings, playlist, player, e => UIEnabled = e, s => PlaySongCommand.Execute(s));
+            Playlist = new PlaylistVm(Settings, playlist, player, s => PlaySongCommand.Execute(s));
             SettingsViewModel = new AppSettingsViewModel(Settings);
 
             PlaySongCommand = new AsyncCommand<Song>(
@@ -78,8 +66,6 @@ namespace PlayerInterface.ViewModels {
             };
             
             SongPlayer.SongChanged += SongPlayer_SongChanged;
-
-            UIEnabled = true;
         }
 
         private void SongPlayer_SongChanged(object sender, PlayerCore.PlayerEventArgs.SongChangedEventArgs e) {
@@ -94,10 +80,7 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        private async Task StartPlayingAsync(Song s) {
-            UIEnabled = false;
-            await Task.Run(() => StartPlaying(s));
-            UIEnabled = true;
-        }
+        private Task StartPlayingAsync(Song s)
+            => Task.Run(() => StartPlaying(s));
     }
 }

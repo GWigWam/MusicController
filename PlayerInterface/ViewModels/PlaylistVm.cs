@@ -57,7 +57,8 @@ namespace PlayerInterface.ViewModels
 
         private Action<Song> _playSong;
 
-        public PlaylistVm(AppSettings settings, Playlist playlist, SongPlayer songPlayer, Action<bool> setUiEnabled, Action<Song> playSong) {
+        public PlaylistVm(AppSettings settings, Playlist playlist, SongPlayer songPlayer, Action<Song> playSong)
+        {
             _playlist = playlist;
             _settings = settings;
             _playSong = playSong;
@@ -67,7 +68,7 @@ namespace PlayerInterface.ViewModels
             _playlist.QueueChanged += (_, _) => UpdateQueueDisplay();
 
             AllPlaylistItems = new ObservableCollection<SongViewModel>();
-            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlaylistItems, this);
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlaylistItems, AllPlaylistItems);
             PlaylistItems = AllPlaylistItems;
 
             SortByCommand = new RelayCommand<PropertyInfo>(SortByProperty);
@@ -187,28 +188,31 @@ namespace PlayerInterface.ViewModels
             SongViewModel toSvm(Song song) => new SongViewModel(song, _settings, IsCurrentSong, _playSong, Enqueue, RemoveSong);
             SongViewModel findSvm(Song song) => AllPlaylistItems.First(i => i.Song == song);
 
-            if(e.Action == NotifyCollectionChangedAction.Add)
+            lock(AllPlaylistItems)
             {
-                AllPlaylistItems.AddRange(e.NewItems.OfType<Song>().Select(toSvm));
-            }
-            else if(e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                AllPlaylistItems.RemoveRange(e.OldItems.OfType<Song>().Select(findSvm));
-            }
-            else if(e.Action == NotifyCollectionChangedAction.Move)
-            {
-                var moved = e.NewItems.OfType<Song>().Select(findSvm).First();
-                AllPlaylistItems.RemoveAt(e.OldStartingIndex);
-                AllPlaylistItems.Insert(e.NewStartingIndex, moved);
-            }
-            else if(e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                AllPlaylistItems.Clear();
-                AllPlaylistItems.AddRange(_playlist.Select(toSvm));
-            }
-            else
-            {
-                throw new NotImplementedException();
+                if(e.Action == NotifyCollectionChangedAction.Add)
+                {
+                    AllPlaylistItems.AddRange(e.NewItems.OfType<Song>().Select(toSvm));
+                }
+                else if(e.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    AllPlaylistItems.RemoveRange(e.OldItems.OfType<Song>().Select(findSvm));
+                }
+                else if(e.Action == NotifyCollectionChangedAction.Move)
+                {
+                    var moved = e.NewItems.OfType<Song>().Select(findSvm).First();
+                    AllPlaylistItems.RemoveAt(e.OldStartingIndex);
+                    AllPlaylistItems.Insert(e.NewStartingIndex, moved);
+                }
+                else if(e.Action == NotifyCollectionChangedAction.Reset)
+                {
+                    AllPlaylistItems.Clear();
+                    AllPlaylistItems.AddRange(_playlist.Select(toSvm));
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
             DisplayedSongsChanged?.Invoke(this, new EventArgs());
         }

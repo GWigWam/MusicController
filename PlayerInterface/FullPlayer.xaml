@@ -90,7 +90,7 @@
                 </Grid>
             </Border>
         </Grid>
-        <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackground]}" IsEnabled="{Binding UIEnabled}">
+        <Grid x:Name="Grid_Tabs" Grid.Row="1" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackground]}">
             <Grid Visibility="Visible" x:Name="Grid_Tab_Main">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
