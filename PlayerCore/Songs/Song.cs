@@ -41,6 +41,6 @@ namespace PlayerCore.Songs
         public virtual bool Equals(Song? other) => Equals(this, other);
         public bool Equals(Song? x, Song? y) => x?.GetHashCode() == y?.GetHashCode();        
         public int GetHashCode(Song obj) => obj.GetHashCode();
-        public override int GetHashCode() => Path.GetHashCode();
+        public override int GetHashCode() => Path.ToLower().GetHashCode();
     }
 }

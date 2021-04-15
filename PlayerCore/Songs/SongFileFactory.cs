@@ -15,14 +15,13 @@ namespace PlayerCore.Songs
 
         public static async Task<Song?> GetAsync(string filePath)
         {
-            filePath = filePath.ToLower();
-            if(Cache.TryGetValue(filePath, out var cached))
+            if(Cache.TryGetValue(filePath.ToLower(), out var cached))
             {
                 return cached;
             }
             else if(await CreateAsync(filePath) is Song res)
             {
-                Cache.TryAdd(filePath, res);
+                Cache.TryAdd(filePath.ToLower(), res);
                 return res;
             }
             return null;
@@ -38,7 +37,7 @@ namespace PlayerCore.Songs
                 try
                 {
                     var fileInfo = TagLib.File.Create(file.FullName);
-                    var result = new Song(filePath, fileInfo.Tag.Title ?? file.Name.Replace(file.Extension, ""), fileInfo.Properties.Duration) {
+                    var result = new Song(file.FullName, fileInfo.Tag.Title ?? file.Name.Replace(file.Extension, ""), fileInfo.Properties.Duration) {
                         BitRate = fileInfo.Properties.AudioBitrate,
                         Artist = fileInfo.Tag.FirstPerformer,
                         Album = fileInfo.Tag.Album,
