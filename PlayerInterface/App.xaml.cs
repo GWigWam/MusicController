@@ -45,6 +45,8 @@ namespace PlayerInterface {
                 }
             };
 
+            SetupVolume(settings, player);
+
             SongStats.SetupStats(settings, player);
 
             var playlist = new Playlist();
@@ -103,6 +105,46 @@ namespace PlayerInterface {
                 set.WriteToDisc();
             }
             return SettingsFile.ReadSettingFile<AppSettings>(AppSettingsFileName);
+        }
+
+        private static void SetupVolume(AppSettings settings, SongPlayer player)
+        {
+            var volume = new PlayerVolume {
+                MasterVolumeDb = settings.MasterVolumeDb,
+                GainPreampDb = settings.GainPreampDb
+            };
+            setGain(player.CurrentSong);
+            useVolume();
+
+            settings.Changed += (s, a) => {
+                if(a.ChangedPropertyName == nameof(AppSettings.MasterVolumeDb))
+                {
+                    volume.MasterVolumeDb = settings.MasterVolumeDb;
+                }
+                else if(a.ChangedPropertyName == nameof(AppSettings.GainPreampDb))
+                {
+                    volume.GainPreampDb = settings.GainPreampDb;
+                }
+                else if(a.ChangedPropertyName == nameof(AppSettings.UseFileGain))
+                {
+                    setGain(player.CurrentSong);
+                }
+            };
+
+            player.SongChanged += (s, a) => setGain(a.Next);
+
+            volume.VolumeChanged += (_, _) => useVolume();
+
+            void setGain(Song? song)
+            {
+                if(song is not null)
+                {
+                    volume.GainDb = settings.UseFileGain ? song.AlbumGain ?? song.TrackGain : null;
+                }
+            }
+
+            void useVolume()
+                => player.Volume = (float)volume.OutputVolume;
         }
 
         protected override void OnExit(ExitEventArgs e) {

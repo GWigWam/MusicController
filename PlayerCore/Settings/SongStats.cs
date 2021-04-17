@@ -14,17 +14,6 @@ namespace PlayerCore.Settings {
 
         public string Path { get; }
 
-        private float? volume = null;
-        public float? Volume {
-            get { return volume; }
-            set {
-                if(value != volume) {
-                    volume = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Volume)));
-                }
-            }
-        }
-
         private int playCount = 0;
         public int PlayCount {
             get { return playCount; }
@@ -40,31 +29,11 @@ namespace PlayerCore.Settings {
             Path = path;
         }
 
-        public static void SetupStats(AppSettings settings, SongPlayer player) {
-            player.SongChanged += (_, args) => {
-                const float defVolume = 0.5f;
-
-                if(args.Previous is Song prev)
-                {
-                    var prevStats = settings.GetSongStats(prev);
-                    prevStats.Volume = player.Volume;
-                }
-
-                if(args.Next is Song next)
-                {
-                    var nextStats = settings.GetSongStats(next);
-                    var nextVolume = nextStats.Volume;
-
-                    if(nextVolume.HasValue) {
-                        player.Volume = nextVolume.Value;
-                    } else {
-                        player.Volume = defVolume;
-                    }
-                }
-            };
-
+        public static void SetupStats(AppSettings settings, SongPlayer player)
+        {
             player.PlayingStopped += (_, a) => {
-                if(a.PlayedToEnd && player.CurrentSong != null) {
+                if(a.PlayedToEnd && player.CurrentSong != null)
+                {
                     settings.GetSongStats(player.CurrentSong).PlayCount++;
                 }
             };

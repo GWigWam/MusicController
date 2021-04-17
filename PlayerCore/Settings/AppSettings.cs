@@ -141,6 +141,39 @@ namespace PlayerCore.Settings {
         }
 
         [JsonIgnore]
+        public double _MasterVolumeDb = Volume.Linear.ToDecibel(0.5);
+        [JsonProperty]
+        public double MasterVolumeDb {
+            get => _MasterVolumeDb;
+            set {
+                _MasterVolumeDb = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(MasterVolumeDb)));
+            }
+        }
+
+        [JsonIgnore]
+        public bool _UseFileGain = false;
+        [JsonProperty]
+        public bool UseFileGain {
+            get => _UseFileGain;
+            set {
+                _UseFileGain = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(UseFileGain)));
+            }
+        }
+        
+        [JsonIgnore]
+        public double _GainPreampDb = 0;
+        [JsonProperty]
+        public double GainPreampDb {
+            get => _GainPreampDb;
+            set {
+                _GainPreampDb = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(GainPreampDb)));
+            }
+        }
+
+        [JsonIgnore]
         private List<string> _StartupSongs { get; set; } = new List<string>();
 
         [JsonIgnore]

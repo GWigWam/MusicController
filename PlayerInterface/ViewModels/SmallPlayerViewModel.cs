@@ -14,12 +14,13 @@ namespace PlayerInterface.ViewModels {
     public class SmallPlayerViewModel {
 
         public PlayingVm Playing { get; }
-
         public NextPrevVm NextPrev { get; }
+        public VolumeVm Volume { get; }
 
-        public SmallPlayerViewModel(PlayingVm playingVm, NextPrevVm nextPrevVm) {
+        public SmallPlayerViewModel(PlayingVm playingVm, NextPrevVm nextPrevVm, AppSettings settings) {
             Playing = playingVm;
             NextPrev = nextPrevVm;
+            Volume = new VolumeVm(settings);
         }
     }
 }

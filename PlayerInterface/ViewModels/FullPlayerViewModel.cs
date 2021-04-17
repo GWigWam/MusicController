@@ -37,6 +37,8 @@ namespace PlayerInterface.ViewModels {
 
         public PlaylistVm Playlist { get; }
 
+        public VolumeVm Volume { get; }
+
         public ICommand PlaySongCommand { get; }
         
         public string PlaylistStats => $"{playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist?.Sum(s => s.TrackLength.Ticks) ?? 0))}";
@@ -50,8 +52,9 @@ namespace PlayerInterface.ViewModels {
             Playing = playingVm;
             NextPrev = nextPrevVm;
 
-            Playlist = new PlaylistVm(Settings, playlist, player, s => PlaySongCommand.Execute(s));
-            SettingsViewModel = new AppSettingsViewModel(Settings);
+            Playlist = new PlaylistVm(settings, playlist, player, s => PlaySongCommand.Execute(s));
+            SettingsViewModel = new AppSettingsViewModel(settings);
+            Volume = new VolumeVm(settings);
 
             PlaySongCommand = new AsyncCommand<Song>(
                 execute: inp => StartPlayingAsync(inp),

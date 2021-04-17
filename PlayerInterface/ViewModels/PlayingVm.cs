@@ -46,14 +46,6 @@ namespace PlayerInterface.ViewModels {
         public Brush ElapsedColor => SongPlayer?.PlayerState == PlayerState.Playing ? System.Windows.SystemColors.HighlightBrush :
             (SongPlayer?.PlayerState == PlayerState.Paused ? Brushes.OrangeRed : Brushes.Transparent);
 
-        public float Volume {
-            get { return (float)Math.Round(SongPlayer.Volume, 2); }
-            set {
-                SongPlayer.Volume = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public PlayingVm(SongPlayer player, TransitionManager transitionMngr) {
             SongPlayer = player;
             TransitionMngr = transitionMngr;
@@ -61,7 +53,6 @@ namespace PlayerInterface.ViewModels {
             SongPlayer.SongChanged += (s, a) => RaisePropertyChanged(nameof(ElapsedFraction), nameof(ElapsedStr));
             SongPlayer.PlayingStopped += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
             SongPlayer.PlaybackStateChanged += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed), nameof(ElapsedColor));
-            SongPlayer.VolumeChanged += (s, a) => RaisePropertyChanged(nameof(Volume));
             TransitionMngr.TransitionChanged += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
 
             UpdateTimer = new Timer() {

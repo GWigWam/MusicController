@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:PlayerInterface"
         xmlns:cc="clr-namespace:PlayerInterface.CustomControls"
         xmlns:th="clr-namespace:PlayerInterface.Themes"
-        mc:Ignorable="d"
+        xmlns:vms="clr-namespace:PlayerInterface.ViewModels"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vms:SmallPlayerViewModel}"
         Title="MusicController"
         Height="40" Width="220"
         WindowStyle="None" ShowInTaskbar="False" ResizeMode="NoResize"
@@ -42,7 +43,7 @@
             <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding Playing.SwitchButtonImgSource}" Command="{Binding Playing.SwitchCommand}" />
             <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
             <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
-            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="3" Value="{Binding Playing.Volume}" ToolTip="{Binding Playing.Volume}"
+            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="3" Value="{Binding Volume.MasterVolume}" ToolTip="{Binding Volume.MasterVolume}"
                 VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                 Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01" />
             <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="4" Image="res/img/ShowFull.png" />

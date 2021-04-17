@@ -37,6 +37,16 @@ namespace PlayerInterface.ViewModels {
             set => Settings.Theme = value;
         }
 
+        public bool UseFileGain {
+            get => Settings.UseFileGain;
+            set => Settings.UseFileGain = value;
+        }
+
+        public double GainPreampDb {
+            get => Settings.GainPreampDb;
+            set => Settings.GainPreampDb = value;
+        }
+
         public ObservableCollection<ExplorerItem> LoadPaths { get; private set; }
 
         public IBaseCommand SaveToDiskCommand { get; private set; }

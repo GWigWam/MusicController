@@ -26,7 +26,7 @@ namespace PlayerInterface {
             var playVm = new PlayingVm(songPlayer, transitionMngr);
             var npVm = new NextPrevVm(songPlayer, playlist);
 
-            var smallVm = new SmallPlayerViewModel(playVm, npVm);
+            var smallVm = new SmallPlayerViewModel(playVm, npVm, settings);
             var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, playVm, npVm);
 
             CreateFullPlayer(!settings.StartMinimized, fullVm);

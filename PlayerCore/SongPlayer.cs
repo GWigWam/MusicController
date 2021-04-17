@@ -100,7 +100,6 @@ namespace PlayerCore {
                     if(AudioFileReader != null) {
                         AudioFileReader.Volume = _Volume;
                     }
-                    VolumeChanged?.Invoke(this, _Volume);
                 }
             }
         }
@@ -110,8 +109,6 @@ namespace PlayerCore {
         public event EventHandler<SongChangedEventArgs> SongChanged;
 
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
-
-        public event EventHandler<float> VolumeChanged;
 
         public SongPlayer(float volume = 1) {
             Volume = volume;

@@ -10,7 +10,7 @@
         xmlns:vme="clr-namespace:PlayerInterface.ViewModels.FolderExplore"
         xmlns:cnv="clr-namespace:PlayerInterface.ValueConverters"
         xmlns:th="clr-namespace:PlayerInterface.Themes"
-        mc:Ignorable="d"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:FullPlayerViewModel}"
         Title="{Binding StatusText}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=390}" MinHeight="230" Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=300}" MinWidth="190" WindowStyle="None"
         PreviewKeyDown="Window_PreviewKeyDown"
         AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}">
@@ -140,7 +140,7 @@
                     <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
                     <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
                     <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding Playlist.ShuffleCommand}" />
-                    <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" Value="{Binding Playing.Volume}" ToolTip="{Binding Playing.Volume}"
+                    <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" Value="{Binding Volume.MasterVolume}" ToolTip="{Binding Volume.MasterVolume}"
                         VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                         Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01"/>
                 </Grid>
@@ -387,6 +387,16 @@
                         </Grid>
 
                         <Button Content="Export current playlist" Command="{Binding Playlist.ExportCommand}" />
+
+                        <Separator />
+                        <Label Margin="0,3,0,0" Content="Replay gain normalization:" FontWeight="Bold" FontSize="16" Padding="0" />
+                        <CheckBox Content="Read file Album/Track gain tags" IsChecked="{Binding SettingsViewModel.UseFileGain}" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Gain preamp:" />
+                            <TextBox MinWidth="50" Margin="2" Text="{Binding SettingsViewModel.GainPreampDb}" />
+                            <Label Content="dB" />
+                        </StackPanel>
 
                         <Separator />
 

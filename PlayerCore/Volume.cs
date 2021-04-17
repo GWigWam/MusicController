@@ -47,12 +47,14 @@ namespace PlayerCore
 
         public static class Decibel
         {
+            private const double Min = 1.5848931924611141E-05; // -96dB
+
             /// <summary>
             /// Convert decibel volume float to a linear value. <br /> <br />
             /// <c>amplitude = 10^(dB / 20)</c>
             /// </summary>
             public static double ToLinear(double decibelValue)
-                => Math.Pow(10, decibelValue / 20f);
+                => Math.Pow(10, decibelValue / 20f) is var r and > Min ? r : 0;
         }
     }
 }
