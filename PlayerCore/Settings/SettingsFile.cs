@@ -51,20 +51,27 @@ namespace PlayerCore.Settings {
             return task.Result;
         }
 
-        public static async Task<T> ReadSettingFileAsync<T>(string filePath) where T : SettingsFile {
-            try {
-                using(var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                using(var sr = new StreamReader(fs)) {
-                    var fileContent = await sr.ReadToEndAsync();
-                    var read = JsonConvert.DeserializeObject<T>(fileContent, JSonSettings);
-                    read.FullFilePath = filePath;
-                    read.AfterRead();
-                    read.HasUnsavedChanges = false;
-                    return read;
-                }
-            } catch(JsonReaderException jre) {
+        public static async Task<T> ReadSettingFileAsync<T>(string filePath) where T : SettingsFile
+        {
+            try
+            {
+                using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                using var sr = new StreamReader(fs);
+                var fileContent = await sr.ReadToEndAsync();
+
+                var read = JsonConvert.DeserializeObject<T>(fileContent, JSonSettings);
+                read.FullFilePath = filePath;
+                await read.AfterRead();
+                read.HasUnsavedChanges = false;
+
+                return read;
+            }
+            catch(JsonReaderException jre)
+            {
                 throw new Exception($"Invalid json encountered while trying to create {typeof(T).Name} from:\n{filePath}\n{jre}", jre);
-            } catch(FileNotFoundException) {
+            }
+            catch(FileNotFoundException)
+            {
                 return null;
             }
         }
@@ -122,9 +129,7 @@ namespace PlayerCore.Settings {
         /// <summary>
         /// Called after method ReadSettingFile has deserialized a file
         /// </summary>
-        protected virtual void AfterRead() {
-            //Empty
-        }
+        protected virtual Task AfterRead() => Task.CompletedTask;
 
         private bool IsPathValidRootedLocal(string path) {
             Uri pathUri;

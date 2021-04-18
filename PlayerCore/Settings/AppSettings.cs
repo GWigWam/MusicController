@@ -189,11 +189,10 @@ namespace PlayerCore.Settings {
             await WriteStartupSongsM3U();
         }
 
-        protected override void AfterRead() {
-            base.AfterRead();
-            var readTask = Task.Run(ReadStartupSongsM3U);
-            readTask.ConfigureAwait(false);
-            readTask.Wait();
+        protected override async Task AfterRead()
+        {
+            await base.AfterRead();
+            await ReadStartupSongsM3U();
         }
 
         private async Task WriteStartupSongsM3U() {
