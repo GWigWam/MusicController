@@ -85,7 +85,7 @@ namespace PlayerInterface {
                     playlist.SelectFirstMatch(added);
                     if(loadSpecific)
                     {
-                        player.PlayerState = PlayerState.Playing;
+                        player.Play();
                     }
                 }
                 await playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths.Skip(1)));

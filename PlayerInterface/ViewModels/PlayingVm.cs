@@ -26,7 +26,7 @@ namespace PlayerInterface.ViewModels {
         public IBaseCommand SwitchCommand { get; }
 
         public string SwitchButtonImgSource =>
-            SongPlayer?.PlayerState == PlayerState.Playing || TransitionMngr.IsTransitioning ? ImgSourcePause : ImgSourcePlay;
+            SongPlayer.IsPlaying || TransitionMngr.IsTransitioning ? ImgSourcePause : ImgSourcePlay;
 
         public string ElapsedStr => FormatHelper.FormatTimeSpan(SongPlayer.Elapsed);
 
@@ -41,10 +41,12 @@ namespace PlayerInterface.ViewModels {
             }
         }
 
-        public bool EnableChangeElapsed => SongPlayer?.CurrentSong != null && SongPlayer?.PlayerState != PlayerState.Stopped;
+        public bool EnableChangeElapsed => SongPlayer?.CurrentSong != null && (SongPlayer.IsPlaying || SongPlayer.IsPaused);
 
-        public Brush ElapsedColor => SongPlayer?.PlayerState == PlayerState.Playing ? System.Windows.SystemColors.HighlightBrush :
-            (SongPlayer?.PlayerState == PlayerState.Paused ? Brushes.OrangeRed : Brushes.Transparent);
+        public Brush ElapsedColor =>
+            SongPlayer?.IsPlaying == true ? System.Windows.SystemColors.HighlightBrush :
+            SongPlayer?.IsPaused == true ? Brushes.OrangeRed
+                : Brushes.Transparent;
 
         public PlayingVm(SongPlayer player, TransitionManager transitionMngr) {
             SongPlayer = player;
@@ -66,10 +68,10 @@ namespace PlayerInterface.ViewModels {
                 execute: () => {
                     if (TransitionMngr.IsTransitioning) {
                         TransitionMngr.CancelTransition();
-                    } else if (SongPlayer.PlayerState == PlayerState.Playing) {
-                        SongPlayer.PlayerState = PlayerState.Paused;
+                    } else if (SongPlayer.IsPlaying) {
+                        SongPlayer.Pause();
                     } else {
-                        SongPlayer.PlayerState = PlayerState.Playing;
+                        SongPlayer.Play();
                     }
                 },
                 canExecute: () => SongPlayer.CurrentSong != null

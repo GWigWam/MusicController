@@ -78,8 +78,8 @@ namespace PlayerInterface.ViewModels {
 
         private void StartPlaying(Song s) {
             playlist.SelectFirstMatch(s);
-            if (SongPlayer.PlayerState != PlayerState.Playing) {
-                SongPlayer.PlayerState = PlayerState.Playing;
+            if (!SongPlayer.IsPlaying) {
+                SongPlayer.Play();
             }
         }
 

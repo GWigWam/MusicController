@@ -70,7 +70,7 @@ namespace PlayerCore {
         public void StartTransition() {
             var moved = TrackList.Next(Loop);
             if (moved) {
-                Player.PlayerState = PlayerState.Paused;
+                Player.Pause();
 
                 if(PauseAfterCurrent) {
                     PauseAfterCurrent = false;
@@ -82,7 +82,7 @@ namespace PlayerCore {
                     try {
                         IsTransitioning = true;
                         await Task.Delay(SongDelayMs, CancelSrc.Token);
-                        Player.PlayerState = PlayerState.Playing;
+                        Player.Play();
                     } finally {
                         IsTransitioning = false;
                     }
