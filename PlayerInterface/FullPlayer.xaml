@@ -130,19 +130,15 @@
                         <ColumnDefinition Width="30" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <cc:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding Playing.SwitchButtonImgSource}" Command="{Binding Playing.SwitchCommand}">
-                        <cc:ImageButton.ContextMenu>
-                            <ContextMenu>
-                                <CheckBox Content="Pause after this song" IsChecked="{Binding Playing.TransitionMngr.PauseAfterCurrent}" Checked="Bt_PauseAfter_Change" Unchecked="Bt_PauseAfter_Change" />
-                            </ContextMenu>
-                        </cc:ImageButton.ContextMenu>
-                    </cc:ImageButton>
+                    
+                    <cc:PlayButton PlayingVm="{Binding Playing}" />
                     <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
                     <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
                     <cc:ImageButton x:Name="Btn_Shuffle" Grid.Column="3" Image="res/img/Shuffle.png" Command="{Binding Playlist.ShuffleCommand}" />
                     <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="4" Value="{Binding Volume.MasterVolume}" ToolTip="{Binding Volume.MasterVolume}"
                         VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                         Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01"/>
+                    
                 </Grid>
                 <Border Grid.Row="2" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}" BorderThickness="0,2,0,0">
                     <Grid x:Name="Grid_Elapsed">

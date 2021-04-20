@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="PlayerInterface.CustomControls.PlayButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PlayerInterface.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="30">
+    
+    <Grid DataContext="{Binding PlayingVm, RelativeSource={RelativeSource AncestorType=local:PlayButton}}">
+        <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}">
+            <local:ImageButton.ContextMenu>
+                <ContextMenu>
+                    <CheckBox Content="Pause after this song" IsChecked="{Binding TransitionMngr.PauseAfterCurrent}" />
+                </ContextMenu>
+            </local:ImageButton.ContextMenu>
+        </local:ImageButton>
+    </Grid>
+    
+</UserControl>
