@@ -4,17 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PlayerInterface.CustomControls"
+             xmlns:th="clr-namespace:PlayerInterface.Themes"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="30">
     
     <Grid DataContext="{Binding PlayingVm, RelativeSource={RelativeSource AncestorType=local:PlayButton}}">
-        <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}">
-            <local:ImageButton.ContextMenu>
-                <ContextMenu>
-                    <CheckBox Content="Pause after this song" IsChecked="{Binding TransitionMngr.PauseAfterCurrent}" />
-                </ContextMenu>
-            </local:ImageButton.ContextMenu>
-        </local:ImageButton>
+        <local:ImageButton x:Name="Btn_Switch" Grid.Column="0" Image="{Binding SwitchButtonImgSource}" Command="{Binding SwitchCommand}"
+                           MouseRightButtonDown="Btn_Switch_MouseRightButtonDown" />
+
+        <Popup x:Name="Popup" PlacementTarget="{Binding ElementName=Btn_Switch}" Placement="MousePoint" StaysOpen="False">
+            <Border Background="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackground]}" BorderBrush="Black" BorderThickness="1">
+                <Grid Margin="5">
+                    <CheckBox Content="Pause after this song" IsChecked="{Binding TransitionMngr.PauseAfterCurrent}"
+                              Checked="CheckBox_Changed" Unchecked="CheckBox_Changed" />
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
     
 </UserControl>

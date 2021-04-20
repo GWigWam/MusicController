@@ -29,5 +29,15 @@ namespace PlayerInterface.CustomControls
         {
             InitializeComponent();
         }
+
+        private void Btn_Switch_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Popup.IsOpen = !Popup.IsOpen;
+        }
+
+        private void CheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            Popup.IsOpen = false;
+        }
     }
 }
