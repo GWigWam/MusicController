@@ -152,149 +152,157 @@
                         <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
-                
-                <ListBox x:Name="Lb_Playlist" Grid.Row="3" ItemsSource="{Binding Playlist.PlaylistItems}" Margin="2,0" SelectionMode="Extended"
-                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop"
-                         SelectionChanged="Lb_Playlist_SelectionChanged" PreviewMouseWheel="Lb_Playlist_PreviewMouseWheel" >
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="BorderThickness" Value="0" />
-                            <Setter Property="ListBoxItem.AllowDrop" Value="True" />
-                            <EventSetter Event="ListBoxItem.MouseMove" Handler="SongCard_MouseMove" />
-                            <EventSetter Event="ListBoxItem.DragOver" Handler="SongCard_DragOver" />
-                            <EventSetter Event="ListBoxItem.DragEnter" Handler="SongCard_DragEnter" />
-                            <EventSetter Event="ListBoxItem.DragLeave" Handler="SongCard_DragLeave" />
-                            <EventSetter Event="ListBoxItem.Drop" Handler="SongCard_Drop" />
-                            <EventSetter Event="ListBoxItem.PreviewMouseDown" Handler="SongCard_PreviewMouseDown" />
-                            <EventSetter Event="ListBoxItem.MouseUp" Handler="SongCard_MouseUp" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                        <ContentPresenter />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type vm:SongViewModel}">
-                            <Border MinHeight="42" BorderThickness="0,0,0,2">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="BorderBrush" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[THighlight]}" />
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Playing}" Value="True">
-                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[THighlight]}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=IsEnabled}" Value="false">
-                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundDisabled]}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <Grid>
-                                    <Grid Visibility="{Binding FrontVisibility}" ToolTip="{Binding Path}">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Label x:Name="Lb_Title" Padding="2" Grid.Column="0" ToolTip="{Binding Title}" FontWeight="Bold">
-                                                <TextBlock>
+
+                <Grid Grid.Row="3">
+                    
+                    <ListBox x:Name="Lb_Playlist" ItemsSource="{Binding Playlist.PlaylistItems}" Margin="2,0" SelectionMode="Extended"
+                             HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             MouseDoubleClick="Lb_Playlist_MouseDoubleClick" KeyUp="Lb_Playlist_KeyUp" AllowDrop="True" Drop="Lb_Playlist_Drop"
+                             SelectionChanged="Lb_Playlist_SelectionChanged" PreviewMouseWheel="Lb_Playlist_PreviewMouseWheel" >
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="ListBoxItem.AllowDrop" Value="True" />
+                                <EventSetter Event="ListBoxItem.MouseMove" Handler="SongCard_MouseMove" />
+                                <EventSetter Event="ListBoxItem.DragOver" Handler="SongCard_DragOver" />
+                                <EventSetter Event="ListBoxItem.DragEnter" Handler="SongCard_DragEnter" />
+                                <EventSetter Event="ListBoxItem.DragLeave" Handler="SongCard_DragLeave" />
+                                <EventSetter Event="ListBoxItem.Drop" Handler="SongCard_Drop" />
+                                <EventSetter Event="ListBoxItem.PreviewMouseDown" Handler="SongCard_PreviewMouseDown" />
+                                <EventSetter Event="ListBoxItem.MouseUp" Handler="SongCard_MouseUp" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:SongViewModel}">
+                                <Border MinHeight="42" BorderThickness="0,0,0,2">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="BorderBrush" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[THighlight]}" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Playing}" Value="True">
+                                                    <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[THighlight]}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=IsEnabled}" Value="false">
+                                                    <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundDisabled]}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Grid Visibility="{Binding FrontVisibility}" ToolTip="{Binding Path}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Label x:Name="Lb_Title" Padding="2" Grid.Column="0" ToolTip="{Binding Title}" FontWeight="Bold">
                                                     <TextBlock>
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
-                                                                <Setter Property="Visibility" Value="Visible"/>
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding QueueIndex}" Value="{x:Null}">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
-                                                        [<TextBlock Text="{Binding QueueIndex}" />]
-                                                    </TextBlock><TextBlock Text="{Binding Title}">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="{x:Type TextBlock}">
-                                                                <Setter Property="FontStyle" Value="Normal" />
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsStartupSong}" Value="False">
-                                                                        <Setter Property="FontStyle" Value="Italic" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
+                                                        <TextBlock>
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding QueueIndex}" Value="{x:Null}">
+                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                            [<TextBlock Text="{Binding QueueIndex}" />]
+                                                        </TextBlock><TextBlock Text="{Binding Title}">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="{x:Type TextBlock}">
+                                                                    <Setter Property="FontStyle" Value="Normal" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsStartupSong}" Value="False">
+                                                                            <Setter Property="FontStyle" Value="Italic" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
                                                     </TextBlock>
-                                                </TextBlock>
-                                            </Label>
-                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <StackPanel.Style>
-                                                    <Style TargetType="{x:Type StackPanel}">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=Lb_Title}" Value="True">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </StackPanel.Style>
-                                                <StackPanel.Resources>
-                                                    <Style TargetType="Label">
-                                                        <Setter Property="Padding" Value="2,0" />
-                                                        <Setter Property="FontSize" Value="9" />
-                                                        <Setter Property="Foreground" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" />
-                                                    </Style>
-                                                </StackPanel.Resources>
-                                                <Label Content="{Binding TrackLengthStr}" ToolTip="Track Length" />
-                                                <Label Content="{Binding BitRateStr}" ToolTip="Bit Rate" />
-                                                <Label Content="{Binding TrackNrStr}" ToolTip="Track #" />
-                                                <Label Content="{Binding YearStr}" ToolTip="Year" />
-                                                <Label Content="{Binding PlayCountStr}" ToolTip="Play Count" />
-                                            </StackPanel>
-                                        </Grid>
-                                        <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
-                                    </Grid>
-                                    <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MenuItems}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
-                                                <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}"
-                                                        Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_SongCard_Menu_MouseLeftButtonUp">
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" />
+                                                </Label>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <StackPanel.Style>
+                                                        <Style TargetType="{x:Type StackPanel}">
+                                                            <Setter Property="Visibility" Value="Visible" />
                                                             <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
-                                                                </Trigger>
+                                                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=Lb_Title}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
-                                                    </Border.Style>
-                                                    <Viewbox Height="20">
-                                                        <Label Padding="0" Content="{Binding Title}" />
-                                                    </Viewbox>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <StackPanel Height="45" Visibility="{Binding DropUnderHintVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Label Padding="2" Content="Insert below" HorizontalContentAlignment="Center" />
-                                        <Label Padding="0" Content="▼" HorizontalContentAlignment="Center" FontSize="18.667" />
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                                    </StackPanel.Style>
+                                                    <StackPanel.Resources>
+                                                        <Style TargetType="Label">
+                                                            <Setter Property="Padding" Value="2,0" />
+                                                            <Setter Property="FontSize" Value="9" />
+                                                            <Setter Property="Foreground" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}" />
+                                                        </Style>
+                                                    </StackPanel.Resources>
+                                                    <Label Content="{Binding TrackLengthStr}" ToolTip="Track Length" />
+                                                    <Label Content="{Binding BitRateStr}" ToolTip="Bit Rate" />
+                                                    <Label Content="{Binding TrackNrStr}" ToolTip="Track #" />
+                                                    <Label Content="{Binding YearStr}" ToolTip="Year" />
+                                                    <Label Content="{Binding PlayCountStr}" ToolTip="Play Count" />
+                                                </StackPanel>
+                                            </Grid>
+                                            <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
+                                        </Grid>
+                                        <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MenuItems}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
+                                                    <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}"
+                                                            Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_SongCard_Menu_MouseLeftButtonUp">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" />
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <Viewbox Height="20">
+                                                            <Label Padding="0" Content="{Binding Title}" />
+                                                        </Viewbox>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <StackPanel Height="45" Visibility="{Binding DropUnderHintVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Label Padding="2" Content="Insert below" HorizontalContentAlignment="Center" />
+                                            <Label Padding="0" Content="▼" HorizontalContentAlignment="Center" FontSize="18.667" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Canvas>
+                        <Rectangle x:Name="Rect_CurPos" Fill="#A046" Width="18" Height="4" Canvas.Right="2" IsHitTestVisible="False" />
+                    </Canvas>
+                </Grid>
+
                 <Label x:Name="Lb_DropHint" Grid.Row="3" Content="Drag &amp; Drop files here!" Visibility="{Binding ShowDropHint}"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333"
                        Background="{x:Null}" Foreground="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}"

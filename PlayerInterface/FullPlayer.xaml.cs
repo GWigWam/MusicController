@@ -52,6 +52,7 @@ namespace PlayerInterface {
             };
             fpvm.Playlist.DisplayedSongsChanged += (s, a) => Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
             fpvm.SongPlayer.SongChanged += (s, a) => Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
+            
             IsVisibleChanged += (s, a) => {
                 if (IsVisible) {
                     Application.Current.Dispatcher.Invoke(ScrollCurrentSongIntoView);
@@ -59,6 +60,36 @@ namespace PlayerInterface {
             };
 
             SizeChanged += (s, a) => UpdateStatusTextAnimation();
+
+            setupCurPosRect();
+
+            void setupCurPosRect()
+            {
+                updateCurPosRect();
+                fpvm.Playlist.DisplayedSongsChanged += (s, a) => Application.Current.Dispatcher.BeginInvoke(new Action(updateCurPosRect));
+                fpvm.SongPlayer.SongChanged += (s, a) => Application.Current.Dispatcher.BeginInvoke(new Action(updateCurPosRect));
+
+                void updateCurPosRect()
+                {
+                    const int topMargin = 20;
+
+                    var playing = Lb_Playlist.Items.OfType<SongViewModel>().FirstOrDefault(svm => svm.Playing);
+                    if(Lb_Playlist.Items.Count > 12)
+                    {
+                        var ix = Lb_Playlist.Items.IndexOf(playing);
+                        var frac = (double)ix / Lb_Playlist.Items.Count;
+                        var scrollHeight = Lb_Playlist.ActualHeight - (2 * topMargin);
+
+                        var y = (scrollHeight * frac) - (Rect_CurPos.Height / 2) + topMargin;
+                        Canvas.SetTop(Rect_CurPos, y);
+                        Rect_CurPos.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        Rect_CurPos.Visibility = Visibility.Collapsed;
+                    }
+                }
+            }
         }
 
         public void MinimizeToTray() {
