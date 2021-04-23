@@ -308,11 +308,12 @@ namespace PlayerInterface {
         private void SongCard_MouseUp(object sender, MouseEventArgs e) {
             ItemsToDrag = null;
 
-            var mbea = e as MouseButtonEventArgs;
-            var svm = (sender as ListBoxItem)?.DataContext as SongViewModel;
-
-            if(svm != null && mbea != null && mbea.ChangedButton == MouseButton.Right) {
-                svm.CurDisplay = (svm.CurDisplay == SongViewModel.DisplayType.Menu) ? SongViewModel.DisplayType.Front : SongViewModel.DisplayType.Menu;
+            if(e is MouseButtonEventArgs mbea && mbea.ChangedButton == MouseButton.Right)
+            {
+                if(sender is ListBoxItem lbi && lbi.DataContext is SongViewModel svm)
+                {
+                    svm.IsMenuVisible = true;
+                }
             }
         }
 
@@ -348,10 +349,11 @@ namespace PlayerInterface {
             }
         }
 
-        private void Border_SongCard_Menu_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+        private void Border_SongCard_Menu_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             if(sender is FrameworkElement fe && fe.DataContext is SongMenuItemViewModel smivm && fe.Tag is SongViewModel svm) {
-                svm.CurDisplay = SongViewModel.DisplayType.Front;
+                svm.IsMenuVisible = false;
                 smivm.Execute();
+                e.Handled = true;
             }
         }
 

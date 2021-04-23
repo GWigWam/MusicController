@@ -266,32 +266,39 @@
                                             </Grid>
                                             <Label Padding="2" Grid.Row="1" Content="{Binding SubTitle}" />
                                         </Grid>
-                                        <ItemsControl Visibility="{Binding MenuVisibility}" ItemsSource="{Binding MenuItems}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
-                                                    <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}"
-                                                            Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonUp="Border_SongCard_Menu_MouseLeftButtonUp">
-                                                        <Border.Style>
-                                                            <Style TargetType="Border">
-                                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" />
-                                                                <Style.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
-                                                                    </Trigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Border.Style>
-                                                        <Viewbox Height="20">
-                                                            <Label Padding="0" Content="{Binding Title}" />
-                                                        </Viewbox>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+
+                                        <Popup Placement="MousePoint" StaysOpen="False" IsOpen="{Binding IsMenuVisible}">
+                                            <Border BorderBrush="Black" BorderThickness="1">
+                                                <ItemsControl ItemsSource="{Binding MenuItems}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type vm:SongMenuItemViewModel}">
+                                                            <Border x:Name="Border_SongCard_Menu" BorderThickness="0,0,0,1" BorderBrush="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBorder]}"
+                                                                    Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=Grid}}" MouseLeftButtonDown="Border_SongCard_Menu_MouseLeftButtonDown">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundLight]}" />
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TBackgroundHighlight]}" />
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <Viewbox Height="20" Margin="10,5">
+                                                                    <Label Padding="0" Content="{Binding Title}" />
+                                                                </Viewbox>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Border>
+                                        </Popup>
+                                        
                                         <StackPanel Height="45" Visibility="{Binding DropUnderHintVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <Label Padding="2" Content="Insert below" HorizontalContentAlignment="Center" />
                                             <Label Padding="0" Content="▼" HorizontalContentAlignment="Center" FontSize="18.667" />
                                         </StackPanel>
+                                        
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -304,7 +311,7 @@
                 </Grid>
 
                 <Label x:Name="Lb_DropHint" Grid.Row="3" Content="Drag &amp; Drop files here!" Visibility="{Binding ShowDropHint}"
-                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333"
+                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="21.333"
                        Background="{x:Null}" Foreground="{Binding Source={x:Static th:ThemeManager.Instance}, Path=Theme[TText]}"
                        AllowDrop="True" Drop="Lb_Playlist_Drop" />
                 

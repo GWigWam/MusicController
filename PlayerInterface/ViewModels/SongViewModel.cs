@@ -94,14 +94,27 @@ namespace PlayerInterface.ViewModels {
             set {
                 if(value != curDisplay) {
                     curDisplay = value;
-                    RaisePropertyChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(MenuVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
+                    RaisePropertyChanged(nameof(CurDisplay), nameof(FrontVisibility), nameof(DropUnderHintVisibility), nameof(MenuItems));
                 }
             }
         }
 
         public Visibility FrontVisibility => CurDisplay == DisplayType.Front ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility MenuVisibility => CurDisplay == DisplayType.Menu ? Visibility.Visible : Visibility.Collapsed;
         public Visibility DropUnderHintVisibility => CurDisplay == DisplayType.DropUnderHint ? Visibility.Visible : Visibility.Collapsed;
+
+        private bool _IsMenuVisible;
+        public bool IsMenuVisible {
+            get => _IsMenuVisible;
+            set {
+                if(_IsMenuVisible != value)
+                {
+                    _IsMenuVisible = value;
+                    RaisePropertyChanged(nameof(IsMenuVisible));
+                    RaisePropertyChanged(nameof(MenuItems));
+                }
+            }
+        }
+
 
         public IEnumerable<SongMenuItemViewModel> MenuItems => GetMenuItems();
 
@@ -147,11 +160,8 @@ namespace PlayerInterface.ViewModels {
 
         public static implicit operator Song(SongViewModel svm) => svm.Song;
 
-        private IEnumerable<SongMenuItemViewModel> GetMenuItems() {
-            if(CurDisplay != DisplayType.Menu) {
-                yield break;
-            }
-
+        private IEnumerable<SongMenuItemViewModel> GetMenuItems()
+        {
             if(!Playing) {
                 yield return new SongMenuItemViewModel("Play now", () => playSong(Song));
                 yield return new SongMenuItemViewModel("Enqueue", () => enqueue(Song));
@@ -184,7 +194,7 @@ namespace PlayerInterface.ViewModels {
         }
 
         public enum DisplayType {
-            Front, Menu, DropUnderHint
+            Front, DropUnderHint
         }
     }
 }
