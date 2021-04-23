@@ -36,12 +36,13 @@ namespace PlayerInterface.ViewModels {
 
         private AppSettings Settings { get; }
         
-        private bool playing = false;
+        private bool _Playing = false;
         public bool Playing {
-            get { return playing; }
+            get => _Playing;
             set {
-                if(playing != value) {
-                    playing = value;
+                if(_Playing != value)
+                {
+                    _Playing = value;
                     RaisePropertyChanged();
                 }
             }
@@ -117,7 +118,6 @@ namespace PlayerInterface.ViewModels {
 
         public bool IsStartupSong => Settings.IsStartupSong(Song);
 
-        private readonly Predicate<Song> isCurrentSong;
         private readonly Action<Song> playSong;
         private readonly Action<Song> enqueue;
         private readonly Action<Song> removeSong;
@@ -128,15 +128,17 @@ namespace PlayerInterface.ViewModels {
         public SongViewModel() {
         }
 
-        public SongViewModel(Song song, AppSettings settings, Predicate<Song> ics, Action<Song> ps, Action<Song> enqueue, Action<Song> rs) {
-            curDisplay = DisplayType.Front;
+        public SongViewModel(Song song, AppSettings settings, bool isPlaying, Action<Song> ps, Action<Song> enqueue, Action<Song> rs)
+        {
             Song = song;
             Settings = settings;
+            Playing = isPlaying;
 
-            isCurrentSong = ics;
             playSong = ps;
             this.enqueue = enqueue;
             removeSong = rs;
+
+            curDisplay = DisplayType.Front;
 
             var stats = settings.GetSongStats(song);
             PlayCount = stats.PlayCount;
@@ -150,7 +152,7 @@ namespace PlayerInterface.ViewModels {
                 yield break;
             }
 
-            if(!isCurrentSong(Song)) {
+            if(!Playing) {
                 yield return new SongMenuItemViewModel("Play now", () => playSong(Song));
                 yield return new SongMenuItemViewModel("Enqueue", () => enqueue(Song));
             }

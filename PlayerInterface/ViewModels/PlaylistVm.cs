@@ -183,9 +183,8 @@ namespace PlayerInterface.ViewModels
 
         private void HandlePlaylistCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            bool IsCurrentSong(Song s) => _playlist.CurrentSong == s;
             void RemoveSong(Song s) => _playlist.Remove(s);
-            SongViewModel toSvm(Song song) => new SongViewModel(song, _settings, IsCurrentSong, _playSong, Enqueue, RemoveSong);
+            SongViewModel toSvm(Song song) => new SongViewModel(song, _settings, _playlist.CurrentSong == song, _playSong, Enqueue, RemoveSong);
             SongViewModel findSvm(Song song) => AllPlaylistItems.First(i => i.Song == song);
 
             lock(AllPlaylistItems)
