@@ -230,12 +230,27 @@ namespace PlayerInterface {
             ((TextBox)sender).SelectAll();
         }
 
-        private void SongCard_MouseMove(object sender, MouseEventArgs e) {
-            if(e.LeftButton == MouseButtonState.Pressed) {
-                var item = sender as ListBoxItem;
-                if(item != null && item.IsSelected && (ItemsToDrag?.Length ?? -1) > 0) {
-                    DragDrop.DoDragDrop(item, ItemsToDrag, DragDropEffects.Move);
+        private Point? DragLeftClickPoint = null;
+        private void SongCard_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(e.LeftButton == MouseButtonState.Pressed)
+            {
+                if(sender is ListBoxItem item && item.IsSelected && (ItemsToDrag?.Length ?? -1) > 0)
+                {
+                    var mPos = e.GetPosition(this);
+                    if(DragLeftClickPoint == null)
+                    {
+                        DragLeftClickPoint = mPos;
+                    }
+                    else if((mPos - DragLeftClickPoint.Value).Length > 20) // Prevent accidental drag by enforcing minimum drag distance
+                    {
+                        DragDrop.DoDragDrop(item, ItemsToDrag, DragDropEffects.Move);
+                    }
                 }
+            }
+            else
+            {
+                DragLeftClickPoint = null;
             }
         }
 
