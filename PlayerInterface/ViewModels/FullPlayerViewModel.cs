@@ -52,14 +52,11 @@ namespace PlayerInterface.ViewModels {
             Playing = playingVm;
             NextPrev = nextPrevVm;
 
-            Playlist = new PlaylistVm(settings, playlist, player, s => PlaySongCommand.Execute(s));
+            Playlist = new PlaylistVm(settings, playlist, player, StartPlaying);
             SettingsViewModel = new AppSettingsViewModel(settings);
             Volume = new VolumeVm(settings);
 
-            PlaySongCommand = new AsyncCommand<Song>(
-                execute: inp => StartPlayingAsync(inp),
-                canExecute: s => SongPlayer != null && s != null
-            );
+            PlaySongCommand = new RelayCommand<Song>(StartPlaying, s => SongPlayer != null && s != null);
 
             playlist.CollectionChanged += (s, a) => {
                 if(a.Action == NotifyCollectionChangedAction.Add || a.Action == NotifyCollectionChangedAction.Remove || a.Action == NotifyCollectionChangedAction.Reset)
@@ -82,8 +79,5 @@ namespace PlayerInterface.ViewModels {
                 SongPlayer.Play();
             }
         }
-
-        private Task StartPlayingAsync(Song s)
-            => Task.Run(() => StartPlaying(s));
     }
 }
