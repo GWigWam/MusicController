@@ -409,6 +409,8 @@
                             <Label Content="dB" />
                         </StackPanel>
 
+                        <TextBlock Text="{Binding Playing.CurrentGainStr}" FontStyle="Italic" />
+
                         <Separator />
 
                         <Label Margin="0,3,0,0" Content="Load on startup:" FontWeight="Bold" FontSize="16" Padding="0" />

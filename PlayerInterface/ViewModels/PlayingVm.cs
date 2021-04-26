@@ -1,4 +1,5 @@
 ﻿using PlayerCore;
+using PlayerCore.Songs;
 using PlayerInterface.Commands;
 using System;
 using System.Collections.Generic;
@@ -48,11 +49,20 @@ namespace PlayerInterface.ViewModels {
             SongPlayer?.IsPaused == true ? Brushes.OrangeRed
                 : Brushes.Transparent;
 
+        public string CurrentGainStr =>
+            SongPlayer.CurrentSong is Song s ?
+                s.AlbumGain is double ag ?
+                    $"Curent gain: {ag:N2}dB (album gain)" :
+                    s.TrackGain is double tg ? 
+                        $"Current gain: {tg:N2}dB (track gain)" :
+                        $"Current track has nog gain tags" :
+                "[No song selected]";
+
         public PlayingVm(SongPlayer player, TransitionManager transitionMngr) {
             SongPlayer = player;
             TransitionMngr = transitionMngr;
 
-            SongPlayer.SongChanged += (s, a) => RaisePropertyChanged(nameof(ElapsedFraction), nameof(ElapsedStr));
+            SongPlayer.SongChanged += (s, a) => RaisePropertyChanged(nameof(ElapsedFraction), nameof(ElapsedStr), nameof(CurrentGainStr));
             SongPlayer.PlayingStopped += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
             SongPlayer.PlaybackStateChanged += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed), nameof(ElapsedColor));
             TransitionMngr.TransitionChanged += (s, a) => RaisePropertyChanged(nameof(SwitchButtonImgSource), nameof(EnableChangeElapsed));
