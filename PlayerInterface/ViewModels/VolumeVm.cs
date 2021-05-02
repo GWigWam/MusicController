@@ -21,6 +21,8 @@ namespace PlayerInterface.ViewModels
             }
         }
 
+        public string VolumeStr => $"{MasterVolume} ({Settings.MasterVolumeDb:N2}dB)";
+
         private AppSettings Settings { get; }
 
         public VolumeVm(AppSettings settings)
@@ -30,7 +32,7 @@ namespace PlayerInterface.ViewModels
             Settings.Changed += (s, a) => {
                 if(a.ChangedPropertyName == nameof(AppSettings.MasterVolumeDb))
                 {
-                    RaisePropertyChanged(nameof(MasterVolume));
+                    RaisePropertyChanged(nameof(MasterVolume), nameof(VolumeStr));
                 }
             };
         }

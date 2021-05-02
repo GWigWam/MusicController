@@ -44,7 +44,7 @@
             <cc:PlayButton PlayingVm="{Binding Playing}" />
             <cc:ImageButton x:Name="Btn_Prev" Grid.Column="1" Image="res/img/Prev.png" Command="{Binding NextPrev.PreviousCommand}" />
             <cc:ImageButton x:Name="Btn_Next" Grid.Column="2" Image="res/img/Next.png" Command="{Binding NextPrev.NextCommand}" />
-            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="3" Value="{Binding Volume.MasterVolume}" ToolTip="{Binding Volume.MasterVolume}"
+            <cc:ScrollSlider x:Name="Slr_Volume" Grid.Column="3" Value="{Binding Volume.MasterVolume}" ToolTip="{Binding Volume.VolumeStr}"
                 VerticalAlignment="Center" Margin="1,0" IsMoveToPointEnabled="True" TickPlacement="BottomRight"
                 Maximum="2" TickFrequency="0.1" LargeChange="0.1" SmallChange="0.01" />
             <cc:ImageButton x:Name="Btn_ShowFull" Grid.Column="4" Image="res/img/ShowFull.png" />
