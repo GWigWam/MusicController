@@ -131,7 +131,10 @@ namespace PlayerInterface {
                 }
             };
 
-            player.SongChanged += (s, a) => setGain(a.Next);
+            player.SongChanged += (s, a) => {
+                setGain(a.Next);
+                useVolume();
+            };
 
             volume.VolumeChanged += (_, _) => useVolume();
 

@@ -55,7 +55,7 @@ namespace PlayerCore
 
         public float Volume {
             set {
-                if(value >= 0 && File != null)
+                if(value >= 0 && File != null && File.Volume != value)
                 {
                     File.Volume = value;
                 }
