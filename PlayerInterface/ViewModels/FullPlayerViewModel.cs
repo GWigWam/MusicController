@@ -41,7 +41,9 @@ namespace PlayerInterface.ViewModels {
 
         public ICommand PlaySongCommand { get; }
         
-        public string PlaylistStats => $"{playlist?.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist?.Sum(s => s.TrackLength.Ticks) ?? 0))}";
+        public string PlaylistStats => Playlist.SelectedPlaylistItems.ToArray() is { Length: > 1 } sel ?
+            $"{sel.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(sel.Sum(svm => svm.Song.TrackLength.Ticks)))}" :
+            $"{playlist.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist.Sum(s => s.TrackLength.Ticks)))}";
 
         public AppSettingsViewModel SettingsViewModel { get; }
 
@@ -64,7 +66,13 @@ namespace PlayerInterface.ViewModels {
                     RaisePropertyChanged(nameof(ShowDropHint), nameof(PlaylistStats));
                 }
             };
-            
+            Playlist.PropertyChanged += (s, a) => {
+                if (a.PropertyName == nameof(Playlist.SelectedPlaylistItems))
+                {
+                    RaisePropertyChanged(nameof(PlaylistStats));
+                }
+            };
+
             SongPlayer.SongChanged += SongPlayer_SongChanged;
         }
 

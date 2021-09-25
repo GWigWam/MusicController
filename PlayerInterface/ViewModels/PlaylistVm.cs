@@ -183,15 +183,13 @@ namespace PlayerInterface.ViewModels
 
         private void HandlePlaylistCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            void RemoveSong(Song s) => _playlist.Remove(s);
-            SongViewModel toSvm(Song song) => new SongViewModel(song, _settings, _playlist.CurrentSong == song, _playSong, Enqueue, RemoveSong);
             SongViewModel findSvm(Song song) => AllPlaylistItems.First(i => i.Song == song);
 
             lock(AllPlaylistItems)
             {
                 if(e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    AllPlaylistItems.AddRange(e.NewItems.OfType<Song>().Select(toSvm));
+                    AllPlaylistItems.AddRange(e.NewItems.OfType<Song>().Select(CreateSvm));
                 }
                 else if(e.Action == NotifyCollectionChangedAction.Remove)
                 {
@@ -206,7 +204,7 @@ namespace PlayerInterface.ViewModels
                 else if(e.Action == NotifyCollectionChangedAction.Reset)
                 {
                     AllPlaylistItems.Clear();
-                    AllPlaylistItems.AddRange(_playlist.Select(toSvm));
+                    AllPlaylistItems.AddRange(_playlist.Select(CreateSvm));
                 }
                 else
                 {
@@ -214,6 +212,18 @@ namespace PlayerInterface.ViewModels
                 }
             }
             DisplayedSongsChanged?.Invoke(this, new EventArgs());
+        }
+
+        private SongViewModel CreateSvm(Song song)
+        {
+            var res = new SongViewModel(song, _settings, _playlist.CurrentSong == song, _playSong, Enqueue, s => _playlist.Remove(s));
+            res.PropertyChanged += (s, a) => {
+                if (a.PropertyName == nameof(SongViewModel.IsSelected))
+                {
+                    RaisePropertyChanged(nameof(SelectedPlaylistItems));
+                }
+            };
+            return res;
         }
 
         public void Enqueue(Song s) {

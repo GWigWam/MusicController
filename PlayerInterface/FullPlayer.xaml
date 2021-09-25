@@ -149,7 +149,7 @@
                         </Grid.ColumnDefinitions>
                         <cc:ProgressControl x:Name="Pc_Elapsed" Grid.Column="0" Grid.ColumnSpan="3" IsEnabled="{Binding Playing.EnableChangeElapsed}" ProgressFill="{Binding Playing.ElapsedColor, Mode=OneWay}" Fraction="{Binding Path=Playing.ElapsedFraction, Mode=TwoWay}" ToolTip="Timestamp" />
                         <Label x:Name="Lb_Elapsed" Grid.Column="0" Style="{StaticResource TimestampLabelStyle}" Content="{Binding Playing.ElapsedStr, FallbackValue=0:00}" />
-                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr,FallbackValue=0:00}" HorizontalAlignment="Right" />
+                        <Label x:Name="Lb_TrackLength" Grid.Column="2" Style="{StaticResource TimestampLabelStyle}" Content="{Binding TrackLengthStr, FallbackValue=0:00}" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
 
