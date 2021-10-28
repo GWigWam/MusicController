@@ -38,6 +38,11 @@
         </Style>
     </Window.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="Left" Command="{Binding NextPrev.PreviousCommand}" />
+        <KeyBinding Modifiers="Ctrl" Key="Right" Command="{Binding NextPrev.NextCommand}" />
+    </Window.InputBindings>
+    
     <Grid x:Name="Grid_Main">
         <Grid.RowDefinitions>
             <RowDefinition Height="34" />
