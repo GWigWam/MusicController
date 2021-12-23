@@ -36,8 +36,8 @@ namespace PlayerInterface.CustomControls
         }
 
         private void CheckBox_Changed(object sender, RoutedEventArgs e)
-        {
-            Popup.IsOpen = false;
-        }
+            => Task.Delay(150).ContinueWith(t => {
+                Dispatcher.Invoke(() => Popup.IsOpen = false);
+            });
     }
 }
