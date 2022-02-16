@@ -237,7 +237,9 @@ namespace PlayerInterface.ViewModels
             } catch (ArgumentException) { }
 
             if (query != null) {
-                return AllPlaylistItems.Where(pli => query.IsMatch(pli.Title) || query.IsMatch(pli.SubTitle));
+                return AllPlaylistItems
+                    .Where(pli => query.IsMatch(pli.Title) || query.IsMatch(pli.SubTitle))
+                    .OrderBy(pli => query.IsMatch(pli.Title) ? 0 : 1);
             } else {
                 return AllPlaylistItems;
             }
