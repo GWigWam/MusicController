@@ -87,6 +87,8 @@ namespace PlayerCore {
                         IsTransitioning = false;
                     }
                 }, CancelSrc.Token);
+            } else {
+                Player.Stop();
             }
         }
 
