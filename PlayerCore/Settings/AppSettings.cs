@@ -113,7 +113,7 @@ namespace PlayerCore.Settings {
         protected List<SongStats> Statistics {
             get => statistics;
             set {
-                statistics = value.Where(ss => File.Exists(ss.Path)).ToList();
+                statistics = value;
                 foreach(var stat in statistics) {
                     stat.PropertyChanged += (s, a) => RaiseChanged(nameof(Statistics));
                 }
@@ -125,8 +125,11 @@ namespace PlayerCore.Settings {
         public string[] QueuedSongs {
             get => _Queued;
             set {
-                _Queued = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueuedSongs)));
+                if (_Queued == null || !_Queued.SequenceEqual(value))
+                {
+                    _Queued = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueuedSongs)));
+                }
             }
         }
 
@@ -135,8 +138,11 @@ namespace PlayerCore.Settings {
         public int? QueueIndex {
             get => _QueueIndx;
             set {
-                _QueueIndx = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueueIndex)));
+                if (_QueueIndx != value)
+                {
+                    _QueueIndx = value;
+                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueueIndex)));
+                }
             }
         }
 
@@ -192,6 +198,7 @@ namespace PlayerCore.Settings {
         protected override async Task AfterRead()
         {
             await base.AfterRead();
+            CleanupDeadStats();
             await ReadStartupSongsM3U();
         }
 
@@ -213,16 +220,42 @@ namespace PlayerCore.Settings {
 
         public SongStats GetSongStats(Song song)
         {
-            return Statistics.FirstOrDefault(ss => ss.Path.Equals(song.Path, StringComparison.OrdinalIgnoreCase)) ??
-                createSongStats();
-
-            SongStats createSongStats()
+            var infHash = SongStats.CalculateInfoHash(song);
+            if (Statistics.FirstOrDefault(ss => ss.Path.Equals(song.Path, StringComparison.OrdinalIgnoreCase)) is SongStats foundByPath)
             {
-                var @new = new SongStats(song.Path);
+                foundByPath.InfoHash = infHash;
+                return foundByPath;
+            }
+            else if (infHash != null && Statistics.FirstOrDefault(ss => ss.InfoHash != null && ss.InfoHash.SequenceEqual(infHash) && !File.Exists(ss.Path)) is SongStats foundByHash) // File moved
+            {
+                Statistics.Remove(foundByHash);                
+                var copy = createSongStats(foundByHash.PlayCount, infHash);
+                return copy;
+            }
+            else
+            {
+                return createSongStats(0, infHash);
+            }
+
+            SongStats createSongStats(int playCount, byte[]? infoHash)
+            {
+                var @new = new SongStats(song.Path) {
+                    PlayCount = playCount,
+                    InfoHash = infoHash
+                };
                 Statistics.Add(@new);
                 @new.PropertyChanged += (s, a) => RaiseChanged(nameof(Statistics));
                 RaiseChanged(nameof(Statistics));
                 return @new;
+            }
+        }
+
+        public void CleanupDeadStats()
+        {
+            var change = Statistics.Where(ss => ss.InfoHash != null || File.Exists(ss.Path)).ToList();
+            if (change.Count != Statistics.Count)
+            {
+                Statistics = change;
             }
         }
 

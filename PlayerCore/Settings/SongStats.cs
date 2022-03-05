@@ -6,11 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace PlayerCore.Settings {
 
     public class SongStats : INotifyPropertyChanged {
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Path { get; }
 
@@ -21,6 +22,18 @@ namespace PlayerCore.Settings {
                 if(value != playCount) {
                     playCount = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PlayCount)));
+                }
+            }
+        }
+
+        private byte[]? _InfoHash;
+        public byte[]? InfoHash {
+            get => _InfoHash;
+            set {
+                if ((value == null && _InfoHash != null) || (value != null && _InfoHash == null) || (value != null && _InfoHash != null && !value.SequenceEqual(_InfoHash)))
+                {
+                    _InfoHash = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InfoHash)));
                 }
             }
         }
@@ -37,6 +50,18 @@ namespace PlayerCore.Settings {
                     settings.GetSongStats(player.CurrentSong).PlayCount++;
                 }
             };
+        }
+        
+        public static byte[]? CalculateInfoHash(Song song)
+        {
+            if (song.Title != null && song.Artist != null)
+            {
+                var inpBytes = Encoding.UTF8.GetBytes($"{song.Artist}_{song.Album}_{song.Title}_{song.Track}_{song.Disc}");
+                using var sha1 = System.Security.Cryptography.SHA1.Create();
+                var hash = sha1.ComputeHash(inpBytes);
+                return hash;
+            }
+            return null;
         }
     }
 }
