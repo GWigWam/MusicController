@@ -20,7 +20,7 @@ namespace PlayerCore
             void addBatch()
             {
                 added.AddRange(playlist.AddSongs(batch, position));
-                position = added.LastOrDefault();
+                position = added.LastOrDefault() ?? position;
                 batch.Clear();
                 batchSize *= 2;
             }
