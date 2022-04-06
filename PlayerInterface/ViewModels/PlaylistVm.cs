@@ -94,13 +94,7 @@ namespace PlayerInterface.ViewModels
                     Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
                     if(input.Paths is string[] paths)
                     {
-                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths), position, new Func<Song, object>[] {
-                            s => s.Artist,
-                            s => s.Year,
-                            s => s.Album,
-                            s => s.Disc,
-                            s => s.Track
-                        });
+                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths), position);
                     }
                 },
                 t => {

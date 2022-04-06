@@ -29,7 +29,9 @@ namespace PlayerCore.Songs
                     }
                     else if(Directory.Exists(fullPath))
                     {
-                        foreach(var innerPath in Directory.EnumerateFiles(fullPath, "*", SearchOption.AllDirectories))
+                        var ownDir = Directory.EnumerateFiles(fullPath).OrderBy(s => s);
+                        var subDirs = GetAllFilePaths(Directory.EnumerateDirectories(fullPath)).OrderBy(s => s);
+                        foreach (var innerPath in ownDir.Concat(subDirs))
                         {
                             yield return innerPath;
                         }
