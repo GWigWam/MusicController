@@ -22,21 +22,7 @@ namespace PlayerCore
         private IWavePlayer? Player { get; set; }
         private AudioFileReader? File { get; set; }
 
-        private Song? _CurrentSong;
-        public Song? CurrentSong {
-            get => _CurrentSong;
-            set {
-                var oldSong = _CurrentSong;
-                _CurrentSong = value;
-
-                if(_CurrentSong != null)
-                {
-                    LoadSong(_CurrentSong, startPlaying: IsPlaying);
-                }
-
-                SongChanged?.Invoke(this, new SongChangedEventArgs(oldSong, _CurrentSong));
-            }
-        }
+        public Song? CurrentSong { get; private set; }
 
         public TimeSpan Elapsed {
             get => File != null && (IsPlaying || IsPaused) ? File.CurrentTime : TimeSpan.Zero;
@@ -76,13 +62,26 @@ namespace PlayerCore
 
         public void Stop()
         {
-            CurrentSong = null;
+            ChangeSong(null);
             Player?.Stop();
             Player?.Dispose();
             File?.Dispose();
             Player = null;
             File = null;
             PlaybackStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ChangeSong(Song? newSong)
+        {
+            var oldSong = CurrentSong;
+            CurrentSong = newSong;
+
+            if (CurrentSong != null)
+            {
+                LoadSong(CurrentSong, startPlaying: IsPlaying);
+            }
+
+            SongChanged?.Invoke(this, new SongChangedEventArgs(oldSong, CurrentSong));
         }
 
         private void LoadSong(Song song, bool startPlaying)

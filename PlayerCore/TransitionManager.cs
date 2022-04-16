@@ -61,7 +61,7 @@ namespace PlayerCore {
             Settings = settings;
 
             if(Player != null && Player.CurrentSong == null) {
-                Player.CurrentSong = TrackList?.CurrentSong;
+                Player.ChangeSong(TrackList?.CurrentSong);
             }
 
             Init();
@@ -109,7 +109,7 @@ namespace PlayerCore {
             try {
                 var newCur = TrackList.CurrentSong;
                 if(newCur != null) {
-                    Player.CurrentSong = newCur;
+                    Player.ChangeSong(newCur);
                 } else {
                     Player.Stop();
                 }
