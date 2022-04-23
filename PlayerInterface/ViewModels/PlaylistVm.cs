@@ -183,7 +183,7 @@ namespace PlayerInterface.ViewModels
             {
                 if(e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    AllPlaylistItems.AddRange(e.NewItems.OfType<Song>().Select(CreateSvm));
+                    AllPlaylistItems.InsertRange(e.NewStartingIndex, e.NewItems.OfType<Song>().Select(CreateSvm));
                 }
                 else if(e.Action == NotifyCollectionChangedAction.Remove)
                 {
