@@ -9,29 +9,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace PlayerCore {
 
-    public class TransitionManager : INotifyPropertyChanged {
+    public class TransitionManager : INotifyPropertyChanged
+    {
         private int SongDelayMs => (int)Settings.SongTransitionDelayMs;
 
         private const bool Loop = false;
 
-        private CancellationTokenSource CancelSrc { get; set; }
+        private CancellationTokenSource? CancelSrc { get; set; }
 
-        public event EventHandler TransitionChanged;
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<Exception>? SongLoadErrorOccurred;
+        public event EventHandler? TransitionChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private AppSettings Settings {
-            get;
-        }
+        private AppSettings Settings { get; }
 
-        public SongPlayer Player {
-            get; private set;
-        }
-
-        public Playlist TrackList {
-            get; private set;
-        }
+        public SongPlayer Player { get; private set; }
+        public Playlist TrackList { get; private set; }
 
         private bool isTransitioning;
         public bool IsTransitioning {
@@ -55,13 +51,14 @@ namespace PlayerCore {
             }
         }
 
-        public TransitionManager(SongPlayer player, Playlist trackList, AppSettings settings) {
+        public TransitionManager(SongPlayer player, Playlist trackList, AppSettings settings)
+        {
             Player = player;
             TrackList = trackList;
             Settings = settings;
 
             if(Player != null && Player.CurrentSong == null) {
-                Player.ChangeSong(TrackList?.CurrentSong);
+                ChangeSongSafe(TrackList?.CurrentSong);
             }
 
             Init();
@@ -99,17 +96,17 @@ namespace PlayerCore {
             TrackList.CurrentSongChanged += TrackList_CurrentSongChanged;
         }
 
-        private void Player_PlayingStopped(object sender, PlayingStoppedEventArgs args) {
+        private void Player_PlayingStopped(object? sender, PlayingStoppedEventArgs args) {
             if(args.PlayedToEnd) {
                 StartTransition();
             }
         }
 
-        private void TrackList_CurrentSongChanged(object sender, EventArgs e) {
+        private void TrackList_CurrentSongChanged(object? sender, EventArgs e) {
             try {
                 var newCur = TrackList.CurrentSong;
                 if(newCur != null) {
-                    Player.ChangeSong(newCur);
+                    ChangeSongSafe(newCur);
                 } else {
                     Player.Stop();
                 }
@@ -117,6 +114,18 @@ namespace PlayerCore {
                 if(slfe.Song != null && TrackList.Contains(slfe.Song)) {
                     TrackList.Remove(slfe.Song);
                 }
+            }
+        }
+
+        private void ChangeSongSafe(Song? song)
+        {
+            try
+            {
+                Player.ChangeSong(song);
+            }
+            catch (Exception e)
+            {
+                SongLoadErrorOccurred?.Invoke(this, e);
             }
         }
     }

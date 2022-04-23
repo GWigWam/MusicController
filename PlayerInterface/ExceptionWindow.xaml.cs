@@ -40,5 +40,7 @@ namespace PlayerInterface {
             }
             return $"-- {e.GetType().FullName} --\n{e.Message}\n\n{e.StackTrace}\n\n{inner}";
         }
+
+        public static void Show(Exception e) => Application.Current.Dispatcher.Invoke(() => new ExceptionWindow(e).Show());
     }
 }

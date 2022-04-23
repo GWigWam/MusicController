@@ -51,6 +51,7 @@ namespace PlayerInterface {
 
             var playlist = new Playlist();
             var transitionMngr = new TransitionManager(player, playlist, settings);
+            transitionMngr.SongLoadErrorOccurred += (s, e) => ExceptionWindow.Show(e);
 
             ThemeManager.Instance.SetTheme(settings.Theme);
             settings.Changed += (s, a) => {
