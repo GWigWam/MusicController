@@ -56,7 +56,7 @@ namespace PlayerCore.Settings {
         {
             if (song.Title != null && song.Artist != null)
             {
-                var inpBytes = Encoding.UTF8.GetBytes($"{song.Artist}_{song.Album}_{song.Title}_{song.Track}_{song.Disc}");
+                var inpBytes = Encoding.UTF8.GetBytes($"{song.Artist}_{song.Album}_{song.Title}".ToLower());
                 using var sha1 = System.Security.Cryptography.SHA1.Create();
                 var hash = sha1.ComputeHash(inpBytes);
                 return hash;
