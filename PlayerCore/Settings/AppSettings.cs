@@ -180,6 +180,32 @@ namespace PlayerCore.Settings {
         }
 
         [JsonIgnore]
+        private string _LastfmUser = "";
+        [JsonProperty]
+        public string LastfmUser
+        {
+            get => _LastfmUser;
+            set
+            {
+                _LastfmUser = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(LastfmUser)));
+            }
+        }
+
+        [JsonIgnore]
+        private bool _LastfmAuthed = false;
+        [JsonProperty]
+        public bool LastfmAuthed
+        {
+            get => _LastfmAuthed;
+            set
+            {
+                _LastfmAuthed = value;
+                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(LastfmAuthed)));
+            }
+        }
+
+        [JsonIgnore]
         private List<string> _StartupSongs { get; set; } = new List<string>();
 
         [JsonIgnore]

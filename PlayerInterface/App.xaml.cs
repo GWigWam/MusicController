@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
+using PlayerCore.Scrobbling;
 using PlayerCore.Settings;
 using PlayerCore.Songs;
 using PlayerInterface.Themes;
@@ -48,6 +49,7 @@ namespace PlayerInterface {
             SetupVolume(settings, player);
 
             SongStats.SetupStats(settings, player);
+            var scrobbler = new Scrobbler(settings, player);
 
             var playlist = new Playlist();
             var transitionMngr = new TransitionManager(player, playlist, settings);
@@ -61,7 +63,7 @@ namespace PlayerInterface {
             };
 
             var windowMgr = new WindowManager((TaskbarIcon)FindResource(TrayIconResourceName));
-            windowMgr.Init(settings, player, playlist, transitionMngr);
+            windowMgr.Init(settings, player, playlist, transitionMngr, scrobbler);
 
             LoadSongsBackground(e.Args, playlist, player, settings);
 

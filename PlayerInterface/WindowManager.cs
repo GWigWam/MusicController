@@ -1,5 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
+using PlayerCore.Scrobbling;
 using PlayerCore.Settings;
 using PlayerInterface.Commands;
 using PlayerInterface.ViewModels;
@@ -22,12 +23,12 @@ namespace PlayerInterface {
             TrayIcon = icon;
         }
 
-        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, TransitionManager transitionMngr) {
+        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, TransitionManager transitionMngr, Scrobbler scrobbler) {
             var playVm = new PlayingVm(songPlayer, transitionMngr);
             var npVm = new NextPrevVm(songPlayer, playlist);
 
             var smallVm = new SmallPlayerViewModel(playVm, npVm, settings);
-            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, playVm, npVm);
+            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, playVm, npVm, scrobbler);
 
             CreateFullPlayer(!settings.StartMinimized, fullVm);
             CreateSmallPlayer(settings.StartMinimized, smallVm);
@@ -37,6 +38,8 @@ namespace PlayerInterface {
             SetupScreenOverlay(settings, songPlayer);
             HandleWindowStateChanges();
             AddMinMaxEvents();
+
+            scrobbler.ExceptionOccured += ExceptionWindow.Show;
         }
 
         private void CreateSmallPlayer(bool show, SmallPlayerViewModel vm) {

@@ -47,6 +47,17 @@ namespace PlayerInterface.ViewModels {
             set => Settings.GainPreampDb = value;
         }
 
+        public string LastfmUser {
+            get => Settings.LastfmUser;
+            set => Settings.LastfmUser = value;
+        }
+
+        public bool LastfmAuthed {
+            get => Settings.LastfmAuthed;
+            set => Settings.LastfmAuthed = value;
+        }
+        public bool LastfmNotAuthed => !LastfmAuthed;
+
         public ObservableCollection<ExplorerItem> LoadPaths { get; private set; }
 
         public IBaseCommand SaveToDiskCommand { get; private set; }
@@ -64,6 +75,13 @@ namespace PlayerInterface.ViewModels {
 
             InitLoadPaths();
             SetupCommands();
+
+            PropertyChanged += (s, a) => {
+                if (a.PropertyName == nameof(LastfmAuthed))
+                {
+                    RaisePropertyChanged(nameof(LastfmNotAuthed));
+                }
+            };
         }
 
         private void SetupCommands() {

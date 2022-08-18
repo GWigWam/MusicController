@@ -415,5 +415,17 @@ namespace PlayerInterface {
                 e.Handled = true;
             }
         }
+
+        private void Bt_LastfmLogin_Click(object sender, RoutedEventArgs e)
+        {
+            if (Pwd_Lastfm.Password.Length > 0)
+            {
+                var param = (Vm.Settings.LastfmUser, Pwd_Lastfm.Password);
+                if (Vm.LastfmLoginCmd.CanExecute(param))
+                {
+                    Vm.LastfmLoginCmd.Execute(param);
+                }
+            }
+        }
     }
 }
