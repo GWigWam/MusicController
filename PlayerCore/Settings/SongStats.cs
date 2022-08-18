@@ -26,6 +26,18 @@ namespace PlayerCore.Settings {
             }
         }
 
+        private DateTimeOffset? _LastPlayed;
+        public DateTimeOffset? LastPlayed {
+            get => _LastPlayed;
+            set {
+                if (value != _LastPlayed)
+                {
+                    _LastPlayed = value;
+                    PropertyChanged?.Invoke(this, new(nameof(LastPlayed)));
+                }
+            }
+        }
+
         private byte[]? _InfoHash;
         public byte[]? InfoHash {
             get => _InfoHash;
@@ -48,6 +60,7 @@ namespace PlayerCore.Settings {
                 if(a.PlayedToEnd && player.CurrentSong != null)
                 {
                     settings.GetSongStats(player.CurrentSong).PlayCount++;
+                    settings.GetSongStats(player.CurrentSong).LastPlayed = DateTimeOffset.Now;
                 }
             };
         }

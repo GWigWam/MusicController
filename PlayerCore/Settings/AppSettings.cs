@@ -254,19 +254,20 @@ namespace PlayerCore.Settings {
             }
             else if (infHash != null && Statistics.FirstOrDefault(ss => ss.InfoHash != null && ss.InfoHash.SequenceEqual(infHash) && !File.Exists(ss.Path)) is SongStats foundByHash) // File moved
             {
-                Statistics.Remove(foundByHash);                
-                var copy = createSongStats(foundByHash.PlayCount, infHash);
+                Statistics.Remove(foundByHash);
+                var copy = createSongStats(foundByHash.PlayCount, foundByHash.LastPlayed, infHash);
                 return copy;
             }
             else
             {
-                return createSongStats(0, infHash);
+                return createSongStats(0, null, infHash);
             }
 
-            SongStats createSongStats(int playCount, byte[]? infoHash)
+            SongStats createSongStats(int playCount, DateTimeOffset? lastPlayed, byte[]? infoHash)
             {
                 var @new = new SongStats(song.Path) {
                     PlayCount = playCount,
+                    LastPlayed = lastPlayed,
                     InfoHash = infoHash
                 };
                 Statistics.Add(@new);

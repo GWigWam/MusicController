@@ -28,7 +28,8 @@ namespace PlayerInterface.ViewModels {
                 ["Year"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Year)),
                 ["Track #"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Track)),
                 //Stats
-                ["Play Count"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount))
+                ["Play Count"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount)),
+                ["Last Played"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.LastPlayed))
             };
         }
 
@@ -66,16 +67,25 @@ namespace PlayerInterface.ViewModels {
         private int _PlayCount;
         public int PlayCount {
             get => _PlayCount;
-            set {
-                if(value != _PlayCount)
-                {
-                    _PlayCount = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(PlayCountStr));
-                }
+            private set {
+                _PlayCount = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(PlayCountStr));
             }
         }
         public string PlayCountStr => $"{PlayCount}x";
+
+        private DateTimeOffset? _LastPlayed;
+        public DateTimeOffset? LastPlayed
+        {
+            get => _LastPlayed;
+            private set {
+                _LastPlayed = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(LastPlayedStr));
+            }
+        }
+        public string LastPlayedStr => $"Last played: {(LastPlayed != null ? $"{LastPlayed:yyyy-MM-dd HH:mm}" : "never")}";
 
         private int? _QueueIndex = null;
         public int? QueueIndex {
@@ -154,8 +164,13 @@ namespace PlayerInterface.ViewModels {
             curDisplay = DisplayType.Front;
 
             var stats = settings.GetSongStats(song);
-            PlayCount = stats.PlayCount;
-            stats.PropertyChanged += (s, a) => PlayCount = ((SongStats)s).PlayCount;
+            setStatsProps();
+            stats.PropertyChanged += (_, _) => setStatsProps();
+            void setStatsProps()
+            {
+                PlayCount = stats.PlayCount;
+                LastPlayed = stats.LastPlayed;
+            }
         }
 
         public static implicit operator Song(SongViewModel svm) => svm.Song;
