@@ -60,7 +60,7 @@ namespace PlayerCore.Scrobbling
             {
                 Client ??= CreateAuthedClient();
 
-                var resp = await Client.Scrobbler.ScrobbleAsync(new Scrobble(song.Artist, song.Album, song.Title, DateTimeOffset.Now));
+                var resp = await Client.Scrobbler.ScrobbleAsync(SongToScrobble(song));
                 if (!resp.Success)
                 {
                     if (resp.Status == LastResponseStatus.BadAuth || resp.Status == LastResponseStatus.SessionExpired || resp.Status == LastResponseStatus.BadApiKey || resp.Status == LastResponseStatus.KeySuspended)
@@ -71,6 +71,18 @@ namespace PlayerCore.Scrobbling
                 }
             }
         }
+
+        public async Task NowPlaying(Song song)
+        {
+            if (!string.IsNullOrEmpty(song.Artist) && !string.IsNullOrEmpty(song.Album) && !string.IsNullOrEmpty(song.Title))
+            {
+                Client ??= CreateAuthedClient();
+                await Client.Track.UpdateNowPlayingAsync(SongToScrobble(song));
+            }
+        }
+
+        private static Scrobble SongToScrobble(Song song)
+            => new Scrobble(song.Artist, song.Album, song.Title, DateTimeOffset.Now) { Duration = song.TrackLength };
 
         private LastfmClient CreateAuthedClient()
         {
@@ -125,6 +137,20 @@ namespace PlayerCore.Scrobbling
                 }
             }
             player.PlayingStopped += (_, a) => _ = scrobbleBackground(a.PlayedToEnd);
+            
+            async Task nowPlayingBackground()
+            {
+                if (player.CurrentSong != null && player.IsPlaying && CanScrobble)
+                {
+                    try
+                    {
+                        await NowPlaying(player.CurrentSong);
+                    }
+                    catch (Exception) { } // Fail silently
+                }
+            }
+            player.PlaybackStateChanged += (s, a) => _ = nowPlayingBackground();
+            player.SongChanged += (s, a) => _ = nowPlayingBackground();
         }
     }
 }
