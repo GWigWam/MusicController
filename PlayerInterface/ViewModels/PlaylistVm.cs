@@ -25,7 +25,7 @@ namespace PlayerInterface.ViewModels
         public IBaseCommand SortByCommand { get; }
         public IBaseCommand ReverseSortCommand { get; }
         public IBaseCommand ShuffleCommand { get; }
-        public IBaseCommand SortBySearchCommand { get; }        
+        public IBaseCommand SortBySearchCommand { get; }
         public IBaseCommand AddFilesCommand { get; }
         public IBaseCommand RemoveSongsCommand { get; }
         public IBaseCommand ExportCommand { get; }
@@ -156,8 +156,8 @@ namespace PlayerInterface.ViewModels
             _playlist.Order(
                 orderBys: new Func<Song, object>[] {
                     s => !reg.IsMatch(s.Title),
-                    s => !reg.IsMatch(s.Album),
-                    s => !reg.IsMatch(s.Artist),
+                    s => s.Album == null || !reg.IsMatch(s.Album),
+                    s => s.Artist == null || !reg.IsMatch(s.Artist),
                 },
                 source: selected
             );
