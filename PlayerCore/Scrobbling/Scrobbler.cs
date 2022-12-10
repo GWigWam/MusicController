@@ -25,6 +25,8 @@ namespace PlayerCore.Scrobbling
 
         public bool CanScrobble => Settings.LastfmAuthed;
 
+        private Dictionary<Song, DateTime> StatLookupHistory { get; } = new();
+
         public Scrobbler(AppSettings settings, SongPlayer player)
         {
             Settings = settings;
@@ -78,6 +80,21 @@ namespace PlayerCore.Scrobbling
             {
                 Client ??= CreateAuthedClient();
                 await Client.Track.UpdateNowPlayingAsync(SongToScrobble(song));
+            }
+        }
+
+        public async Task UpdateStats(Song song)
+        {
+            if (!StatLookupHistory.TryGetValue(song, out var lastLookup) || lastLookup + TimeSpan.FromMinutes(30) < DateTime.Now)
+            {
+                StatLookupHistory[song] = DateTime.Now;
+                Client ??= CreateAuthedClient();
+
+                if (Settings.GetSongStats(song) is SongStats stats &&
+                    (await Client.Track.GetInfoAsync(song.Title, song.Artist, Client.User.Auth.UserSession.Username)) is { Success: true } info)
+                {
+                    stats.PlayCount = info.Content.UserPlayCount is int pc && pc > stats.PlayCount ? pc : stats.PlayCount;
+                }
             }
         }
 
@@ -151,6 +168,19 @@ namespace PlayerCore.Scrobbling
             }
             player.PlaybackStateChanged += (s, a) => _ = nowPlayingBackground();
             player.SongChanged += (s, a) => _ = nowPlayingBackground();
+
+            async Task updateStatsBackground()
+            {
+                if (player.CurrentSong is Song song && CanScrobble)
+                {
+                    try
+                    {
+                        await UpdateStats(song);
+                    }
+                    catch (Exception) { } // Fail silently
+                }
+            }
+            player.SongChanged += (s, a) => _ = updateStatsBackground();
         }
     }
 }
