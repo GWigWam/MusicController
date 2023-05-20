@@ -157,11 +157,16 @@ namespace PlayerCore.Scrobbling
             
             async Task nowPlayingBackground()
             {
-                if (player.CurrentSong != null && player.IsPlaying && CanScrobble)
+                var playing = player.CurrentSong;
+                if (playing != null && player.IsPlaying && CanScrobble)
                 {
                     try
                     {
-                        await NowPlaying(player.CurrentSong);
+                        await Task.Delay(1000);
+                        if (player.CurrentSong == playing)
+                        {
+                            await NowPlaying(playing);
+                        }
                     }
                     catch (Exception) { } // Fail silently
                 }
