@@ -136,13 +136,7 @@ namespace PlayerCore
         }
 
         public void Shuffle(IEnumerable<Song>? source = null)
-        {
-            Order(s => Random.NextDouble(), source);
-            if(Length > 0)
-            {
-                SetIndexForceUpdate(0);
-            }
-        }
+            => Order(s => Random.NextDouble(), source);
 
         public void Order(Func<Song, object> orderBy, IEnumerable<Song>? source = null)
             => Order(new[] { orderBy }, source);
