@@ -131,6 +131,7 @@ namespace PlayerCore
             if(_Queue.Count > 0)
             {
                 _Queue.Clear();
+                QueueIndex = null;
                 RaiseQueueChanged();
             }
         }
@@ -192,10 +193,18 @@ namespace PlayerCore
 
         public void SelectFirstMatch(Predicate<Song> filter)
         {
-            var index = Songs.FindIndex(filter);
-            if(index >= 0)
+            if (Queue.Any() && Queue.FirstOrDefault(q => filter(q)) is Song inQueue)
             {
-                SetIndexForceUpdate(index);
+                QueueIndex = Queue.IndexOf(inQueue);
+            }
+            else
+            {
+                var index = Songs.FindIndex(filter);
+                if (index >= 0)
+                {
+                    ClearQueue();
+                    SetIndexForceUpdate(index);
+                }
             }
         }
 
