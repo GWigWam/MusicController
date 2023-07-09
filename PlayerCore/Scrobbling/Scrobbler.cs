@@ -139,53 +139,44 @@ namespace PlayerCore.Scrobbling
 
         private void SetupScrobbling(SongPlayer player)
         {
-            async Task scrobbleBackground(bool playedToEnd)
-            {
-                if (playedToEnd && player.CurrentSong != null && CanScrobble)
-                {
-                    try
-                    {
-                        await Scrobble(player.CurrentSong);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionOccured?.Invoke(e);
-                    }
-                }
-            }
-            player.PlayingStopped += (_, a) => _ = scrobbleBackground(a.PlayedToEnd);
-            
-            async Task nowPlayingBackground()
-            {
-                var playing = player.CurrentSong;
-                if (playing != null && player.IsPlaying && CanScrobble)
-                {
-                    try
-                    {
-                        await Task.Delay(1000);
-                        if (player.CurrentSong == playing)
-                        {
-                            await NowPlaying(playing);
-                        }
-                    }
-                    catch (Exception) { } // Fail silently
-                }
-            }
-            player.PlaybackStateChanged += (s, a) => _ = nowPlayingBackground();
-            player.SongChanged += (s, a) => _ = nowPlayingBackground();
+            var (delayed, scrobbled) = ((Song?)null, (Song?)null);
 
-            async Task updateStatsBackground()
-            {
-                if (player.CurrentSong is Song song && CanScrobble)
+            player.PlaybackStateChanged += (_, _) => _ = tryProcessBackground();
+            player.SongChanged += (s, a) => {
+                if (a.Next != a.Previous)
                 {
-                    try
+                    (delayed, scrobbled) = (null, null);
+                    _ = tryProcessBackground();
+                }
+            };
+
+            async Task tryProcessBackground() { try { if (CanScrobble) { await processBackground(); } } catch (Exception) { /* Fail silently */ } }
+            async Task processBackground()
+            {
+                var handle = player.CurrentSong;
+                await Task.Delay(1000);
+
+                if (player.IsPlaying && player.CurrentSong is Song playing && playing == handle)
+                {
+                    if (delayed != playing)
                     {
-                        await UpdateStats(song);
+                        delayed = playing;
+                        await UpdateStats(playing);
+                        await NowPlaying(playing);
                     }
-                    catch (Exception) { } // Fail silently
+
+                    const int scrobbleDelayMin = 4;
+                    const double scrobblePercentage = 0.9;
+                    var scrobbleDelay = Math.Min((playing.TrackLength - player.Elapsed).TotalMilliseconds * scrobblePercentage, scrobbleDelayMin * 60 * 1000); // Scrobble after 4min or after 90% of song, whichever is first
+                    await Task.Delay((int)scrobbleDelay);
+
+                    if (player.IsPlaying && player.CurrentSong is Song scrobble && scrobble == handle && scrobbled != scrobble)
+                    {
+                        scrobbled = scrobble;
+                        await Scrobble(scrobble);
+                    }
                 }
             }
-            player.SongChanged += (s, a) => _ = updateStatsBackground();
         }
     }
 }
