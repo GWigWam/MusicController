@@ -13,23 +13,23 @@ using System.Windows;
 namespace PlayerInterface.ViewModels {
     public class SongViewModel : NotifyPropertyChanged {
 
-        public static readonly Dictionary<string, PropertyInfo> SortProperties;
+        public static readonly Dictionary<string, PropertyInfo[]> SortProperties;
 
         static SongViewModel() {
             var songtype = typeof(Song);
             var statType = typeof(SongStats);
-            SortProperties = new Dictionary<string, PropertyInfo>() {
+            SortProperties = new Dictionary<string, PropertyInfo[]>() {
                 //Song:
-                ["Title"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Title)),
-                ["Album"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Album)),
-                ["Artist"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Artist)),
-                ["Genre"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Genre)),
-                ["Length"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.TrackLength)),
-                ["Year"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Year)),
-                ["Track #"] = songtype.GetProperty(nameof(PlayerCore.Songs.Song.Track)),
+                ["Title"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Title)) },
+                ["Album"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Album)) },
+                ["Artist"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Artist)) },
+                ["Genre"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Genre)) },
+                ["Length"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.TrackLength)) },
+                ["Year"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Year)) },
+                ["Track #"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Track)), songtype.GetProperty(nameof(PlayerCore.Songs.Song.Disc)) },
                 //Stats
-                ["Play Count"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount)),
-                ["Last Played"] = statType.GetProperty(nameof(PlayerCore.Settings.SongStats.LastPlayed))
+                ["Play Count"] = new[] { statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount)) },
+                ["Last Played"] = new[] { statType.GetProperty(nameof(PlayerCore.Settings.SongStats.LastPlayed)) }
             };
         }
 

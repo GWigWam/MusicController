@@ -71,7 +71,7 @@ namespace PlayerInterface.ViewModels
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(AllPlaylistItems, AllPlaylistItems);
             PlaylistItems = AllPlaylistItems;
 
-            SortByCommand = new RelayCommand<PropertyInfo>(SortByProperty);
+            SortByCommand = new RelayCommand<PropertyInfo[]>(SortByProperty);
 
             ReverseSortCommand = new RelayCommand(() => _playlist.Reverse());
 
@@ -136,14 +136,20 @@ namespace PlayerInterface.ViewModels
             _playlist.Shuffle(selected);
         }
 
-        private void SortByProperty(PropertyInfo pi) {
+        private void SortByProperty(PropertyInfo[] pis) {
             var selected = SelectedPlaylistItems.Select(svm => svm.Song).ToArray();
             selected = selected.Length > 1 ? selected : null;
 
-            if (pi.DeclaringType == typeof(Song)) {
-                _playlist.Order((s) => pi.GetValue(s), selected);
-            } else if (pi.DeclaringType == typeof(SongStats)) {
-                _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s)), selected);
+            foreach (var pi in pis)
+            {
+                if (pi.DeclaringType == typeof(Song))
+                {
+                    _playlist.Order((s) => pi.GetValue(s), selected);
+                }
+                else if (pi.DeclaringType == typeof(SongStats))
+                {
+                    _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s)), selected);
+                }
             }
         }
 
