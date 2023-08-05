@@ -65,6 +65,7 @@ namespace PlayerCore {
         }
 
         public void StartTransition() {
+            var prev = TrackList.CurrentSong;
             var moved = TrackList.Next(Loop);
             if (moved) {
                 Player.Pause();
@@ -78,7 +79,9 @@ namespace PlayerCore {
                 Task.Run(async () => {
                     try {
                         IsTransitioning = true;
-                        await Task.Delay(SongDelayMs, CancelSrc.Token);
+                        var isNextOnAlbum = prev != null && prev.Album == TrackList.CurrentSong!.Album && (prev.Track == null || prev.Track + 1 == TrackList.CurrentSong.Track) && prev.Disc == TrackList.CurrentSong.Disc;
+                        var delay = isNextOnAlbum ? 0 : SongDelayMs; // Do not delay between consecutive tracks on same album
+                        await Task.Delay(delay, CancelSrc.Token);
                         Player.Play();
                     } finally {
                         IsTransitioning = false;
