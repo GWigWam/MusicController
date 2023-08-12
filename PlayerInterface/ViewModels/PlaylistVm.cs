@@ -230,6 +230,14 @@ namespace PlayerInterface.ViewModels
             _playlist.Enqueue(s);
         }
 
+        public void Enqueue(IEnumerable<Song> qs)
+        {
+            foreach (var q in qs)
+            {
+                Enqueue(q);
+            }
+        }
+
         private IEnumerable<SongViewModel> GetSearchResult() {
             Regex query = null;
             try {

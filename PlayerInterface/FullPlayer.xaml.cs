@@ -179,9 +179,10 @@ namespace PlayerInterface {
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e) {
             if(e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
                 if(e.Key == Key.Q) {
-                    var fst = Vm.Playlist.SelectedPlaylistItems.FirstOrDefault();
-                    if(fst != null) {
-                        Vm.Playlist.Enqueue(fst);
+                    var sel = Vm.Playlist.SelectedPlaylistItems.Select(svm => svm.Song).ToArray();
+                    if (sel.Any())
+                    {
+                        Vm.Playlist.Enqueue(sel);
                     }
                 }
             } else {
