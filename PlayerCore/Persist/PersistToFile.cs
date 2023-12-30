@@ -6,9 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore.Settings {
-
-    public abstract class SettingsFile {
+namespace PlayerCore.Persist
+{
+    public abstract class PersistToFile
+    {
         private static JsonSerializerSettings JSonSettings;
 
         [JsonIgnore]
@@ -21,37 +22,32 @@ namespace PlayerCore.Settings {
             get; protected set;
         } = false;
 
-        public event EventHandler<SettingChangedEventArgs> Changed;
+        public event EventHandler<PersistentPropertyChangedEventArgs> Changed;
 
         public event EventHandler Saved;
 
-        static SettingsFile() {
+        static PersistToFile() {
             JSonSettings = new JsonSerializerSettings() {
                 Formatting = Formatting.Indented,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
             };
         }
 
-        public SettingsFile(string filePath) : this() {
+        public PersistToFile(string filePath) : this() {
             if(IsPathValidRootedLocal(filePath)) {
                 FullFilePath = filePath;
                 HasUnsavedChanges = true;
             } else {
-                throw new ArgumentException("SettingsFile filePath is not valid");
+                throw new ArgumentException($"{nameof(PersistToFile)} filePath is not valid");
             }
         }
 
         private Task WritingTask { get; set; }
 
         [JsonConstructor]
-        protected SettingsFile() { }
+        protected PersistToFile() { }
 
-        public static T ReadSettingFile<T>(string filePath) where T : SettingsFile {
-            var task = Task.Run(() => ReadSettingFileAsync<T>(filePath));
-            return task.Result;
-        }
-
-        public static async Task<T> ReadSettingFileAsync<T>(string filePath) where T : SettingsFile
+        public static async Task<T> ReadFileAsync<T>(string filePath) where T : PersistToFile
         {
             try
             {
@@ -76,19 +72,19 @@ namespace PlayerCore.Settings {
             }
         }
 
-        public void WriteToDisc() {
-            var task = Task.Run(WriteToDiscAsync);
-            task.Wait();
-        }
-
-        public async Task WriteToDiscAsync() {
-            if(HasUnsavedChanges) {
-                try {
-                    WritingTask = WritingTask ?? WriteToDiskInternalAsync();
+        public async Task WriteToDiscAsync()
+        {
+            if (HasUnsavedChanges)
+            {
+                try
+                {
+                    WritingTask ??= WriteToDiskInternalAsync();
                     await WritingTask;
                     HasUnsavedChanges = false;
-                } catch(Exception) {
-                } finally {
+                }
+                catch (Exception) { }
+                finally
+                {
                     WritingTask = null;
                 }
             }
@@ -110,31 +106,27 @@ namespace PlayerCore.Settings {
             }
         }
 
-        protected void RaiseChanged(SettingChangedEventArgs args) {
+        protected void RaiseChanged(PersistentPropertyChangedEventArgs args) {
             HasUnsavedChanges = true;
             Changed?.Invoke(this, args);
         }
 
         protected void RaiseChanged(string propertyName) {
-            var prop = typeof(AppSettings).GetProperty(propertyName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-            if(prop == null) {
-                throw new ArgumentException("Invalid property name");
-            }
-            var args = new SettingChangedEventArgs(prop);
+            var prop = GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+                ?? throw new ArgumentException("Invalid property name");
+            var args = new PersistentPropertyChangedEventArgs(prop);
             RaiseChanged(args);
         }
 
         protected void RaiseSaved() => Saved?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
-        /// Called after method ReadSettingFile has deserialized a file
+        /// Called after method <see cref="ReadFileAsync{T}(string)"/> has deserialized a file
         /// </summary>
         protected virtual Task AfterRead() => Task.CompletedTask;
 
         private bool IsPathValidRootedLocal(string path) {
-            Uri pathUri;
-            bool isValidUri = Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out pathUri);
-
+            bool isValidUri = Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out var pathUri);
             return isValidUri && pathUri != null;
         }
     }

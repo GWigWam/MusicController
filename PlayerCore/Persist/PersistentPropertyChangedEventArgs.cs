@@ -5,17 +5,17 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore.Settings {
+namespace PlayerCore.Persist {
 
-    public class SettingChangedEventArgs : EventArgs {
+    public class PersistentPropertyChangedEventArgs : EventArgs {
         public PropertyInfo ChangedProperty;
         public string ChangedPropertyName => ChangedProperty.Name;
 
-        public SettingChangedEventArgs(PropertyInfo changedProperty) {
+        public PersistentPropertyChangedEventArgs(PropertyInfo changedProperty) {
             ChangedProperty = changedProperty;
         }
 
-        public SettingChangedEventArgs(Type type, string propertyName) {
+        public PersistentPropertyChangedEventArgs(Type type, string propertyName) {
             ChangedProperty = type.GetProperty(propertyName);
         }
     }

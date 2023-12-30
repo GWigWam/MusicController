@@ -1,4 +1,4 @@
-﻿using PlayerCore.Settings;
+﻿using PlayerCore.Persist;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
@@ -28,8 +28,8 @@ namespace PlayerInterface.ViewModels {
                 ["Year"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Year)) },
                 ["Track #"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Track)), songtype.GetProperty(nameof(PlayerCore.Songs.Song.Disc)) },
                 //Stats
-                ["Play Count"] = new[] { statType.GetProperty(nameof(PlayerCore.Settings.SongStats.PlayCount)) },
-                ["Last Played"] = new[] { statType.GetProperty(nameof(PlayerCore.Settings.SongStats.LastPlayed)) }
+                ["Play Count"] = new[] { statType.GetProperty(nameof(PlayerCore.Persist.SongStats.PlayCount)) },
+                ["Last Played"] = new[] { statType.GetProperty(nameof(PlayerCore.Persist.SongStats.LastPlayed)) }
             };
         }
 

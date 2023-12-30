@@ -1,7 +1,7 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
 using PlayerCore.Scrobbling;
-using PlayerCore.Settings;
+using PlayerCore.Persist;
 using PlayerCore.Songs;
 using PlayerInterface.Themes;
 using System;
@@ -27,14 +27,14 @@ namespace PlayerInterface {
 
         public event EventHandler<ExitEventArgs> Exiting;
 
-        private void Application_Startup(object sender, StartupEventArgs e) {
+        private async void Application_Startup(object sender, StartupEventArgs e) {
             var workingDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\SpeechMusicController\\{(IsDebug ? "Debug\\" : "Release\\")}";
             if(!Directory.Exists(workingDir)) {
                 Directory.CreateDirectory(workingDir);
             }
             Directory.SetCurrentDirectory(workingDir);
 
-            var settings = InitSettings();
+            var settings = await InitSettings();
             new AutoSave(settings, 60 * 10);
 
             var player = new SongPlayer();
@@ -69,7 +69,7 @@ namespace PlayerInterface {
 
             Exiting += (s, a) => {
                 PersistentQueue.SaveQueue(playlist, settings);
-                settings.WriteToDisc();
+                Task.Run(settings.WriteToDiscAsync).Wait();
             };
 
             windowMgr.Overlay.DisplayText("SMC Running...", 2000);
@@ -102,12 +102,12 @@ namespace PlayerInterface {
             }
         });
 
-        private AppSettings InitSettings() {
+        private async Task<AppSettings> InitSettings() {
             if(!File.Exists(AppSettingsFileName)) {
                 var set = new AppSettings(AppSettingsFileName);
-                set.WriteToDisc();
+                await set.WriteToDiscAsync();
             }
-            return SettingsFile.ReadSettingFile<AppSettings>(AppSettingsFileName);
+            return await PersistToFile.ReadFileAsync<AppSettings>(AppSettingsFileName);
         }
 
         private static void SetupVolume(AppSettings settings, SongPlayer player)

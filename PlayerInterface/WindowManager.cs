@@ -1,7 +1,7 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PlayerCore;
 using PlayerCore.Scrobbling;
-using PlayerCore.Settings;
+using PlayerCore.Persist;
 using PlayerInterface.Commands;
 using PlayerInterface.ViewModels;
 using System;

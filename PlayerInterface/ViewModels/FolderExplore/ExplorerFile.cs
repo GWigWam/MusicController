@@ -1,4 +1,4 @@
-﻿using PlayerCore.Settings;
+﻿using PlayerCore.Persist;
 using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;

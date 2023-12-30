@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace PlayerCore.Settings
+namespace PlayerCore.Persist
 {
     public delegate void StartupSongChangedHandler(object sender, StartupSongsChangedArgs args);
 

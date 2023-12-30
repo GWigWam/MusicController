@@ -7,9 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerCore.Settings {
-
-    public class AppSettings : SettingsFile {
+namespace PlayerCore.Persist
+{
+    public class AppSettings : PersistToFile
+    {
         private const string M3UFileName = "StartupSongs.m3u";
 
         public event StartupSongChangedHandler StartupSongsChanged;
@@ -24,7 +25,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != startMinimized) {
                     startMinimized = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartMinimized)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(StartMinimized)));
                 }
             }
         }
@@ -37,7 +38,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != songTransitionDelayMs) {
                     songTransitionDelayMs = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(SongTransitionDelayMs)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(SongTransitionDelayMs)));
                 }
             }
         }
@@ -50,7 +51,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != screenOverlayShowTimeMs) {
                     screenOverlayShowTimeMs = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(ScreenOverlayShowTimeMs)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(ScreenOverlayShowTimeMs)));
                 }
             }
         }
@@ -63,7 +64,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != resetSentenceTimeMs) {
                     resetSentenceTimeMs = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(ResetSentenceTimeMs)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(ResetSentenceTimeMs)));
                 }
             }
         }
@@ -76,7 +77,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != windowHeight) {
                     windowHeight = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(WindowHeight)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(WindowHeight)));
                 }
             }
         }
@@ -89,7 +90,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != windowWidth) {
                     windowWidth = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(WindowWidth)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(WindowWidth)));
                 }
             }
         }
@@ -102,7 +103,7 @@ namespace PlayerCore.Settings {
             set {
                 if(value != theme) {
                     theme = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(Theme)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(Theme)));
                 }
             }
         }
@@ -128,7 +129,7 @@ namespace PlayerCore.Settings {
                 if (_Queued == null || !_Queued.SequenceEqual(value))
                 {
                     _Queued = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueuedSongs)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(QueuedSongs)));
                 }
             }
         }
@@ -141,7 +142,7 @@ namespace PlayerCore.Settings {
                 if (_QueueIndx != value)
                 {
                     _QueueIndx = value;
-                    RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(QueueIndex)));
+                    RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(QueueIndex)));
                 }
             }
         }
@@ -153,7 +154,7 @@ namespace PlayerCore.Settings {
             get => _MasterVolumeDb;
             set {
                 _MasterVolumeDb = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(MasterVolumeDb)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(MasterVolumeDb)));
             }
         }
 
@@ -164,7 +165,7 @@ namespace PlayerCore.Settings {
             get => _UseFileGain;
             set {
                 _UseFileGain = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(UseFileGain)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(UseFileGain)));
             }
         }
         
@@ -175,7 +176,7 @@ namespace PlayerCore.Settings {
             get => _GainPreampDb;
             set {
                 _GainPreampDb = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(GainPreampDb)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(GainPreampDb)));
             }
         }
 
@@ -188,7 +189,7 @@ namespace PlayerCore.Settings {
             set
             {
                 _LastfmUser = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(LastfmUser)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(LastfmUser)));
             }
         }
 
@@ -201,7 +202,7 @@ namespace PlayerCore.Settings {
             set
             {
                 _LastfmAuthed = value;
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(LastfmAuthed)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(LastfmAuthed)));
             }
         }
 
@@ -293,7 +294,7 @@ namespace PlayerCore.Settings {
         {
             if(TryAddStartupSong(songPath))
             {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
             }
         }
 
@@ -306,7 +307,7 @@ namespace PlayerCore.Settings {
             }
             if(change)
             {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
             }
         }
 
@@ -314,7 +315,7 @@ namespace PlayerCore.Settings {
         {
             if(TryRemoveStartupSong(songPath))
             {
-                RaiseChanged(new SettingChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(StartupSongPaths)));
             }
         }
 

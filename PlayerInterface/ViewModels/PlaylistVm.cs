@@ -1,6 +1,6 @@
 ﻿using PlayerCore;
 using PlayerCore.PlaylistFiles;
-using PlayerCore.Settings;
+using PlayerCore.Persist;
 using PlayerCore.Songs;
 using PlayerInterface.Commands;
 using System;

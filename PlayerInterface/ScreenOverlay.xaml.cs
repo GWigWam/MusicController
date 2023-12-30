@@ -1,4 +1,4 @@
-﻿using PlayerCore.Settings;
+﻿using PlayerCore.Persist;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
