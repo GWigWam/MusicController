@@ -12,6 +12,9 @@ namespace PlayerCore
     {
         public static async Task<Song[]> AddSongsAsync(this Playlist playlist, IAsyncEnumerable<Song> addSongs, Song? position = null, IEnumerable<Func<Song, object>>? orderBys = null)
         {
+            const int minBatchSize = 8;
+            const int maxBatchSize = 256;
+
             var added = new List<Song>();
             var batch = new List<Song>();
             var batchSize = 1;
@@ -28,7 +31,7 @@ namespace PlayerCore
             await foreach(var add in addSongs)
             {
                 batch.Add(add);
-                if(batch.Count >= batchSize)
+                if((batch.Count >= batchSize && batch.Count >= minBatchSize) || batch.Count >= maxBatchSize)
                 {
                     addBatch();
                 }
