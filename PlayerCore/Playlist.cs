@@ -183,9 +183,30 @@ namespace PlayerCore
             }
         }
 
-        public void Reverse()
+        public void Reverse(IEnumerable<Song>? source = null)
         {
-            ChangeList(Songs.Reverse);
+            ChangeList(() => {
+                if (source is null)
+                {
+                    Songs.Reverse();
+                }
+                else
+                {
+                    var oldIxs = Songs.Select((s, i) => (song: s, ix: i))
+                        .Join(source, t => t.song, s => s, (t, _) => t)
+                        .ToArray();
+                    for (int i = 0; i < oldIxs.Length / 2; i++)
+                    {
+                        var cur = oldIxs[i];
+                        var tgt = oldIxs[oldIxs.Length - 1 - i];
+
+                        Songs.RemoveAt(cur.ix);
+                        Songs.Insert(cur.ix, tgt.song);
+                        Songs.RemoveAt(tgt.ix);
+                        Songs.Insert(tgt.ix, cur.song);
+                    }
+                }
+            });
             RaiseCollectionChanged(new(NotifyCollectionChangedAction.Reset));
         }
 

@@ -73,7 +73,7 @@ namespace PlayerInterface.ViewModels
 
             SortByCommand = new RelayCommand<PropertyInfo[]>(SortByProperty);
 
-            ReverseSortCommand = new RelayCommand(() => _playlist.Reverse());
+            ReverseSortCommand = new RelayCommand(Reverse);
 
             MovePlaylistSongsCommand = new RelayCommand<(SongViewModel[] move, SongViewModel to)>(
                 inp => _playlist.MoveTo(inp.to.Song, inp.move.Select(svm => svm.Song).ToArray()),
@@ -151,6 +151,13 @@ namespace PlayerInterface.ViewModels
                     _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s)), selected);
                 }
             }
+        }
+
+        private void Reverse() {
+            var selected = SelectedPlaylistItems.Select(svm => svm.Song).ToArray();
+            selected = selected.Length > 1 ? selected : null;
+
+            _playlist.Reverse(selected);
         }
 
         private void SortBySearch() {
