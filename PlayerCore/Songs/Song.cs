@@ -36,8 +36,6 @@ namespace PlayerCore.Songs
             TrackLength = trackLength;
         }
 
-        public static Task<Song?> CreateAsync(string filePath) => SongFileFactory.GetAsync(filePath);
-
         public virtual bool Equals(Song? other) => Equals(this, other);
         public bool Equals(Song? x, Song? y) => x?.GetHashCode() == y?.GetHashCode();
         public int GetHashCode(Song obj) => obj.GetHashCode();

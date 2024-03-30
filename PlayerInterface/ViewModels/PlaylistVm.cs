@@ -57,7 +57,7 @@ namespace PlayerInterface.ViewModels
 
         private Action<Song> _playSong;
 
-        public PlaylistVm(AppSettings settings, Playlist playlist, SongPlayer songPlayer, Action<Song> playSong)
+        public PlaylistVm(AppSettings settings, SongFileFactory songFileFactory, Playlist playlist, SongPlayer songPlayer, Action<Song> playSong)
         {
             _playlist = playlist;
             _settings = settings;
@@ -94,7 +94,7 @@ namespace PlayerInterface.ViewModels
                     Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
                     if(input.Paths is string[] paths)
                     {
-                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths), position, orderBys: new Func<Song, object>[] { s => s.Artist, s => s.Year, s => s.Album, s => s.Disc, s => s.Track });
+                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(songFileFactory, paths), position, orderBys: new Func<Song, object>[] { s => s.Artist, s => s.Year, s => s.Album, s => s.Disc, s => s.Track });
                     }
                 },
                 t => {

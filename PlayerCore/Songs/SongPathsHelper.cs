@@ -8,11 +8,11 @@ namespace PlayerCore.Songs
 {
     public static class SongPathsHelper
     {
-        public static IAsyncEnumerable<Song> CreateSongs(IEnumerable<string> paths)
+        public static IAsyncEnumerable<Song> CreateSongs(SongFileFactory factory, IEnumerable<string> paths)
         {
             IAsyncEnumerable<Song> CreateSongFiles(IEnumerable<string> filePaths)
             {
-                return filePaths.ToAsyncEnumerable().SelectAwait(async p => await Song.CreateAsync(p)).Where(s => s != null);
+                return filePaths.ToAsyncEnumerable().SelectAwait(async p => await factory.GetAsync(p)).Where(s => s != null);
             }
 
             IEnumerable<string> GetAllFilePaths(IEnumerable<string> fullPaths)

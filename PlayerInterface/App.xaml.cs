@@ -34,8 +34,9 @@ namespace PlayerInterface {
             }
             Directory.SetCurrentDirectory(workingDir);
 
-            var settings = await InitSettings();
+            var settings = await InitPersistentFiles();
             new AutoSave(settings, 60 * 10);
+            var songFileFactory = new SongFileFactory();
 
             var player = new SongPlayer();
             player.PlayingStopped += (s, a) => {
@@ -63,9 +64,9 @@ namespace PlayerInterface {
             };
 
             var windowMgr = new WindowManager((TaskbarIcon)FindResource(TrayIconResourceName));
-            windowMgr.Init(settings, player, playlist, transitionMngr, scrobbler);
+            windowMgr.Init(settings, songFileFactory, player, playlist, transitionMngr, scrobbler);
 
-            LoadSongsBackground(e.Args, playlist, player, settings);
+            LoadSongsBackground(e.Args, playlist, player, settings, songFileFactory);
 
             Exiting += (s, a) => {
                 PersistentQueue.SaveQueue(playlist, settings);
@@ -75,13 +76,13 @@ namespace PlayerInterface {
             windowMgr.Overlay.DisplayText("SMC Running...", 2000);
         }
 
-        private static void LoadSongsBackground(string[] appArgs, Playlist playlist, SongPlayer player, AppSettings settings) => Task.Run(async () =>
+        private static void LoadSongsBackground(string[] appArgs, Playlist playlist, SongPlayer player, AppSettings settings, SongFileFactory songFileFactory) => Task.Run(async () =>
         {
             var loadSpecific = appArgs.Length > 0;
             var paths = loadSpecific ? appArgs : getStartupSongsShuffled();
             if(paths.Any())
             {
-                var fst = await Song.CreateAsync(paths.First());
+                var fst = await songFileFactory.GetAsync(paths.First());
                 if(fst != null)
                 {
                     var added = playlist.AddSong(fst);
@@ -91,8 +92,8 @@ namespace PlayerInterface {
                         player.Play();
                     }
                 }
-                await playlist.AddSongsAsync(SongPathsHelper.CreateSongs(paths.Skip(1)));
-                await PersistentQueue.RestoreQueue(playlist, settings);
+                await playlist.AddSongsAsync(SongPathsHelper.CreateSongs(songFileFactory, paths.Skip(1)));
+                await PersistentQueue.RestoreQueue(playlist, settings, songFileFactory);
             }
 
             string[] getStartupSongsShuffled()
@@ -102,12 +103,16 @@ namespace PlayerInterface {
             }
         });
 
-        private async Task<AppSettings> InitSettings() {
-            if(!File.Exists(AppSettingsFileName)) {
-                var set = new AppSettings(AppSettingsFileName);
-                await set.WriteToDiscAsync();
+        private async Task<AppSettings> InitPersistentFiles()
+        {
+            if(!File.Exists(AppSettingsFileName))
+            {
+                var createSettings = new AppSettings(AppSettingsFileName);
+                await createSettings.WriteToDiscAsync();
             }
-            return await PersistToFile.ReadFileAsync<AppSettings>(AppSettingsFileName);
+            var settings = await PersistToFile.ReadFileAsync<AppSettings>(AppSettingsFileName);
+
+            return settings;
         }
 
         private static void SetupVolume(AppSettings settings, SongPlayer player)

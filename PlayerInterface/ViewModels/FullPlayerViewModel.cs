@@ -52,7 +52,7 @@ namespace PlayerInterface.ViewModels {
 
         public AppSettingsViewModel SettingsViewModel { get; }
 
-        public FullPlayerViewModel(AppSettings settings, SongPlayer player, Playlist playlist, PlayingVm playingVm, NextPrevVm nextPrevVm, Scrobbler scrobbler) {
+        public FullPlayerViewModel(AppSettings settings, SongFileFactory songFileFactory, SongPlayer player, Playlist playlist, PlayingVm playingVm, NextPrevVm nextPrevVm, Scrobbler scrobbler) {
             Settings = settings;
             this.playlist = playlist;
             SongPlayer = player;
@@ -60,7 +60,7 @@ namespace PlayerInterface.ViewModels {
             NextPrev = nextPrevVm;
             Scrobbler = scrobbler;
 
-            Playlist = new PlaylistVm(settings, playlist, player, StartPlaying);
+            Playlist = new PlaylistVm(settings, songFileFactory, playlist, player, StartPlaying);
             SettingsViewModel = new AppSettingsViewModel(settings);
             Volume = new VolumeVm(settings);
 

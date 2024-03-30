@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using PlayerCore.Songs;
 
 namespace PlayerInterface {
     internal class WindowManager {
@@ -23,12 +24,12 @@ namespace PlayerInterface {
             TrayIcon = icon;
         }
 
-        public void Init(AppSettings settings, SongPlayer songPlayer, Playlist playlist, TransitionManager transitionMngr, Scrobbler scrobbler) {
+        public void Init(AppSettings settings, SongFileFactory songFileFactory, SongPlayer songPlayer, Playlist playlist, TransitionManager transitionMngr, Scrobbler scrobbler) {
             var playVm = new PlayingVm(songPlayer, transitionMngr);
             var npVm = new NextPrevVm(songPlayer, playlist);
 
             var smallVm = new SmallPlayerViewModel(playVm, npVm, settings);
-            var fullVm = new FullPlayerViewModel(settings, songPlayer, playlist, playVm, npVm, scrobbler);
+            var fullVm = new FullPlayerViewModel(settings, songFileFactory, songPlayer, playlist, playVm, npVm, scrobbler);
 
             CreateFullPlayer(!settings.StartMinimized, fullVm);
             CreateSmallPlayer(settings.StartMinimized, smallVm);

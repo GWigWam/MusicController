@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 #nullable enable
 namespace PlayerCore.Songs
 {
-    internal static class SongFileFactory
+    public class SongFileFactory
     {
-        private static readonly ConcurrentDictionary<string, Song> Cache = new();
+        private readonly ConcurrentDictionary<string, Song> Cache = new();
 
-        public static async Task<Song?> GetAsync(string filePath)
+        public async Task<Song?> GetAsync(string filePath)
         {
             if(Cache.TryGetValue(filePath.ToLower(), out var cached))
             {

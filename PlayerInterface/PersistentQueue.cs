@@ -19,11 +19,11 @@ namespace PlayerInterface
             settings.QueueIndex = playlist.QueueIndex;
         }
 
-        public static async Task RestoreQueue(Playlist playlist, AppSettings settings)
+        public static async Task RestoreQueue(Playlist playlist, AppSettings settings, SongFileFactory songFileFactory)
         {
             if(settings.QueuedSongs.Length > 0)
             {
-                var queuedSongs = SongPathsHelper.CreateSongs(settings.QueuedSongs);
+                var queuedSongs = SongPathsHelper.CreateSongs(songFileFactory, settings.QueuedSongs);
                 await playlist.AddSongsAsync(queuedSongs);
 
                 foreach(var qp in settings.QueuedSongs)
