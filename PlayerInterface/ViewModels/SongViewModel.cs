@@ -17,16 +17,18 @@ namespace PlayerInterface.ViewModels {
 
         static SongViewModel() {
             var songtype = typeof(Song);
+            var tagsType = typeof(SongTags);
             var statType = typeof(SongStats);
             SortProperties = new Dictionary<string, PropertyInfo[]>() {
                 //Song:
                 ["Title"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Title)) },
-                ["Album"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Album)) },
-                ["Artist"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Artist)) },
-                ["Genre"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Genre)) },
-                ["Length"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.TrackLength)) },
-                ["Year"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Year)) },
-                ["Track #"] = new[] { songtype.GetProperty(nameof(PlayerCore.Songs.Song.Track)), songtype.GetProperty(nameof(PlayerCore.Songs.Song.Disc)) },
+                //Tags:
+                ["Album"] = new[] { tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.Album)) },
+                ["Artist"] = new[] { tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.Artist)) },
+                ["Genre"] = new[] { tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.Genre)) },
+                ["Length"] = new[] { tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.TrackLength)) },
+                ["Year"] = new[] { tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.Year)) },
+                ["Track #"] = new[] { tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.Track)), tagsType.GetProperty(nameof(PlayerCore.Songs.SongTags.Disc)) },
                 //Stats
                 ["Play Count"] = new[] { statType.GetProperty(nameof(PlayerCore.Persist.SongStats.PlayCount)) },
                 ["Last Played"] = new[] { statType.GetProperty(nameof(PlayerCore.Persist.SongStats.LastPlayed)) }
@@ -51,18 +53,18 @@ namespace PlayerInterface.ViewModels {
 
         public string Path => Song.Path;
 
-        public string SubTitle => $"{Song.Artist} {(Song.Album is string a ? $"({a})" : null)}";
+        public string SubTitle => $"{(Song.Tags?.Artist is string ar ? $"{ar} " : null)}{(Song.Tags?.Album is string al ? $"({al})" : null)}";
         public string Title => Song.Title;
 
-        public string TrackLengthStr => $"[{FormatHelper.FormatTimeSpan(Song.TrackLength)}]";
-        public string BitRateStr => $"{Song.BitRate}kbps";
+        public string TrackLengthStr => Song.Tags?.TrackLength is TimeSpan tl ? $"[{FormatHelper.FormatTimeSpan(tl)}]" : string.Empty;
+        public string BitRateStr => Song.Tags?.BitRate is int br ? $"{br}kbps" : string.Empty;
         public string TrackNrStr =>
-            Song.Track is int t ?
-                Song.TrackCount is int tc ? $"{t}/{tc}" :
+            Song.Tags?.Track is int t ?
+                Song.Tags.TrackCount is int tc ? $"{t}/{tc}" :
                 $"#{t}" :
             string.Empty;
 
-        public string YearStr => Song.Year is int y ? $"{y}" : string.Empty;
+        public string YearStr => Song.Tags?.Year is int y ? $"{y}" : string.Empty;
 
         private int _PlayCount;
         public int PlayCount {

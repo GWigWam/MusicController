@@ -94,7 +94,7 @@ namespace PlayerInterface.ViewModels
                     Song position = (input.Position as Song) ?? _playlist.LastOrDefault();
                     if(input.Paths is string[] paths)
                     {
-                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(songFileFactory, paths), position, orderBys: new Func<Song, object>[] { s => s.Artist, s => s.Year, s => s.Album, s => s.Disc, s => s.Track });
+                        await _playlist.AddSongsAsync(SongPathsHelper.CreateSongs(songFileFactory, paths), position, orderBys: new Func<Song, object>[] { s => s.Tags?.Artist, s => s.Tags?.Year, s => s.Tags?.Album, s => s.Tags?.Disc, s => s.Tags?.Track });
                     }
                 },
                 t => {
@@ -150,6 +150,10 @@ namespace PlayerInterface.ViewModels
                 {
                     _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s)), selected);
                 }
+                else if (pi.DeclaringType == typeof(SongTags))
+                {
+                    _playlist.Order((s) => s.Tags is SongTags t ? pi.GetValue(t) : null, selected);
+                }
             }
         }
 
@@ -169,8 +173,8 @@ namespace PlayerInterface.ViewModels
             _playlist.Order(
                 orderBys: new Func<Song, object>[] {
                     s => !reg.IsMatch(s.Title),
-                    s => s.Album == null || !reg.IsMatch(s.Album),
-                    s => s.Artist == null || !reg.IsMatch(s.Artist),
+                    s => string.IsNullOrEmpty(s.Tags?.Album)  || !reg.IsMatch(s.Tags.Album),
+                    s => string.IsNullOrEmpty(s.Tags?.Artist) || !reg.IsMatch(s.Tags.Artist),
                 },
                 source: selected
             );

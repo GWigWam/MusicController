@@ -50,10 +50,10 @@ namespace PlayerInterface.ViewModels {
                 : Brushes.Transparent;
 
         public string CurrentGainStr =>
-            SongPlayer.CurrentSong is Song s ?
-                s.AlbumGain is double ag ?
+            SongPlayer.CurrentSong?.Tags is SongTags st ?
+                st.AlbumGain is double ag ?
                     $"Curent gain: {ag:N2}dB (album gain)" :
-                    s.TrackGain is double tg ? 
+                    st.TrackGain is double tg ? 
                         $"Current gain: {tg:N2}dB (track gain)" :
                         $"Current track has nog gain tags" :
                 "[No song selected]";

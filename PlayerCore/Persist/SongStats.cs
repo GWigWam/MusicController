@@ -67,9 +67,9 @@ namespace PlayerCore.Persist {
         
         public static byte[]? CalculateInfoHash(Song song)
         {
-            if (song.Title != null && song.Artist != null)
+            if (song.Title != null && song.Tags?.Artist is string artist)
             {
-                var inpBytes = Encoding.UTF8.GetBytes($"{song.Artist}_{song.Album}_{song.Title}".ToLower());
+                var inpBytes = Encoding.UTF8.GetBytes($"{artist}_{song.Tags?.Album}_{song.Title}".ToLower());
                 using var sha1 = System.Security.Cryptography.SHA1.Create();
                 var hash = sha1.ComputeHash(inpBytes);
                 return hash;

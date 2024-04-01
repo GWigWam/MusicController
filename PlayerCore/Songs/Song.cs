@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -9,31 +10,32 @@ using System.Threading.Tasks;
 #nullable enable
 namespace PlayerCore.Songs
 {
-    [DebuggerDisplay("{Title} - {Artist} ({Album})")]
-    public record Song : IEqualityComparer<Song>, IEquatable<Song>
+    [DebuggerDisplay("'{Title}' ({Tags})")]
+    public record Song : IEqualityComparer<Song>, IEquatable<Song>, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public string Path { get; }
-        public string Title { get; }
-        public TimeSpan TrackLength { get; }
-        public int BitRate { get; init; }
+        public string Title { get; private set; }
 
-        public string? Album { get; init; }
-        public string? Artist { get; init; }
-        public string? Genre { get; init; }
+        private SongTags? _Tags;
+        public SongTags? Tags {
+            get => _Tags;
+            set {
+                _Tags = value;
+                PropertyChanged?.Invoke(this, new(nameof(Tags)));
+                if (value?.Title != null) {
+                    Title = value.Title;
+                    PropertyChanged?.Invoke(this, new(nameof(Title)));
+                }
+            }
+        }
 
-        public int? Track { get; init; }
-        public int? TrackCount { get; init; }
-        public int? Disc { get; init; }
-        public int? DiscCount { get; init; }
-        public int? Year { get; init; }
-        public double? AlbumGain { get; init; }
-        public double? TrackGain { get; init; }
-
-        internal Song(string path, string title, TimeSpan trackLength)
+        internal Song(string path, string title, SongTags? tags = null)
         {
             Path = path;
             Title = title;
-            TrackLength = trackLength;
+            _Tags = tags;
         }
 
         public virtual bool Equals(Song? other) => Equals(this, other);

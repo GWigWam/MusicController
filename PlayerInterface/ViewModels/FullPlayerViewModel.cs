@@ -24,7 +24,7 @@ namespace PlayerInterface.ViewModels {
 
         public string TrackLengthStr => FormatHelper.FormatTimeSpan(SongPlayer.TrackLength);
 
-        public string StatusText => $"{SongPlayer?.CurrentSong?.Title} - {SongPlayer?.CurrentSong?.Artist}";
+        public string StatusText => $"{SongPlayer?.CurrentSong?.Title} - {SongPlayer?.CurrentSong?.Tags?.Artist}";
 
         public Visibility ShowDropHint => (playlist?.Length ?? 0) > 0 ? Visibility.Collapsed : Visibility.Visible;
         
@@ -47,8 +47,8 @@ namespace PlayerInterface.ViewModels {
         public IBaseCommand LastfmLogoutCmd { get; }
 
         public string PlaylistStats => Playlist.SelectedPlaylistItems.ToArray() is { Length: > 1 } sel ?
-            $"{sel.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(sel.Sum(svm => svm.Song.TrackLength.Ticks)))}" :
-            $"{playlist.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist.Sum(s => s.TrackLength.Ticks)))}";
+            $"{sel.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(sel.Sum(svm => svm.Song.Tags?.TrackLength.Ticks ?? 1)))}" :
+            $"{playlist.Length} - {FormatHelper.FormatTimeSpan(new TimeSpan(playlist.Sum(s => s.Tags?.TrackLength.Ticks ?? 1)))}";
 
         public AppSettingsViewModel SettingsViewModel { get; }
 

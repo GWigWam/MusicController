@@ -150,7 +150,7 @@ namespace PlayerInterface {
             {
                 if(song is not null)
                 {
-                    volume.GainDb = settings.UseFileGain ? song.AlbumGain ?? song.TrackGain : null;
+                    volume.GainDb = settings.UseFileGain ? song.Tags?.AlbumGain ?? song.Tags?.TrackGain : null;
                 }
             }
 

@@ -58,11 +58,11 @@ namespace PlayerCore.Scrobbling
 
         public async Task Scrobble(Song song)
         {
-            if (!string.IsNullOrEmpty(song.Artist) && !string.IsNullOrEmpty(song.Album) && !string.IsNullOrEmpty(song.Title))
+            if (!string.IsNullOrEmpty(song.Tags?.Artist) && !string.IsNullOrEmpty(song.Tags.Album) && !string.IsNullOrEmpty(song.Tags.Title))
             {
                 Client ??= CreateAuthedClient();
 
-                var resp = await Client.Scrobbler.ScrobbleAsync(SongToScrobble(song));
+                var resp = await Client.Scrobbler.ScrobbleAsync(SongToScrobble(song.Tags));
                 if (!resp.Success)
                 {
                     if (resp.Status == LastResponseStatus.BadAuth || resp.Status == LastResponseStatus.SessionExpired || resp.Status == LastResponseStatus.BadApiKey || resp.Status == LastResponseStatus.KeySuspended)
@@ -76,10 +76,10 @@ namespace PlayerCore.Scrobbling
 
         public async Task NowPlaying(Song song)
         {
-            if (!string.IsNullOrEmpty(song.Artist) && !string.IsNullOrEmpty(song.Album) && !string.IsNullOrEmpty(song.Title))
+            if (!string.IsNullOrEmpty(song.Tags?.Artist) && !string.IsNullOrEmpty(song.Tags.Album) && !string.IsNullOrEmpty(song.Tags.Title))
             {
                 Client ??= CreateAuthedClient();
-                await Client.Track.UpdateNowPlayingAsync(SongToScrobble(song));
+                await Client.Track.UpdateNowPlayingAsync(SongToScrobble(song.Tags));
             }
         }
 
@@ -91,14 +91,15 @@ namespace PlayerCore.Scrobbling
                 Client ??= CreateAuthedClient();
 
                 if (Settings.GetSongStats(song) is SongStats stats &&
-                    (await Client.Track.GetInfoAsync(song.Title, song.Artist, Client.User.Auth.UserSession.Username)) is { Success: true } info)
+                    (song.Tags?.Title is string title && song.Tags.Artist is string artist) &&
+                    (await Client.Track.GetInfoAsync(title, artist, Client.User.Auth.UserSession.Username)) is { Success: true } info)
                 {
                     stats.PlayCount = info.Content.UserPlayCount is int pc && pc > stats.PlayCount ? pc : stats.PlayCount;
                 }
             }
         }
 
-        private static Scrobble SongToScrobble(Song song)
+        private static Scrobble SongToScrobble(SongTags song)
             => new Scrobble(song.Artist, song.Album, song.Title, DateTimeOffset.Now) { Duration = song.TrackLength };
 
         private LastfmClient CreateAuthedClient()
@@ -156,7 +157,7 @@ namespace PlayerCore.Scrobbling
                 var handle = player.CurrentSong;
                 await Task.Delay(1000);
 
-                if (player.IsPlaying && player.CurrentSong is Song playing && playing == handle)
+                if (player.IsPlaying && player.CurrentSong is Song playing && playing == handle && playing.Tags?.TrackLength is TimeSpan duration)
                 {
                     if (delayed != playing)
                     {
@@ -167,7 +168,7 @@ namespace PlayerCore.Scrobbling
 
                     const int scrobbleDelayMin = 4;
                     const double scrobblePercentage = 0.9;
-                    var scrobbleDelay = Math.Min((playing.TrackLength - player.Elapsed).TotalMilliseconds * scrobblePercentage, scrobbleDelayMin * 60 * 1000); // Scrobble after 4min or after 90% of song, whichever is first
+                    var scrobbleDelay = Math.Min((duration - player.Elapsed).TotalMilliseconds * scrobblePercentage, scrobbleDelayMin * 60 * 1000); // Scrobble after 4min or after 90% of song, whichever is first
                     await Task.Delay((int)scrobbleDelay);
 
                     if (player.IsPlaying && player.CurrentSong is Song scrobble && scrobble == handle && scrobbled != scrobble)

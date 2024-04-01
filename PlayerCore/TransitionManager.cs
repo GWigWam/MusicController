@@ -79,7 +79,10 @@ namespace PlayerCore {
                 Task.Run(async () => {
                     try {
                         IsTransitioning = true;
-                        var isNextOnAlbum = prev != null && prev.Album == TrackList.CurrentSong!.Album && (prev.Track == null || prev.Track + 1 == TrackList.CurrentSong.Track) && prev.Disc == TrackList.CurrentSong.Disc;
+                        var isNextOnAlbum = prev != null
+                            && prev.Tags?.Album is string pAlbum && pAlbum == TrackList.CurrentSong!.Tags?.Album
+                            && (prev.Tags?.Track == null || prev.Tags.Track + 1 == TrackList.CurrentSong.Tags?.Track)
+                            && prev.Tags?.Disc == TrackList.CurrentSong.Tags?.Disc;
                         var delay = isNextOnAlbum ? 0 : SongDelayMs; // Do not delay between consecutive tracks on same album
                         await Task.Delay(delay, CancelSrc.Token);
                         Player.Play();

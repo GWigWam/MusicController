@@ -88,7 +88,7 @@ namespace PlayerInterface {
 
             player.SongChanged += (s, a) => {
                 if(player?.CurrentSong != null && CurrentWindow != Window.Full) {
-                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title} - {player.CurrentSong.Artist}"));
+                    Application.Current.Dispatcher.Invoke(() => Overlay.DisplayText($"{player.CurrentSong.Title}{(player.CurrentSong?.Tags?.Artist is string ar ? $" - {ar}": null)}"));
                 }
             };
         }

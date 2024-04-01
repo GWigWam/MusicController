@@ -37,19 +37,26 @@ namespace PlayerCore.Songs
                 try
                 {
                     var fileInfo = TagLib.File.Create(file.FullName);
-                    var result = new Song(file.FullName, fileInfo.Tag.Title ?? file.Name.Replace(file.Extension, ""), fileInfo.Properties.Duration) {
+                    var tags = new SongTags {
+                        Title = fileInfo.Tag.Title,
+                        TrackLength = fileInfo.Properties.Duration,
                         BitRate = fileInfo.Properties.AudioBitrate,
+
                         Artist = fileInfo.Tag.FirstPerformer,
                         Album = fileInfo.Tag.Album,
                         Genre = fileInfo.Tag.FirstGenre,
+
                         Track = fileInfo.Tag.Track is var t and not 0 ? (int)t : null,
                         TrackCount = fileInfo.Tag.TrackCount is var tc and not 0 ? (int)tc : null,
                         Disc = fileInfo.Tag.Disc is var d and not 0 ? (int)d : null,
                         DiscCount = fileInfo.Tag.DiscCount is var dc and not 0 ? (int)dc : null,
+
                         Year = fileInfo.Tag.Year is var y and not 0 ? (int)y : null,
+
                         AlbumGain = fileInfo.Tag.ReplayGainAlbumGain is var ag and not double.NaN ? ag : null,
                         TrackGain = fileInfo.Tag.ReplayGainTrackGain is var tg and not double.NaN ? tg : null,
                     };
+                    var result = new Song(file.FullName, fileInfo.Tag.Title ?? file.Name.Replace(file.Extension, ""), tags);
                     return result;
                 }
                 catch { }
