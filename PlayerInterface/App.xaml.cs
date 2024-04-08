@@ -24,6 +24,7 @@ namespace PlayerInterface {
         private const string TrayIconResourceName = "Tbi_Icon";
 
         public static string AppSettingsFileName = "AppSettings.json";
+        public static string FileTagsCacheFileName = "FileTagsCache.json";
 
         public event EventHandler<ExitEventArgs> Exiting;
 
@@ -34,9 +35,10 @@ namespace PlayerInterface {
             }
             Directory.SetCurrentDirectory(workingDir);
 
-            var settings = await InitPersistentFiles();
+            var (settings, tagsCache) = await InitPersistentFiles();
             new AutoSave(settings, 60 * 10);
-            var songFileFactory = new SongFileFactory(settings);
+            new AutoSave(tagsCache, 60 * 10);
+            var songFileFactory = new SongFileFactory(settings, tagsCache);
 
             var player = new SongPlayer();
             player.PlayingStopped += (s, a) => {
@@ -71,7 +73,7 @@ namespace PlayerInterface {
             Exiting += (s, a) => {
                 songFileFactory.Dispose();
                 PersistentQueue.SaveQueue(playlist, settings);
-                Task.Run(settings.WriteToDiscAsync).Wait();
+                Task.Run(async () => { await settings.WriteToDiscAsync(); await tagsCache.WriteToDiscAsync(); }).Wait();
             };
 
             windowMgr.Overlay.DisplayText("SMC Running...", 2000);
@@ -104,16 +106,23 @@ namespace PlayerInterface {
             }
         });
 
-        private async Task<AppSettings> InitPersistentFiles()
+        private async Task<(AppSettings, FileTagsCache)> InitPersistentFiles()
         {
             if(!File.Exists(AppSettingsFileName))
             {
                 var createSettings = new AppSettings(AppSettingsFileName);
                 await createSettings.WriteToDiscAsync();
             }
-            var settings = await PersistToFile.ReadFileAsync<AppSettings>(AppSettingsFileName);
+            var settingsT = PersistToFile.ReadFileAsync<AppSettings>(AppSettingsFileName);
 
-            return settings;
+            if (!File.Exists(FileTagsCacheFileName))
+            {
+                var createTagsCache = new FileTagsCache(FileTagsCacheFileName);
+                await createTagsCache.WriteToDiscAsync();
+            }
+            var tagsT = PersistToFile.ReadFileAsync<FileTagsCache>(FileTagsCacheFileName);
+
+            return (await settingsT, await tagsT);
         }
 
         private static void SetupVolume(AppSettings settings, SongPlayer player)

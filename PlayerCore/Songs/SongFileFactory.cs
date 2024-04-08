@@ -17,10 +17,12 @@ namespace PlayerCore.Songs
         private readonly ConcurrentQueue<Song> UpdateTagsQueue = new();
 
         private AppSettings AppSettings { get; }
+        private FileTagsCache FileTagsCache { get; }
 
-        public SongFileFactory(AppSettings appSettings)
+        public SongFileFactory(AppSettings appSettings, FileTagsCache tagsCache)
         {
             AppSettings = appSettings;
+            FileTagsCache = tagsCache;
             _ = RunBackgroundTagLoader(CancellationTokenSource.Token);
         }
 
@@ -32,7 +34,8 @@ namespace PlayerCore.Songs
             if(file.Exists && SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.OrdinalIgnoreCase)))
             {
                 var stats = AppSettings.GetSongStats(filePath);
-                var result = new Song(file.FullName, file.Name.Replace(file.Extension, ""), stats: stats);
+                var tags = FileTagsCache.TryGet(filePath, out var tv) ? tv : null;
+                var result = new Song(file.FullName, tags?.Title ?? file.Name.Replace(file.Extension, ""), tags, stats);
                 UpdateTagsQueue.Enqueue(result);
                 return result;
             }
@@ -81,6 +84,7 @@ namespace PlayerCore.Songs
                     {
                         song.Stats = AppSettings.GetSongStats(song.Path);
                     }
+                    FileTagsCache.AddOrUpdate(song.Path, song.Tags);
                 }
                 catch (Exception) { }
             }
