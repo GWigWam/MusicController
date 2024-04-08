@@ -24,14 +24,9 @@ namespace PlayerCore.Songs
             _ = RunBackgroundTagLoader(CancellationTokenSource.Token);
         }
 
-        public async Task<Song?> GetAsync(string filePath)
-        {
-            return await CreateAsync(filePath) is Song res ? res : null;
-        }
+        public Task<Song?> CreateAsync(string filePath) => Task.Run(() => Create(filePath));
 
-        private Task<Song?> CreateAsync(string filePath) => Task.Run(() => Create(filePath));
-
-        private Song? Create(string filePath)
+        public Song? Create(string filePath)
         {
             var file = new FileInfo(filePath);
             if(file.Exists && SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.OrdinalIgnoreCase)))

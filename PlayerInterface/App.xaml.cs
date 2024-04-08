@@ -83,7 +83,7 @@ namespace PlayerInterface {
             var paths = loadSpecific ? appArgs : getStartupSongsShuffled();
             if(paths.Any())
             {
-                var fst = await songFileFactory.GetAsync(paths.First());
+                var fst = songFileFactory.Create(paths.First());
                 if(fst != null)
                 {
                     var added = playlist.AddSong(fst);
