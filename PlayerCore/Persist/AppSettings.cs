@@ -247,27 +247,35 @@ namespace PlayerCore.Persist
 
 #nullable enable
         public SongStats? GetSongStats(string songPath)
-            => Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase));
+        {
+            lock (Statistics)
+            {
+                return Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase));
+            }
+        }
 
         public bool TryFixSongStatsByTagsHash(string songPath, SongTags tags)
         {
-            var infHash = SongStats.CalculateInfoHash(tags);
-            if (Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase)) is SongStats foundByPath)
+            lock (Statistics)
             {
-                var oldHash = foundByPath.InfoHash;
-                foundByPath.InfoHash = infHash;
-                return (oldHash == null && infHash != null) || (oldHash != null && infHash == null) || (oldHash != null && infHash != null && !infHash.SequenceEqual(oldHash));
-            }
-            else if (infHash != null && Statistics.FirstOrDefault(ss => ss.InfoHash != null && ss.InfoHash.SequenceEqual(infHash) && !File.Exists(ss.Path)) is SongStats foundByHash) // File moved
-            {
-                Statistics.Remove(foundByHash);
-                createSongStats(foundByHash.PlayCount, foundByHash.LastPlayed, infHash);
-                return true;
-            }
-            else
-            {
-                createSongStats(0, null, infHash);
-                return true;
+                var infHash = SongStats.CalculateInfoHash(tags);
+                if (Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase)) is SongStats foundByPath)
+                {
+                    var oldHash = foundByPath.InfoHash;
+                    foundByPath.InfoHash = infHash;
+                    return (oldHash == null && infHash != null) || (oldHash != null && infHash == null) || (oldHash != null && infHash != null && !infHash.SequenceEqual(oldHash));
+                }
+                else if (infHash != null && Statistics.FirstOrDefault(ss => ss.InfoHash != null && ss.InfoHash.SequenceEqual(infHash) && !File.Exists(ss.Path)) is SongStats foundByHash) // File moved
+                {
+                    Statistics.Remove(foundByHash);
+                    createSongStats(foundByHash.PlayCount, foundByHash.LastPlayed, infHash);
+                    return true;
+                }
+                else
+                {
+                    createSongStats(0, null, infHash);
+                    return true;
+                }
             }
 
             SongStats createSongStats(int playCount, DateTimeOffset? lastPlayed, byte[]? infoHash)
@@ -287,10 +295,13 @@ namespace PlayerCore.Persist
 
         public void CleanupDeadStats()
         {
-            var change = Statistics.Where(ss => ss.InfoHash != null || File.Exists(ss.Path)).ToList();
-            if (change.Count != Statistics.Count)
+            lock (Statistics)
             {
-                Statistics = change;
+                var change = Statistics.Where(ss => ss.InfoHash != null || File.Exists(ss.Path)).ToList();
+                if (change.Count != Statistics.Count)
+                {
+                    Statistics = change;
+                }
             }
         }
 
