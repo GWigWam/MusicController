@@ -148,7 +148,7 @@ namespace PlayerInterface.ViewModels
                 }
                 else if (pi.DeclaringType == typeof(SongStats))
                 {
-                    _playlist.Order((s) => pi.GetValue(_settings.GetSongStats(s)), selected);
+                    _playlist.Order((s) => s.Stats is SongStats stats ? pi.GetValue(stats) : null, selected);
                 }
                 else if (pi.DeclaringType == typeof(SongTags))
                 {

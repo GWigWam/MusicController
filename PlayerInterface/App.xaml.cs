@@ -36,7 +36,7 @@ namespace PlayerInterface {
 
             var settings = await InitPersistentFiles();
             new AutoSave(settings, 60 * 10);
-            var songFileFactory = new SongFileFactory();
+            var songFileFactory = new SongFileFactory(settings);
 
             var player = new SongPlayer();
             player.PlayingStopped += (s, a) => {
@@ -49,7 +49,7 @@ namespace PlayerInterface {
 
             SetupVolume(settings, player);
 
-            SongStats.SetupStats(settings, player);
+            SongStats.SetupStats(player);
             var scrobbler = new Scrobbler(settings, player);
 
             var playlist = new Playlist();
@@ -69,6 +69,7 @@ namespace PlayerInterface {
             LoadSongsBackground(e.Args, playlist, player, settings, songFileFactory);
 
             Exiting += (s, a) => {
+                songFileFactory.Dispose();
                 PersistentQueue.SaveQueue(playlist, settings);
                 Task.Run(settings.WriteToDiscAsync).Wait();
             };

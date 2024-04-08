@@ -245,28 +245,34 @@ namespace PlayerCore.Persist
             }
         }
 
-        public SongStats GetSongStats(Song song)
+#nullable enable
+        public SongStats? GetSongStats(string songPath)
+            => Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase));
+
+        public bool TryFixSongStatsByTagsHash(string songPath, SongTags tags)
         {
-            var infHash = SongStats.CalculateInfoHash(song);
-            if (Statistics.FirstOrDefault(ss => ss.Path.Equals(song.Path, StringComparison.OrdinalIgnoreCase)) is SongStats foundByPath)
+            var infHash = SongStats.CalculateInfoHash(tags);
+            if (Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase)) is SongStats foundByPath)
             {
+                var oldHash = foundByPath.InfoHash;
                 foundByPath.InfoHash = infHash;
-                return foundByPath;
+                return (oldHash == null && infHash != null) || (oldHash != null && infHash == null) || (oldHash != null && infHash != null && !infHash.SequenceEqual(oldHash));
             }
             else if (infHash != null && Statistics.FirstOrDefault(ss => ss.InfoHash != null && ss.InfoHash.SequenceEqual(infHash) && !File.Exists(ss.Path)) is SongStats foundByHash) // File moved
             {
                 Statistics.Remove(foundByHash);
-                var copy = createSongStats(foundByHash.PlayCount, foundByHash.LastPlayed, infHash);
-                return copy;
+                createSongStats(foundByHash.PlayCount, foundByHash.LastPlayed, infHash);
+                return true;
             }
             else
             {
-                return createSongStats(0, null, infHash);
+                createSongStats(0, null, infHash);
+                return true;
             }
 
             SongStats createSongStats(int playCount, DateTimeOffset? lastPlayed, byte[]? infoHash)
             {
-                var @new = new SongStats(song.Path) {
+                var @new = new SongStats(songPath) {
                     PlayCount = playCount,
                     LastPlayed = lastPlayed,
                     InfoHash = infoHash
@@ -277,6 +283,7 @@ namespace PlayerCore.Persist
                 return @new;
             }
         }
+#nullable restore
 
         public void CleanupDeadStats()
         {

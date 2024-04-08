@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlayerCore.Persist;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,11 +32,21 @@ namespace PlayerCore.Songs
             }
         }
 
-        internal Song(string path, string title, SongTags? tags = null)
+        private SongStats? _Stats;
+        public SongStats? Stats {
+            get => _Stats;
+            set {
+                _Stats = value;
+                PropertyChanged?.Invoke(this, new(nameof(Stats)));
+            }
+        }
+
+        internal Song(string path, string title, SongTags? tags = null, SongStats? stats = null)
         {
             Path = path;
             Title = title;
             _Tags = tags;
+            _Stats = stats;
         }
 
         public virtual bool Equals(Song? other) => Equals(this, other);

@@ -90,7 +90,7 @@ namespace PlayerCore.Scrobbling
                 StatLookupHistory[song] = DateTime.Now;
                 Client ??= CreateAuthedClient();
 
-                if (Settings.GetSongStats(song) is SongStats stats &&
+                if (song.Stats is SongStats stats &&
                     (song.Tags?.Title is string title && song.Tags.Artist is string artist) &&
                     (await Client.Track.GetInfoAsync(title, artist, Client.User.Auth.UserSession.Username)) is { Success: true } info)
                 {

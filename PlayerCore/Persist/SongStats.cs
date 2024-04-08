@@ -54,22 +54,22 @@ namespace PlayerCore.Persist {
             Path = path;
         }
 
-        public static void SetupStats(AppSettings settings, SongPlayer player)
+        public static void SetupStats(SongPlayer player)
         {
             player.PlayingStopped += (_, a) => {
-                if(a.PlayedToEnd && player.CurrentSong != null)
+                if(a.PlayedToEnd && player.CurrentSong != null && player.CurrentSong.Stats is SongStats stats)
                 {
-                    settings.GetSongStats(player.CurrentSong).PlayCount++;
-                    settings.GetSongStats(player.CurrentSong).LastPlayed = DateTimeOffset.Now;
+                    stats.PlayCount++;
+                    stats.LastPlayed = DateTimeOffset.Now;
                 }
             };
         }
         
-        public static byte[]? CalculateInfoHash(Song song)
+        public static byte[]? CalculateInfoHash(SongTags tags)
         {
-            if (song.Title != null && song.Tags?.Artist is string artist)
+            if (tags.Title is string title && tags.Artist is string artist)
             {
-                var inpBytes = Encoding.UTF8.GetBytes($"{artist}_{song.Tags?.Album}_{song.Title}".ToLower());
+                var inpBytes = Encoding.UTF8.GetBytes($"{artist}_{tags.Album}_{title}".ToLower());
                 using var sha1 = System.Security.Cryptography.SHA1.Create();
                 var hash = sha1.ComputeHash(inpBytes);
                 return hash;

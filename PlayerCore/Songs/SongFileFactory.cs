@@ -1,43 +1,69 @@
-﻿using System;
+﻿using PlayerCore.Persist;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 #nullable enable
 namespace PlayerCore.Songs
 {
-    public class SongFileFactory
+    public class SongFileFactory : IDisposable
     {
-        private readonly ConcurrentDictionary<string, Song> Cache = new();
+        private readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+        private readonly ConcurrentQueue<Song> UpdateTagsQueue = new();
+
+        private AppSettings AppSettings { get; }
+
+        public SongFileFactory(AppSettings appSettings)
+        {
+            AppSettings = appSettings;
+            _ = RunBackgroundTagLoader(CancellationTokenSource.Token);
+        }
 
         public async Task<Song?> GetAsync(string filePath)
         {
-            if(Cache.TryGetValue(filePath.ToLower(), out var cached))
-            {
-                return cached;
-            }
-            else if(await CreateAsync(filePath) is Song res)
-            {
-                Cache.TryAdd(filePath.ToLower(), res);
-                return res;
-            }
-            return null;
+            return await CreateAsync(filePath) is Song res ? res : null;
         }
 
-        private static Task<Song?> CreateAsync(string filePath) => Task.Run(() => Create(filePath));
+        private Task<Song?> CreateAsync(string filePath) => Task.Run(() => Create(filePath));
 
-        private static Song? Create(string filePath)
+        private Song? Create(string filePath)
         {
             var file = new FileInfo(filePath);
             if(file.Exists && SongPlayer.SupportedExtensions.Any(s => s.Equals(file.Extension, StringComparison.OrdinalIgnoreCase)))
             {
+                var stats = AppSettings.GetSongStats(filePath);
+                var result = new Song(file.FullName, file.Name.Replace(file.Extension, ""), stats: stats);
+                UpdateTagsQueue.Enqueue(result);
+                return result;
+            }
+            return null;
+        }
+
+        private async Task RunBackgroundTagLoader(CancellationToken ct)
+        {
+            while (true)
+            {
+                UpdateQueuedSongTags(ct);
+                await Task.Delay(10, ct).ConfigureAwait(false);
+            }
+        }
+
+        private void UpdateQueuedSongTags(CancellationToken ct)
+        {
+            while (UpdateTagsQueue.TryDequeue(out var song))
+            {
+                ct.ThrowIfCancellationRequested();
+
                 try
                 {
-                    var fileInfo = TagLib.File.Create(file.FullName);
-                    var tags = new SongTags {
+                    var fileInfo = TagLib.File.Create(song.Path);
+                    song.Tags = new SongTags
+                    {
                         Title = fileInfo.Tag.Title,
                         TrackLength = fileInfo.Properties.Duration,
                         BitRate = fileInfo.Properties.AudioBitrate,
@@ -56,12 +82,18 @@ namespace PlayerCore.Songs
                         AlbumGain = fileInfo.Tag.ReplayGainAlbumGain is var ag and not double.NaN ? ag : null,
                         TrackGain = fileInfo.Tag.ReplayGainTrackGain is var tg and not double.NaN ? tg : null,
                     };
-                    var result = new Song(file.FullName, fileInfo.Tag.Title ?? file.Name.Replace(file.Extension, ""), tags);
-                    return result;
+                    if (AppSettings.TryFixSongStatsByTagsHash(song.Path, song.Tags) is bool statsChanged && statsChanged)
+                    {
+                        song.Stats = AppSettings.GetSongStats(song.Path);
+                    }
                 }
-                catch { }
+                catch (Exception) { }
             }
-            return null;
+        }
+
+        public void Dispose()
+        {
+            CancellationTokenSource?.Cancel();
         }
     }
 }

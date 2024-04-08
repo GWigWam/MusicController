@@ -23,5 +23,7 @@ namespace PlayerInterface {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        protected void RaiseAllPropertiesChanged() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
     }
 }

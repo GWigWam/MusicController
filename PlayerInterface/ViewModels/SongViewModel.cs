@@ -165,14 +165,32 @@ namespace PlayerInterface.ViewModels {
 
             curDisplay = DisplayType.Front;
 
-            var stats = settings.GetSongStats(song);
-            setStatsProps();
-            stats.PropertyChanged += (_, _) => setStatsProps();
-            void setStatsProps()
+            void loadStats()
             {
-                PlayCount = stats.PlayCount;
-                LastPlayed = stats.LastPlayed;
+                if (song.Stats is SongStats stats)
+                {
+                    setStatsProps();
+                    stats.PropertyChanged += (_, _) => setStatsProps();
+                    void setStatsProps()
+                    {
+                        PlayCount = stats.PlayCount;
+                        LastPlayed = stats.LastPlayed;
+                    }
+                }
             }
+            loadStats();
+
+            song.PropertyChanged += (_, a) =>
+            {
+                if (a.PropertyName == nameof(Song.Tags))
+                {
+                    RaiseAllPropertiesChanged();
+                }
+                else if (a.PropertyName == nameof(Song.Stats))
+                {
+                    loadStats();
+                }
+            };
         }
 
         public static implicit operator Song(SongViewModel svm) => svm.Song;
