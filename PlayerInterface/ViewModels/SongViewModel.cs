@@ -214,7 +214,7 @@ namespace PlayerInterface.ViewModels {
 
         private void OpenFileLocation() {
             if(File.Exists(Path)) {
-                System.Diagnostics.Process.Start("explorer.exe", $"/select, {Path}");
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{Path}\"");
             }
         }
         
