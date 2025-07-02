@@ -35,8 +35,19 @@ namespace PlayerCore.PlaylistFiles
                 }
             }
 
+            static IEnumerable<string> toAbsolutePaths(IEnumerable<string> inp, string rootPath)
+            {
+                foreach (var line in inp)
+                {
+                    yield return Path.IsPathRooted(line) ? line : Path.Combine(rootPath, line);
+                }
+            }
+
             var lines = parse(content);
-            return new M3U(lines);
+            var m3uRoot = Path.GetDirectoryName(filePath)!;
+            var absLines = toAbsolutePaths(lines, m3uRoot);
+
+            return new M3U(absLines);
         }
 
         public async Task WriteAsync(string filePath, bool allowOverwrite)
