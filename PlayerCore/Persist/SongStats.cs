@@ -1,4 +1,5 @@
-﻿using PlayerCore.Songs;
+﻿using Newtonsoft.Json;
+using PlayerCore.Songs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,6 +47,18 @@ namespace PlayerCore.Persist {
                 {
                     _InfoHash = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InfoHash)));
+                }
+            }
+        }
+
+        private string? _ScrobblerUrl;
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? ScrobblerUrl {
+            get => _ScrobblerUrl;
+            set {
+                if (!string.Equals(_ScrobblerUrl, value, StringComparison.OrdinalIgnoreCase))
+                {
+                    _ScrobblerUrl = value;
                 }
             }
         }

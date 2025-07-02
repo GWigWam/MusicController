@@ -207,6 +207,19 @@ namespace PlayerCore.Persist
         }
 
         [JsonIgnore]
+        private DateTimeOffset? _LastScrobblerFullUpdate;
+        [JsonProperty]
+        public DateTimeOffset? LastScrobblerFullUpdate
+        {
+            get => _LastScrobblerFullUpdate;
+            set
+            {
+                _LastScrobblerFullUpdate = value;
+                RaiseChanged(new PersistentPropertyChangedEventArgs(typeof(AppSettings), nameof(LastScrobblerFullUpdate)));
+            }
+        }
+
+        [JsonIgnore]
         private List<string> _StartupSongs { get; set; } = new List<string>();
 
         [JsonIgnore]
@@ -251,6 +264,14 @@ namespace PlayerCore.Persist
             lock (Statistics)
             {
                 return Statistics.FirstOrDefault(ss => ss.Path.Equals(songPath, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+
+        public SongStats? GetSongStatsByScrobblerUrl(string url)
+        {
+            lock (Statistics)
+            {
+                return Statistics.FirstOrDefault(ss => ss.ScrobblerUrl is string u && u.Equals(url, StringComparison.OrdinalIgnoreCase));
             }
         }
 

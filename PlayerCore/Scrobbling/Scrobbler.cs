@@ -8,6 +8,7 @@ using IF.Lastfm.Core.Api;
 using IF.Lastfm.Core.Objects;
 using IF.Lastfm.Core.Api.Enums;
 using PlayerCore.Songs;
+using System.Text.RegularExpressions;
 
 #nullable enable
 namespace PlayerCore.Scrobbling
@@ -31,6 +32,11 @@ namespace PlayerCore.Scrobbling
         {
             Settings = settings;
             SetupScrobbling(player);
+
+            if (CanScrobble)
+            {
+                Task.Run(() => UpdateAllStats());
+            }
         }
 
         public async Task Login(string username, string password)
@@ -95,9 +101,43 @@ namespace PlayerCore.Scrobbling
                     (await Client.Track.GetInfoAsync(title, artist, Client.User.Auth.UserSession.Username)) is { Success: true } info)
                 {
                     stats.PlayCount = info.Content.UserPlayCount is int pc && pc > stats.PlayCount ? pc : stats.PlayCount;
+                    stats.ScrobblerUrl = ConvertScrobblerUrl(info.Content.Url);
                 }
             }
         }
+
+        public async Task UpdateAllStats()
+        {
+            const int LastFmMaxLimit = 200;
+            Client ??= CreateAuthedClient();
+
+            var from = Settings.LastScrobblerFullUpdate ?? DateTime.Now.Subtract(TimeSpan.FromDays(30));
+            var page = 1;
+            var pageCnt = 0;
+            List<LastTrack> scrobbles = new();
+            do
+            {
+                var pagesResp = await Client.User.GetRecentScrobbles(Client.User.Auth.UserSession.Username, from, pagenumber: page++, count: LastFmMaxLimit);
+                scrobbles.AddRange(pagesResp);
+                pageCnt = pagesResp.TotalPages;
+            }
+            while (page <= pageCnt);
+
+            foreach (var scrobble in scrobbles.Where(t => t.IsNowPlaying != true && t.TimePlayed != null).OrderBy(t => t.TimePlayed!.Value))
+            {
+                if (Settings.GetSongStatsByScrobblerUrl(ConvertScrobblerUrl(scrobble.Url)) is SongStats stat)
+                {
+                    if (stat.LastPlayed + TimeSpan.FromMinutes(5) < scrobble.TimePlayed!.Value)
+                    {
+                        stat.LastPlayed = scrobble.TimePlayed.Value.ToLocalTime();
+                        stat.PlayCount++;
+                    }
+                }
+            }
+            Settings.LastScrobblerFullUpdate = DateTimeOffset.Now;
+        }
+
+        private static string ConvertScrobblerUrl(Uri uri) => new Regex(@"^(https?\:\/\/)?(www\.)?", RegexOptions.IgnoreCase).Replace(uri.ToString(), "").Replace("last.fm/music", "", StringComparison.OrdinalIgnoreCase);
 
         private static Scrobble SongToScrobble(SongTags song)
             => new Scrobble(song.Artist, song.Album, song.Title, DateTimeOffset.Now) { Duration = song.TrackLength };
